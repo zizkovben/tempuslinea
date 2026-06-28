@@ -1,0 +1,109 @@
+/*
+  ============================================================
+  CHRONOS — community-styles-patch-5l.css
+  Phase 5l: New thread tag classes + researcher badge additions
+  
+  HOW TO APPLY:
+  Paste this entire block into styles.css, after the existing
+  community thread styles section. Search for the last
+  .thread-tag rule in styles.css and append below it.
+  ============================================================
+*/
+
+/* ── NEW THREAD TAG VARIANTS (batch 2) ─────────────────────────────── */
+
+.thread-tag.tag-evidence {
+  background: rgba(12, 106, 105, 0.18);
+  color: var(--teal-hi);
+  border: 1px solid var(--teal);
+}
+
+.thread-tag.tag-mystery {
+  background: rgba(107, 33, 168, 0.18);
+  color: var(--violet-hi);
+  border: 1px solid var(--violet);
+}
+
+.thread-tag.tag-academic {
+  background: rgba(212, 160, 23, 0.12);
+  color: var(--gold);
+  border: 1px solid var(--gold-dim);
+}
+
+.thread-tag.tag-date-challenge {
+  background: rgba(180, 80, 20, 0.18);
+  color: #e07840;
+  border: 1px solid #8b4010;
+}
+
+.thread-tag.tag-contested {
+  background: rgba(180, 20, 20, 0.15);
+  color: #d45050;
+  border: 1px solid #7a1a1a;
+}
+
+.thread-tag.tag-globe {
+  background: rgba(30, 80, 140, 0.18);
+  color: #5090d0;
+  border: 1px solid #1e3a6a;
+}
+
+/* ── RESEARCHER BADGE (for about.html researcher table — new entries) ── */
+
+.researcher-tier-alt {
+  color: var(--text-secondary);
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--text-dim);
+  border-radius: 3px;
+  padding: 1px 5px;
+}
+
+.researcher-new-badge {
+  color: var(--teal-hi);
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: rgba(12, 106, 105, 0.15);
+  border: 1px solid var(--teal);
+  border-radius: 3px;
+  padding: 1px 5px;
+  margin-left: 4px;
+}
+
+/* ── THREAD CARD — contested vote state (more dn than up) ───────────── */
+
+.thread-card[data-thread-id="16"] .vote-display,
+.thread-card .vote-display.contested {
+  color: #d45050;
+}
+
+/* ── THREAD CIV REFS ────────────────────────────────────────────────── */
+
+.thread-civs .civ-id {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--text-secondary);
+  opacity: 0.7;
+}
+
+/* ── SOURCE COUNT BUTTON ────────────────────────────────────────────── */
+
+.btn-sources {
+  background: transparent;
+  border: 1px solid var(--text-dim);
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  padding: 3px 8px;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s;
+}
+
+.btn-sources:hover {
+  border-color: var(--teal);
+  color: var(--teal-hi);
+}
