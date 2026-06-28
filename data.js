@@ -1,12 +1,4 @@
 // ============================================================
-// CHRONOS · data.js
-// All civilization records, epoch bands, and preset zoom levels.
-// TO ADD A CIVILIZATION: copy a CIVS entry and edit fields.
-// Fields: id, n (name), s (start year), e (end year),
-//         r (region), t (type: confirmed|theorized|debated),
-//         d (description), up (upvotes), dn (downvotes),
-//         cont (continent key for filtering)
-// ============================================================
 
 const CIVS = [
 
@@ -812,9 +804,6 @@ const CIVS = [
     d:"The Jōmon are one of the world's oldest pottery-producing cultures, with ceramic vessels dating to approximately 14,000 BCE — among the earliest known. Over their 14,000-year span the Jōmon developed a sophisticated hunter-gatherer-fisher society with sedentary villages, complex ritual practices, and standardised artistic traditions. Recent ancient DNA analysis established that they represent a deeply divergent human lineage. Their long tenure of sedentism without agriculture challenges simplistic models of social complexity.", up:1040, dn:36 },
 
 
-// PHASE 5m — NEW CIVILIZATIONS 181–210
-// Append these records to the CIVS array in data.js
-// Paste before the closing ]; of the CIVS array
 
   // ── BATCH 5m ── ids 181–210 ──────────────────────────────────────────────
 
@@ -1721,21 +1710,7 @@ const CIVS = [
       { s:-13000, e:-9600, label:"Mainstream geology — Missoula Megafloods occurred in multiple pulses between ~18,000 and 13,000 BP; carved Channeled Scablands; caused by glacial dam failures, not cosmic impact", source:"Bretz, Journal of Geology (1923); Baker, Science (1978)", researcher:null, up:1380, dn:380 },
       { s:-10900, e:-9600, label:"Carlson / Hancock — YDB-era megafloods were triggered by extraterrestrial impacts on ice sheets; scale was globally civilisation-ending; Carolina Bays are secondary impact craters", source:"Carlson, Kosmographia (2019); Hancock, Magicians of the Gods (2015)", researcher:"Randall Carlson", up:1180, dn:680 },
     ] },
-// ════════════════════════════════════════════════════════════════════════════
-// PHASE 5z — APPEND TO data.js
-// ════════════════════════════════════════════════════════════════════════════
-//
-// INSTRUCTIONS (owner):
-//   1. Open your local data.js
-//   2. Find the very last closing  ];  at the bottom of the CIVS array
-//   3. Replace that  ];  with a comma, then paste ALL lines below it
-//      (the new entries already end with  ];  )
-//
-// ════════════════════════════════════════════════════════════════════════════
 
-// ── PHASE 5z — Civilizations 401–430 ──────────────────────────────────────
-// Append these entries to the end of the CIVS array in data.js
-// APPEND-ONLY — do not modify any existing records
 
   { id:401, n:"Kerma / Kingdom of Kush (Early)", r:"Africa", t:"confirmed",
     s:-2500, e:-1500, p:80000, lang:"kushitic", gov:"monarchy",
@@ -1857,23 +1832,8 @@ const CIVS = [
     s:-2500, e:1500, p:20000, lang:"paleo-eskimo", gov:"band",
     d:"The Dorset culture (~500 BCE–1500 CE) and its predecessor the Pre-Dorset (~2500–500 BCE) represent the primary human occupation of the Canadian Arctic and Greenland before the arrival of Thule Inuit ancestors from Alaska around 1000 CE. The Dorset people — known as the Tunit in Inuit oral tradition, described as a race of giants of great strength — were highly specialised Arctic hunters who subsisted primarily on ringed seals, walrus, and caribou in one of Earth's most demanding environments. Their material culture shows no evidence of dog sleds (they pulled sleds themselves), bows and arrows, or boats capable of open-water hunting — technological absences that made them vulnerable to Thule replacement. Ancient DNA analysis has confirmed Dorset people were genetically distinct from all living Arctic populations, representing a separate migration wave from Siberia. Their oral memory preservation in Inuit tradition as the Tunit represents one of the few cases of documented Indigenous memory of a now-extinct human population." },
   // END PHASE 5z
-];,
-// ════════════════════════════════════════════════════════════════════════════
-// PHASE 5aa — APPEND TO data.js
-// Civilizations 431–460
-// ════════════════════════════════════════════════════════════════════════════
-//
-// INSTRUCTIONS (owner):
-//   1. Open your local data.js
-//   2. Find the very last closing  ];  at the bottom
-//   3. Replace that  ];  with a comma, then paste ALL lines below it
-//      (these entries already end with the correct closing bracket)
-//
-// ════════════════════════════════════════════════════════════════════════════
 
-// ── PHASE 5aa — Civilizations 431–460 ─────────────────────────────────────
-// Append these entries to the end of the CIVS array in data.js
-// APPEND-ONLY — do not modify any existing records
+
 
   { id:431, n:"Timurid Empire", r:"Asia", t:"confirmed",
     s:1370, e:1507, p:5000000, lang:"chagatai-turkic", gov:"empire",
@@ -1995,19 +1955,7 @@ const CIVS = [
     s:-12800, e:-11500, p:0, lang:"unknown", gov:"unknown",
     d:"The network of catastrophic megafloods associated with the Younger Dryas Boundary event (~12,800–11,500 BCE) — including the Missoula Megafloods of the Pacific Northwest, the Lake Agassiz outburst floods into the North Atlantic, and possible Gulf of Mexico flood pulses — represents the largest freshwater flood events in the last 100,000 years of Earth history, reshaping continents and almost certainly triggering the Younger Dryas cooling through disruption of Atlantic thermohaline circulation. Randall Carlson's geological fieldwork across the Channeled Scablands of Washington State has documented flood features — gravel bars the size of hills, dry falls, coulees — of a scale that requires floodwaters of almost incomprehensible volume. The relevance to ancient history is direct: these floods drowned the coastal and riverine zones where any pre-Younger Dryas complex culture would most likely have been located, explaining the absence of physical evidence that mainstream archaeology uses to reject the pre-Flood civilisation hypothesis. Graham Hancock's thesis and Carlson's geology are intellectually interdependent in this specific respect." },
   // END PHASE 5aa
-];,
-// ════════════════════════════════════════════════════════════════════════════
-// PHASE 5ab — APPEND TO data.js
-// Civilizations 461–490
-// ════════════════════════════════════════════════════════════════════════════
-//
-// INSTRUCTIONS (owner):
-//   1. Open your local data.js
-//   2. Find the very last closing  ];  at the bottom
-//   3. Replace that  ];  with a comma, then paste ALL lines below
-//      (these entries already end with the correct closing bracket)
-//
-// ════════════════════════════════════════════════════════════════════════════
+
 
 // ── PHASE 5ab — Civilizations 461–490 ─────────────────────────────────────
 // Append to CIVS array in data.js — APPEND-ONLY
@@ -2132,19 +2080,7 @@ const CIVS = [
     s:-400000, e:-30000, p:0, lang:"unknown", gov:"unknown",
     d:"The Denisovans — an archaic human population known initially only from fragmentary remains in Denisova Cave in the Russian Altai — are now understood through ancient DNA analysis to have ranged across a vast territory from Siberia through Southeast Asia to Oceania, based on the geographic distribution of Denisovan genetic inheritance in modern populations. Melanesians and Aboriginal Australians carry approximately 3–5% Denisovan ancestry, suggesting a major Denisovan population in Southeast Asia or Wallacea that interbred with modern humans migrating through the region. Philippine Negritos carry the highest known proportion of Denisovan ancestry of any living population (~5%), suggesting prolonged contact in island Southeast Asia. Andrew Collins's Denisovan Origins (2019) proposes Denisovans as the builders of Göbekli Tepe and other early monumental sites, arguing their cognitive capabilities were equivalent to or exceeded those of contemporary Homo sapiens. Mainstream paleoanthropology acknowledges Denisovan cognitive sophistication — a needle, a bracelet, and decorated bones from Denisova Cave demonstrate symbolic behaviour — but does not accept monument-building capacity without physical evidence." },
   // END PHASE 5ab
-];,
-// ════════════════════════════════════════════════════════════════════════════
-// PHASE 5ac — APPEND TO data.js
-// Civilizations 491–520
-// ════════════════════════════════════════════════════════════════════════════
-//
-// INSTRUCTIONS (owner):
-//   1. Open your local data.js
-//   2. Find the very last closing  ];  at the bottom
-//   3. Replace that  ];  with a comma, then paste ALL lines below
-//      (these entries already end with the correct closing bracket)
-//
-// ════════════════════════════════════════════════════════════════════════════
+
 
 // ── PHASE 5ac — Civilizations 491–520 ─────────────────────────────────────
 // Append to CIVS array in data.js — APPEND-ONLY
@@ -2269,19 +2205,7 @@ const CIVS = [
     s:1300, e:1600, p:1500, lang:"muskogean-cherokee-proto", gov:"chiefdom",
     d:"Hiwassee Island at the confluence of the Hiwassee and Tennessee Rivers in present-day Tennessee was a major Dallas phase Mississippian centre whose excavation by the Tennessee Valley Authority in the 1930s — before the site was partially inundated by Chickamauga reservoir — produced one of the most complete stratigraphic records of a Mississippian platform mound site ever documented, revealing multiple construction stages and associated structures spanning the full Dallas phase occupation. The meticulous excavation records from Hiwassee Island, published by Thomas Lewis and Madeline Kneberg in 1946, remain a foundational reference for southeastern archaeology. The site's position at the confluence of two major rivers made it a strategic node in the exchange and communication networks of the upper Tennessee Valley Mississippian world. Its Dallas phase material culture and geographic position in the southern Appalachian foothills place it in the zone most likely connected to the emergence of the historic Cherokee Nation." },
   // END PHASE 5ac
-];,
-// ════════════════════════════════════════════════════════════════════════════
-// PHASE 5ad — APPEND TO data.js
-// Civilizations 521–550
-// ════════════════════════════════════════════════════════════════════════════
-//
-// INSTRUCTIONS (owner):
-//   1. Open your local data.js
-//   2. Find the very last closing  ];  at the bottom
-//   3. Replace that  ];  with a comma, then paste ALL lines below
-//      (these entries already end with the correct closing bracket)
-//
-// ════════════════════════════════════════════════════════════════════════════
+
 
 // ── PHASE 5ad — Civilizations 521–550 ─────────────────────────────────────
 // Append to CIVS array in data.js — APPEND-ONLY
@@ -2406,19 +2330,7 @@ const CIVS = [
     s:1000, e:1400, p:2000, lang:"various-siouan", gov:"chiefdom",
     d:"The Powers Phase of the Mississippi River lowlands in present-day southeastern Missouri (~1000–1400 CE) is archaeologically significant as a well-documented regional Mississippian community whose settlement pattern — a single large centre (Powers Fort) surrounded by four medium villages and numerous hamlets and farmsteads — has been comprehensively surveyed and mapped, providing one of the most complete pictures of how a Mississippian local community system was spatially organised across the landscape. James Price and James Griffin's systematic survey of the Powers Phase settlement system in the 1970s and 1980s became a model for regional settlement archaeology and demonstrated that Mississippian communities could be understood as integrated territorial systems rather than isolated site assemblages. The Powers Phase people appear to have abandoned their territory rapidly around 1400 CE, possibly in response to the same climatic and political disruptions that were reorganising Mississippian societies across the region." },
   // END PHASE 5ad
-];,
-// ════════════════════════════════════════════════════════════════════════════
-// PHASE 5ae — APPEND TO data.js
-// Civilizations 551–580
-// ════════════════════════════════════════════════════════════════════════════
-//
-// INSTRUCTIONS (owner):
-//   1. Open your local data.js
-//   2. Find the very last closing  ];  at the bottom
-//   3. Replace that  ];  with a comma, then paste ALL lines below
-//      (these entries already end with the correct closing bracket)
-//
-// ════════════════════════════════════════════════════════════════════════════
+
 
 // ── PHASE 5ae — Civilizations 551–580 ─────────────────────────────────────
 // Append to CIVS array in data.js — APPEND-ONLY
@@ -2543,19 +2455,7 @@ const CIVS = [
     s:900, e:1300, p:2500, lang:"proto-puebloan", gov:"village",
     d:"Yellow Jacket Pueblo in present-day southwestern Colorado was one of the largest Ancestral Puebloan communities of the Mesa Verde region, with an estimated 1,200–1,900 rooms making it comparable in scale to Pueblo Bonito despite its relative obscurity in popular accounts of the Ancestral Puebloan world. The site features multiple great kivas, a great house, and evidence of a community that aggregated population from surrounding smaller sites during the 13th century — the same population consolidation process documented at many Mesa Verde-tradition sites in the period before the final abandonment of the Four Corners region around 1300 CE. Yellow Jacket's scale suggests it briefly served as a regional population centre during the organisational disruption of the late Pueblo III period, drawing people from a wide surrounding area in a pattern of demographic consolidation that immediately preceded the mass migration southward to the Rio Grande and beyond." },
   // END PHASE 5ae
-];,
-// ════════════════════════════════════════════════════════════════════════════
-// PHASE 5af — APPEND TO data.js
-// Civilizations 581–610
-// ════════════════════════════════════════════════════════════════════════════
-//
-// INSTRUCTIONS (owner):
-//   1. Open your local data.js
-//   2. Find the very last closing  ];  at the bottom
-//   3. Replace that  ];  with a comma, then paste ALL lines below
-//      (these entries already end with the correct closing bracket)
-//
-// ════════════════════════════════════════════════════════════════════════════
+
 
 // ── PHASE 5af — Civilizations 581–610 ─────────────────────────────────────
 // Append to CIVS array in data.js — APPEND-ONLY
@@ -2680,13 +2580,7 @@ const CIVS = [
     s:985, e:1279, p:8000000, lang:"tamil", gov:"empire",
     d:"The Chola Empire of southern India under Rajaraja I and Rajendra I (~985–1279 CE) achieved the most ambitious maritime military projection in medieval Asian history — naval expeditions that raided the Srivijaya Empire in Sumatra, established diplomatic relations with China, and briefly controlled the Strait of Malacca, projecting Tamil Hindu culture across the Bay of Bengal. The Chola navy, operating thousands of kilometres from its base in Tamil Nadu, represented an unprecedented southern Indian military reach into Southeast Asia. On land, the Chola patronised an extraordinary florescence of Tamil literature, bronze casting, and temple architecture — the Brihadeeswarar Temple at Thanjavur, built by Rajaraja I and completed in 1010 CE, is a UNESCO World Heritage Site and one of the great achievements of Indian architectural history, with a vimana tower of 66 metres built entirely of granite. Chola bronze casting — particularly the Nataraja (Shiva as Lord of Dance) figure — achieved an artistic synthesis of cosmic symbolism and technical perfection that has become globally recognised as one of humanity's supreme sculptural achievements." },
   // END PHASE 5af
-];,
-// ============================================================
-// PHASE 5ag APPEND — data.js
-// Civilizations 611–640
-// INSTRUCTIONS: Open your local data.js → find the final ];
-// Replace ]; with , then paste everything below, ending with ];
-// ============================================================
+
 
   {
     id: 611,
@@ -3017,21 +2911,7 @@ const CIVS = [
     loc: [-13.5, -74.2],
     d: "The Wari (Huari) Empire was the first expansive state in Andean South America, preceding the Inca by five centuries and pioneering many of the administrative and infrastructure techniques the Inca would later scale to continental dimensions. Centred at their capital Huari near modern Ayacucho, the Wari constructed a network of roads, administrative centres, and storage facilities across the Andes from northern Peru to Chile and Bolivia, integrating diverse ecological zones through state-controlled redistribution. Wari iconography, particularly the Staff God figure shared with Tiwanaku, reveals an intertwined religious tradition with that civilisation to the south, though whether this represents alliance, cultural diffusion, or hegemony remains debated. The Wari collapse around 1000 CE is attributed variously to prolonged drought, internal political fragmentation, and resource depletion.",
     v: 0
-  }
-
-// ============================================================
-// END PHASE 5ag APPEND — data.js
-// After pasting: ensure the file ends with ];
-// Total new records: 30 (ids 611–640)
-// ============================================================,
-// ============================================================
-// PHASE 5ah APPEND — data.js
-// IDs 641–670
-// Append these records to the END of the CIVS array in data.js
-// Instructions: open data.js → find the final ]; → replace it
-// with a comma → paste everything below → file ends with ];
-// ============================================================
-
+  },
   {
     id: 641,
     n: "Srivijaya Maritime Empire",
@@ -3362,12 +3242,6 @@ const CIVS = [
     cont: "OC",
     desc: "The concept of Mu as a sunken Pacific continent was first elaborated by Augustus Le Plongeon in the nineteenth century and subsequently popularised by James Churchward, who claimed to derive the tradition from secret Naacal tablets he encountered in India. Proponents of Mu — or Lemuria in its alternative formulation — point to the cultural and linguistic similarities between Pacific island peoples, the mythological traditions of a sunken homeland preserved across Polynesia and Micronesia, and anomalous archaeological structures such as Nan Madol in Pohnpei as circumstantial evidence. Mainstream geology rejects the existence of a sunken Pacific continent, as the Pacific floor is composed of dense oceanic crust incapable of the crustal subsidence that would be required. Some alternative researchers, including Graham Hancock, discuss the flooding of continental shelves during post-glacial sea-level rise as a more geologically plausible mechanism for the loss of inhabited coastal lands across the Pacific."
   },
-// ============================================================
-// PHASE 5ai APPEND — data.js
-// IDs 671–700
-// Append to END of CIVS array in data.js
-// Instructions: find final ]; → replace with , → paste below → ends with ];
-// ============================================================
 
   {
     id: 671,
@@ -3699,12 +3573,6 @@ const CIVS = [
     cont: "AS",
     desc: "The Younger Dryas Boundary (YDB) Event — dated to approximately 12,900 years ago — is proposed by a growing body of researchers to represent the impact or airburst of a fragmented comet or asteroid that triggered catastrophic wildfires, megafaunal extinction, abrupt cooling, and the collapse of Clovis culture in North America. Graham Hancock, Randall Carlson, and others have argued that this cataclysm destroyed a sophisticated pre-agricultural civilisation whose survivors became the mythological flood-bringers, sky gods, and civilising teachers recorded in the origin myths of cultures worldwide — from Sumerian Oannes to Egyptian Zep Tepi to the Vedic Devas. The YDIH (Younger Dryas Impact Hypothesis) has accumulated substantial peer-reviewed geological support including nano-diamonds, platinum-group element anomalies, and magnetic spherules at the YDB layer across four continents, though the hypothesis remains contested by mainstream geology. Göbekli Tepe, Çatalhöyük, and the sudden appearance of monument-building and agricultural knowledge across multiple regions shortly after 11,600 BCE are cited by alternative researchers as evidence of a post-catastrophe knowledge-transmission event from a destroyed antecedent civilisation."
   },
-// ============================================================
-// PHASE 5aj APPEND — data.js
-// IDs 701–730
-// Append to END of CIVS array in data.js
-// Instructions: find final ]; → replace with , → paste below → ends with ];
-// ============================================================
 
   {
     id: 701,
@@ -4036,12 +3904,6 @@ const CIVS = [
     cont: "AS",
     desc: "The Vijayanagara Empire was the last great Hindu empire of south India, founded in 1336 CE as a bulwark against the southward expansion of the Delhi Sultanate and becoming for three centuries the dominant power of the Deccan and the wealthiest kingdom in India. The capital Hampi on the Tungabhadra River was at its height in the early sixteenth century one of the world's largest cities, with a population estimated at 500,000 and a market district described by Portuguese visitor Domingo Paes as larger and more lavishly stocked than Lisbon. The empire maintained a policy of religious tolerance, with the Vijayanagara rulers styling themselves protectors of all Hindu traditions while permitting Muslim and Christian commercial communities to flourish. The catastrophic Battle of Talikota in 1565 CE, in which a coalition of Deccan Sultanates defeated and killed the last great Vijayanagara emperor, resulted in the systematic sacking of Hampi — one of the largest planned destructions of a city in Asian history."
   },
-// ============================================================
-// PHASE 5ak APPEND — data.js
-// IDs 731–760
-// Append to END of CIVS array in data.js
-// Instructions: find final ]; → replace with , → paste below → ends with ];
-// ============================================================
 
   {
     id: 731,
@@ -4373,12 +4235,6 @@ const CIVS = [
     cont: "AS",
     desc: "The Yuan Dynasty was the Mongol-ruled imperial dynasty of China established by Kublai Khan, representing the first time all of China had been ruled by a non-Han dynasty and forming the Chinese portion of the vast Mongol Empire that stretched from Korea to Poland at its maximum extent. Kublai Khan's court at Khanbaliq (modern Beijing) was described by Marco Polo with barely credible superlatives — its wealth, scale, and administrative sophistication exceeded anything in the European experience — and the Yuan court attracted scholars, merchants, and craftsmen from across Eurasia in perhaps the most cosmopolitan court in world history. The Pax Mongolica — the relative peace and security across the Mongol-controlled Silk Road — enabled an unprecedented volume of long-distance trade and cultural exchange between East Asia and the Islamic world and Europe, including the transmission of Chinese technologies such as printing and gunpowder westward. The dynasty was overthrown by the Han Chinese rebel Zhu Yuanzhang in 1368, who founded the Ming dynasty and expelled the Mongols to the steppe."
   },
-// ============================================================
-// PHASE 5al APPEND — data.js
-// IDs 761–790
-// Append to END of CIVS array in data.js
-// Instructions: find final ]; → replace with , → paste below → ends with ];
-// ============================================================
 
   {
     id: 761,
@@ -4710,12 +4566,6 @@ const CIVS = [
     cont: "AF",
     desc: "The Almohad Caliphate was a Berber Muslim dynasty from the Atlas Mountains of Morocco that conquered the Almoravid Empire and unified North Africa and al-Andalus under a rigidly puritanical Islamic reform movement, creating the largest empire in western Islam and inadvertently triggering the intellectual flourishing that produced the philosopher Averroes and the Jewish thinker Maimonides — both of whom worked in Almohad Córdoba and both of whom were eventually forced into exile by Almohad religious intolerance. Averroes' commentaries on Aristotle, written in Córdoba under the Almohads, became the primary vehicle through which Aristotelian philosophy re-entered Western European thought, directly enabling the Scholastic movement of Albert the Great and Thomas Aquinas — making the Almohad period paradoxically crucial to the European intellectual tradition despite its political hostility to non-Muslim scholarship. The Almohad defeat at Las Navas de Tolosa in 1212 CE by a coalition of Christian Iberian kingdoms was the decisive turning point in the Reconquista, permanently shifting the military balance in Iberia toward the Christian kingdoms. The caliphate dissolved into competing Berber dynasties by 1269."
   },
-// ============================================================
-// PHASE 5am APPEND — data.js
-// IDs 791–820
-// Append to END of CIVS array in data.js
-// Instructions: find final ]; → replace with , → paste below → ends with ];
-// ============================================================
 
   {
     id: 791,
@@ -5047,12 +4897,6 @@ const CIVS = [
     cont: "AM",
     desc: "The Chimú Empire of the Peruvian north coast was the largest pre-Inca state in South America, centred on Chan Chan — the world's largest pre-Columbian city and the largest adobe city ever built — whose vast royal compounds, called ciudadelas, each served as the palace of a successive Chimú king and subsequently as the funerary monument and administrative centre of his cult after death. The Chimú irrigation system transformed the coastal desert of northern Peru through a network of inter-valley canals of extraordinary engineering ambition, connecting river systems separated by stretches of the world's driest desert to create an agricultural system capable of supporting a dense urban population. Chimú metalworkers were among the most accomplished in the pre-Columbian world, producing gold and silver objects of remarkable technical refinement — including the famous Chimú gold knife (tumi) and headdresses — that were subsequently plundered by the Inca conquerors who absorbed the Chimú state around 1470 CE. The Inca Empire inherited Chimú administrative systems, metallurgical traditions, and skilled craftsmen who were resettled at Cuzco following the conquest."
   },
-// ============================================================
-// PHASE 5an APPEND — data.js
-// IDs 821–850
-// Append to END of CIVS array in data.js
-// Instructions: find final ]; → replace with , → paste below → ends with ];
-// ============================================================
 
   {
     id: 821,
@@ -5384,12 +5228,6 @@ const CIVS = [
     cont: "EU",
     desc: "The Monastic State of the Teutonic Knights was a crusading military order state established in Prussia and the Baltic through the forced conversion and military conquest of the indigenous Prussian, Latvian, and Lithuanian peoples — one of the most brutal colonisation campaigns in medieval European history — creating a polity governed by the Grand Master of the Teutonic Order that was simultaneously a military organisation, a monastic institution, and a functioning territorial state. The Teutonic Knights' annual Reise — the sponsored military expeditions into pagan Lithuanian territory that attracted crusading knights from across Europe as a fashionable religious and martial adventure — continued for over a century and was participated in by figures including Henry Bolingbroke (later Henry IV of England) and John Boucicaut of France. The catastrophic defeat at the Battle of Grunwald in 1410 at the hands of the Polish-Lithuanian forces irreparably damaged the Order's military power and began a century of decline. The Order secularised and became a Lutheran duchy under Albert of Hohenzollern in 1525, ending the monastic state and creating the ancestor state of the later Kingdom of Prussia."
   },
-// ============================================================
-// PHASE 5ao APPEND — data.js
-// IDs 851–880
-// Append to END of CIVS array in data.js
-// Instructions: find final ]; → replace with , → paste below → ends with ];
-// ============================================================
 
   {
     id: 851,
@@ -5721,17 +5559,6 @@ const CIVS = [
     cont: "AS",
     desc: "The Tokugawa Shogunate established two and a half centuries of remarkable peace and stability in Japan through a system of political control that confined the emperor to a ceremonial role, required the daimyo (feudal lords) to alternate residence between their domains and Edo (Tokyo) under the sankin-kōtai system, and enforced the sakoku policy of near-complete national isolation that limited foreign contact to a small Dutch trading post at Dejima in Nagasaki. The peace of the Edo period generated a flourishing of urban popular culture — kabuki theatre, ukiyo-e woodblock printing, haiku poetry, and the prose fiction tradition of the gesaku — that produced a sophisticated commercial cultural economy of remarkable diversity, concentrated in the cities of Edo, Osaka, and Kyoto. Commodore Matthew Perry's arrival with a squadron of American steam-powered warships in Tokyo Bay in 1853 — the 'Black Ships' — shattered the sakoku policy and began the crisis that ended the Tokugawa system, with the shogunate's inability to resist foreign pressure discrediting it in the eyes of the samurai class. The Meiji Restoration of 1868 returned formal power to the Emperor Meiji and began Japan's rapid modernisation."
   },
-// PHASE_5ap_APPEND_data.js
-// Tempus Linea — CHRONOS
-// Civilizations 881–910
-// -----------------------------------------------------------------------
-// HOW TO APPLY:
-// 1. Open your local data.js file
-// 2. Find the very last line that reads:   ];
-// 3. Replace that ];  with a single comma:  ,
-// 4. Paste all lines between the dashes below
-// 5. Then add ];  at the very end to close the array
-// -----------------------------------------------------------------------
 
   {
     id: 881,
@@ -6002,24 +5829,7 @@ const CIVS = [
     t: "theorized",
     cont: "oceania",
     d: "The Pre-Saudeleur Hypothesis proposes that the basalt-column artificial islands of Nan Madol on Pohnpei were begun by a predecessor population predating the historically attested Saudeleur dynasty by a millennium or more. Pohnpeian oral traditions attribute the founding construction to two mythical brothers, Olisihpa and Olosohpa, who arrived from a distant land and used supernatural means to position the massive basalt columns. Some alternative researchers in the network of Graham Hancock have suggested the site warrants systematic underwater archaeological survey, noting that sea levels around Pohnpei were significantly lower during the early Holocene. No peer-reviewed archaeological consensus currently supports a pre-1000 BCE occupation of the Nan Madol reef platform."
-  }
-
-// -----------------------------------------------------------------------
-// END OF PHASE_5ap_APPEND_data.js
-// Close the array with ];  after pasting this block
-// -----------------------------------------------------------------------,
-// PHASE_5aq_APPEND_data.js
-// Tempus Linea — CHRONOS
-// Civilizations 911–940
-// -----------------------------------------------------------------------
-// HOW TO APPLY:
-// 1. Open your local data.js file
-// 2. Find the very last line that reads:   ];
-// 3. Replace that ];  with a single comma:  ,
-// 4. Paste all lines between the dashes below
-// 5. Then add ];  at the very end to close the array
-// -----------------------------------------------------------------------
-
+  },
   {
     id: 911,
     n: "Mississippian Culture",
@@ -6289,24 +6099,7 @@ const CIVS = [
     t: "confirmed",
     cont: "asia",
     d: "The Bactrian-Margiana Archaeological Complex, also called the Oxus Civilisation, was a Bronze Age urban culture of Central Asia centred in present-day Turkmenistan, Afghanistan, and northern Iran, contemporaneous with Mesopotamia, Egypt, and the Indus Valley and connected to all three by trade in lapis lazuli, tin, carnelian, and luxury textiles. Its rectangular fortified settlements — including Gonur Tepe in Turkmenistan and Dashly in Afghanistan — contained palaces, temples, and sophisticated craft workshops producing distinctive chlorite vessels, compartmented seals, and composite figurines that appear across a vast exchange network. The BMAC is a prime candidate for the archaeological culture of the earliest Indo-Iranian speakers, potentially the proto-Aryans whose migrations carried Vedic and Avestan religious traditions into India and Iran respectively. The civilisation collapsed around 1700 BCE, likely due to a combination of climatic desiccation and the arrival of steppe pastoralists."
-  }
-
-// -----------------------------------------------------------------------
-// END OF PHASE_5aq_APPEND_data.js
-// Close the array with ];  after pasting this block
-// -----------------------------------------------------------------------,
-// PHASE_5ar_APPEND_data.js
-// Tempus Linea — CHRONOS
-// Civilizations 941–970
-// -----------------------------------------------------------------------
-// HOW TO APPLY:
-// 1. Open your local data.js file
-// 2. Find the very last line that reads:   ];
-// 3. Replace that ];  with a single comma:  ,
-// 4. Paste all lines between the dashes below
-// 5. Then add ];  at the very end to close the array
-// -----------------------------------------------------------------------
-
+  },
   {
     id: 941,
     n: "Lydian Kingdom",
@@ -6576,24 +6369,7 @@ const CIVS = [
     t: "theorized",
     cont: "asia",
     d: "The Submerged Dwarka Hypothesis proposes that underwater stone structures discovered off the coast of Dwarka in Gujarat, India, by the National Institute of Ocean Technology in 2001–2002, represent the remains of an ancient city that may correspond to the legendary city of Dwarka described in the Mahabharata as the kingdom of the god-king Krishna, submerged by the sea following his death. Mainstream archaeologists, while acknowledging the existence of submerged structures, date them to no earlier than the historical period (c.1500 BCE) and suggest they represent a natural or human-made harbour feature. Alternative researchers and proponents of Vedic historical literalism argue the structures could date to the post-glacial sea-level rise of 7000–9000 BCE, placing Dwarka among the world's oldest submerged cities. The site has not been subjected to comprehensive peer-reviewed underwater excavation. Graham Hancock has cited Dwarka as part of a broader pattern of submerged coastal civilisations worldwide."
-  }
-
-// -----------------------------------------------------------------------
-// END OF PHASE_5ar_APPEND_data.js
-// Close the array with ];  after pasting this block
-// -----------------------------------------------------------------------,
-// PHASE_5as_APPEND_data.js
-// Tempus Linea — CHRONOS
-// Civilizations 971–1000
-// -----------------------------------------------------------------------
-// HOW TO APPLY:
-// 1. Open your local data.js file
-// 2. Find the very last line that reads:   ];
-// 3. Replace that ];  with a single comma:  ,
-// 4. Paste all lines between the dashes below
-// 5. Then add ];  at the very end to close the array
-// -----------------------------------------------------------------------
-
+  },
   {
     id: 971,
     n: "Sassanid Persian Empire",
@@ -6865,8 +6641,4 @@ const CIVS = [
     d: "The Out of Africa dispersal of anatomically modern Homo sapiens, beginning approximately 70,000 years ago following a possible population bottleneck associated with the Toba supervolcanic eruption, represents not a single civilisation but the foundational migration network that populated the entire world and from which all subsequent human cultures descend. Genetic, archaeological, and linguistic evidence converges on an African origin for all living humans, with primary dispersal routes tracked through the Arabian Peninsula and South Asian coast to Australia by approximately 65,000 BCE, into East Asia and Europe by 45,000 BCE, across the Bering land bridge into the Americas by at least 16,000 BCE, and into the remote Pacific by 3,500 BCE. This entry serves as Tempus Linea's anchor civilisation — the root node from which all 999 preceding entries ultimately branch — and its globe representation marks the African origin point while its timeline span encompasses the full arc of the human story from first dispersal to the threshold of recorded history."
   }
 
-// -----------------------------------------------------------------------
-// END OF PHASE_5as_APPEND_data.js
-// Close the array with ];  after pasting this block
-// -----------------------------------------------------------------------
 ];

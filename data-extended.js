@@ -1563,150 +1563,6 @@ const CIV_META = {
            { lat:47.50, lng:-117.00, label:'Channeled Scablands, Washington — carved in days by outburst floods', source:'Baker, Science (1978)', researcher:null, up:1240, dn:320 },
          ] },
 
-};
-
-// ── FILTER OPTION DEFINITIONS ────────────────────────────────
-// These power the checkboxes in the filter panel.
-// Add new keys here if you add new rel/gov/pop values above.
-
-const FILTER_DEFS = {
-  status: {
-    label: 'STATUS',
-    field: 't',
-    options: [
-      { key:'confirmed',  label:'Confirmed',  color:'#9a6e08' },
-      { key:'theorized',  label:'Theorized',  color:'#6b21a8' },
-      { key:'debated',    label:'Debated',    color:'#0c6a69' },
-    ]
-  },
-  era: {
-    label: 'ERA / EPOCH',
-    field: 'era',   // derived at runtime from start year
-    options: [
-      { key:'pre-yd',      label:'Pre-Younger Dryas (pre-10800 BCE)' },
-      { key:'younger-dryas',label:'Younger Dryas (10800–9700 BCE)'  },
-      { key:'neolithic',   label:'Neolithic (9700–3500 BCE)'         },
-      { key:'bronze',      label:'Bronze Age (3500–1200 BCE)'  },
-      { key:'iron',        label:'Iron Age (1200–500 BCE)'     },
-      { key:'classical',   label:'Classical (500 BCE–500 CE)'  },
-      { key:'medieval',    label:'Medieval (500–1500 CE)'      },
-      { key:'early-mod',   label:'Early Modern (1500–1800)'    },
-      { key:'modern',      label:'Modern (1800–present)'       },
-    ]
-  },
-  continent: {
-    label: 'REGION',
-    field: 'cont',
-    options: [
-      { key:'africa',     label:'Africa'          },
-      { key:'americas',   label:'Americas'        },
-      { key:'asia',       label:'Asia & Mid-East' },
-      { key:'middle-east',label:'Middle East'     },
-      { key:'europe',     label:'Europe'          },
-      { key:'pacific',    label:'Pacific'         },
-      { key:'oceania',    label:'Oceania'         },
-      { key:'atlantic',   label:'Atlantic'        },
-      { key:'global',     label:'Global / Unknown'},
-    ]
-  },
-  religion: {
-    label: 'RELIGION / BELIEF',
-    field: 'rel',
-    options: [
-      { key:'polytheist',  label:'Polytheistic'   },
-      { key:'monotheist',  label:'Monotheistic'   },
-      { key:'hindu',       label:'Hindu'           },
-      { key:'buddhist',    label:'Buddhist'        },
-      { key:'animist',     label:'Animist'         },
-      { key:'shamanic',    label:'Shamanic'        },
-      { key:'zoroastrian', label:'Zoroastrian'     },
-      { key:'theorized',   label:'Theorized/Other' },
-      { key:'unknown',     label:'Unknown'         },
-    ]
-  },
-  governance: {
-    label: 'GOVERNANCE',
-    field: 'gov',
-    options: [
-      { key:'empire',     label:'Empire'      },
-      { key:'kingdom',    label:'Kingdom'     },
-      { key:'republic',   label:'Republic'    },
-      { key:'city-state', label:'City-State'  },
-      { key:'theocracy',  label:'Theocracy'   },
-      { key:'tribal',     label:'Tribal / Chiefdom' },
-      { key:'federation', label:'Federation'  },
-      { key:'unknown',    label:'Unknown'     },
-    ]
-  },
-  language: {
-    label: 'LANGUAGE / SCRIPT',
-    field: 'lang',
-    options: [
-      { key:'semitic',       label:'Semitic (Akkadian, Arabic, Hebrew, Phoenician...)' },
-      { key:'indo-european', label:'Indo-European (Greek, Latin, Sanskrit, Celtic, Persian...)' },
-      { key:'sino-tibetan',  label:'Sino-Tibetan (Chinese, Tibetan...)' },
-      { key:'dravidian',     label:'Dravidian (Tamil, Telugu, Kannada...)' },
-      { key:'austronesian',  label:'Austronesian (Polynesian, Malay, Cham...)' },
-      { key:'niger-congo',   label:'Niger-Congo / Bantu (Swahili, Yoruba, Shona...)' },
-      { key:'afroasiatic',   label:"Afroasiatic (Egyptian, Berber, Ge'ez...)" },
-      { key:'mesoamerican',  label:'Mesoamerican (Maya, Nahuatl, Zapotec...)' },
-      { key:'andean',        label:'Andean (Quechua, Aymara...)' },
-      { key:'turkic-mongolic',label:'Turkic & Mongolic' },
-      { key:'japonic',       label:'Japonic (Japanese, Ryukyuan)' },
-      { key:'austro-asiatic',label:'Austro-Asiatic (Khmer, Mon...)' },
-      { key:'isolate',       label:'Linguistic Isolate (Sumerian, Etruscan, Basque...)' },
-      { key:'undeciphered',  label:'Undeciphered Script' },
-      { key:'reconstructed', label:'Reconstructed / Proto-Language' },
-      { key:'multiple',      label:'Multiple / Imperial Polyglot' },
-      { key:'unknown',       label:'Unknown / Oral Only' },
-    ]
-  },
-  population: {
-    label: 'PEAK POPULATION',
-    field: 'pop',
-    options: [
-      { key:'tiny',    label:'Tiny   (< 10k)'    },
-      { key:'small',   label:'Small  (10k–100k)' },
-      { key:'medium',  label:'Medium (100k–1M)'  },
-      { key:'large',   label:'Large  (1M–10M)'   },
-      { key:'massive', label:'Massive (10M+)'    },
-      { key:'unknown', label:'Unknown'           },
-    ]
-  },
-};
-
-// ── ERA DERIVATION ────────────────────────────────────────────
-// Assigns an 'era' key to each civilization based on its start year.
-function deriveEra(startYear) {
-  if (startYear < -10800)  return 'pre-yd';
-  if (startYear < -9700)   return 'younger-dryas';
-  if (startYear < -3500)   return 'neolithic';
-  if (startYear < -1200)   return 'bronze';
-  if (startYear < -500)    return 'iron';
-  if (startYear < 500)     return 'classical';
-  if (startYear < 1500)    return 'medieval';
-  if (startYear < 1800)    return 'early-mod';
-  return 'modern';
-}
-
-// ── MERGE INTO CIVS ────────────────────────────────────────────
-// Runs once on load. Merges CIV_META + era into each CIVS record.
-(function mergeMeta() {
-  CIVS.forEach(c => {
-    const ext = CIV_META[c.id] || {,
-// ════════════════════════════════════════════════════════════════════════════
-// PHASE 5z — APPEND TO data-extended.js
-// ════════════════════════════════════════════════════════════════════════════
-//
-// INSTRUCTIONS (owner):
-//   1. Open your local data-extended.js
-//   2. Find the very last  };  closing the CIV_META object
-//   3. Replace that  };  with a comma, then paste ALL lines below it
-//
-// ════════════════════════════════════════════════════════════════════════════
-
-// ── PHASE 5z — data-extended.js entries (ids 401–430) ──────────────────────
-// Append to CIV_META object in data-extended.js
 
   401: { locationType:"A", tags:["nubian","kerma","nile","burial","tumuli","africa-east","egypt-contemporary"] },
   402: { locationType:"A", tags:["phrygian","anatolia","midas","cybele","mystery-cult","bronze-age-collapse"] },
@@ -1772,23 +1628,6 @@ function deriveEra(startYear) {
   428: { locationType:"A", tags:["ancestral-puebloan","chaco-canyon","new-mexico","great-house","roads","astronomy","drought","southwest"] },
   429: { locationType:"A", tags:["mississippian","etowah","georgia","ceremonial-complex","copper","marble","southeast","mounds"] },
   430: { locationType:"A", tags:["dorset","pre-dorset","arctic","paleo-eskimo","tunit","inuit","canada","greenland","ancient-dna"] },
-  // END PHASE 5z
-};,
-// ════════════════════════════════════════════════════════════════════════════
-// PHASE 5aa — APPEND TO extended.js
-// Civilizations 431–460
-// ════════════════════════════════════════════════════════════════════════════
-//
-// INSTRUCTIONS (owner):
-//   1. Open your local extended.js
-//   2. Find the very last closing  };  at the bottom
-//   3. Replace that  };  with a comma, then paste ALL lines below it
-//      (these entries already end with the correct closing bracket)
-//
-// ════════════════════════════════════════════════════════════════════════════
-
-// ── PHASE 5aa — data-extended.js entries (ids 431–460) ─────────────────────
-
   431: { locationType:"A", tags:["timurid","samarkand","central-asia","tamerlane","islamic","astronomy","ulugh-beg"] },
   432: { locationType:"A", tags:["majapahit","java","southeast-asia","maritime","hindu-buddhist","gajah-mada","indonesia"] },
   433: { locationType:"A", tags:["khmer","angkor","cambodia","hydraulic","southeast-asia","lidar","urban","collapse"] },
@@ -1855,23 +1694,6 @@ function deriveEra(startYear) {
       { lat:50.0, lng:-95.0, label:"Lake Agassiz outburst zone, Manitoba", source:"Teller et al. — Quaternary Science Reviews (2002)", researcher:null, up:1654, dn:432 },
       { lat:26.0, lng:-90.0, label:"Gulf of Mexico flood pulse zone", source:"Fairbanks — Nature (1989)", researcher:null, up:1102, dn:543 }
     ]},
-  // END PHASE 5aa
-};,
-// ════════════════════════════════════════════════════════════════════════════
-// PHASE 5ab — APPEND TO extended.js
-// Civilizations 461–490
-// ════════════════════════════════════════════════════════════════════════════
-//
-// INSTRUCTIONS (owner):
-//   1. Open your local extended.js
-//   2. Find the very last closing  };  at the bottom
-//   3. Replace that  };  with a comma, then paste ALL lines below
-//      (these entries already end with the correct closing bracket)
-//
-// ════════════════════════════════════════════════════════════════════════════
-
-// ── PHASE 5ab — data-extended.js entries (ids 461–490) ─────────────────────
-
   461: { locationType:"A", tags:["mississippian","winterville","mississippi","lower-valley","mounds","platform"] },
   462: { locationType:"A", tags:["taino","caribbean","arawak","columbus","contact","depopulation","cassava","zemis"] },
   463: { locationType:"A", tags:["mississippian","parkin","arkansas","de-soto","casqui","historic-contact","chiefdom"] },
@@ -1916,23 +1738,6 @@ function deriveEra(startYear) {
       { lat:-5.0, lng:140.0, label:"Melanesia / Papua (highest modern Denisovan ancestry)", source:"Reich et al. — Nature (2010)", researcher:null, up:1876, dn:312 },
       { lat:12.0, lng:122.0, label:"Philippines (highest island Southeast Asia Denisovan ancestry)", source:"Larena et al. — Current Biology (2021)", researcher:null, up:1543, dn:432 }
     ]},
-  // END PHASE 5ab
-};,
-// ════════════════════════════════════════════════════════════════════════════
-// PHASE 5ac — APPEND TO extended.js
-// Civilizations 491–520
-// ════════════════════════════════════════════════════════════════════════════
-//
-// INSTRUCTIONS (owner):
-//   1. Open your local extended.js
-//   2. Find the very last closing  };  at the bottom
-//   3. Replace that  };  with a comma, then paste ALL lines below
-//      (these entries already end with the correct closing bracket)
-//
-// ════════════════════════════════════════════════════════════════════════════
-
-// ── PHASE 5ac — data-extended.js entries (ids 491–520) ─────────────────────
-
   491: { locationType:"A", tags:["mississippian","shiloh","tennessee-valley","phase-ii","exchange","appalachian","hinterland"] },
   492: { locationType:"A", tags:["solutrean","europe","palaeolithic","flint-knapping","stanford-bradley","atlantic-crossing","glacial-max"] },
   493: { locationType:"B", tags:["bell-beaker","europe","bronze-age","dna","stonehenge","amesbury-archer","steppe","celtic-origin"],
@@ -1972,23 +1777,6 @@ function deriveEra(startYear) {
   518: { locationType:"A", tags:["olmec","la-venta","veracruz","pyramid","jade","jaguar","mesoamerica","calendar","mother-culture"] },
   519: { locationType:"A", tags:["chichimec","northern-mexico","hunter-gatherer","colonial-resistance","chichimec-war","uto-aztecan","nomadic"] },
   520: { locationType:"A", tags:["mississippian","hiwassee-island","dallas-phase","tennessee","tva","cherokee","stratigraphy","southeast"] },
-  // END PHASE 5ac
-};,
-// ════════════════════════════════════════════════════════════════════════════
-// PHASE 5ad — APPEND TO extended.js
-// Civilizations 521–550
-// ════════════════════════════════════════════════════════════════════════════
-//
-// INSTRUCTIONS (owner):
-//   1. Open your local extended.js
-//   2. Find the very last closing  };  at the bottom
-//   3. Replace that  };  with a comma, then paste ALL lines below
-//      (these entries already end with the correct closing bracket)
-//
-// ════════════════════════════════════════════════════════════════════════════
-
-// ── PHASE 5ad — data-extended.js entries (ids 521–550) ─────────────────────
-
   521: { locationType:"A", tags:["mississippian","moundville","phase-i","founding","black-warrior","pauketat","alabama","emergence"] },
   522: { locationType:"A", tags:["sican","lambayeque","peru","gold","naymlap","batan-grande","chimu-precursor","andean","tumi"] },
   523: { locationType:"A", tags:["moche","peru","ceramic","portrait-vessel","sacrifice","huaca-del-sol","andean","naturalism"] },
@@ -2052,23 +1840,6 @@ function deriveEra(startYear) {
   548: { locationType:"A", tags:["muisca","colombia","el-dorado","gold","emerald","zipa","zaque","confederation","chibchan","bogota"] },
   549: { locationType:"A", tags:["mississippian","helena-crossing","arkansas","mississippi-river","crossing","trade-node","exchange"] },
   550: { locationType:"A", tags:["mississippian","powers-phase","missouri","settlement-pattern","powers-fort","survey","regional-system"] },
-  // END PHASE 5ad
-};,
-// ════════════════════════════════════════════════════════════════════════════
-// PHASE 5ae — APPEND TO extended.js
-// Civilizations 551–580
-// ════════════════════════════════════════════════════════════════════════════
-//
-// INSTRUCTIONS (owner):
-//   1. Open your local extended.js
-//   2. Find the very last closing  };  at the bottom
-//   3. Replace that  };  with a comma, then paste ALL lines below
-//      (these entries already end with the correct closing bracket)
-//
-// ════════════════════════════════════════════════════════════════════════════
-
-// ── PHASE 5ae — data-extended.js entries (ids 551–580) ─────────────────────
-
   551: { locationType:"A", tags:["mississippian","zebree","arkansas","woodland-transition","early-mississippian","ceramic","emergence"] },
   552: { locationType:"A", tags:["fremont","nine-mile-canyon","utah","rock-art","petroglyphs","pictographs","corridor","hunting"] },
   553: { locationType:"A", tags:["mogollon","mimbres","new-mexico","ceramic","pottery","burial","killed-vessels","southwest","collapse"] },
@@ -2099,23 +1870,6 @@ function deriveEra(startYear) {
   578: { locationType:"A", tags:["ancestral-puebloan","lowry-pueblo","colorado","chacoan-outlier","painted-kiva","wall-paintings","dendrochronology"] },
   579: { locationType:"A", tags:["coles-creek","louisiana","pre-mississippian","lower-mississippi","mounds","precursor","ranked-society","chiefdom"] },
   580: { locationType:"A", tags:["ancestral-puebloan","yellow-jacket","colorado","mesa-verde","large-pueblo","aggregation","migration","pueblo-iii"] },
-  // END PHASE 5ae
-};,
-// ════════════════════════════════════════════════════════════════════════════
-// PHASE 5af — APPEND TO extended.js
-// Civilizations 581–610
-// ════════════════════════════════════════════════════════════════════════════
-//
-// INSTRUCTIONS (owner):
-//   1. Open your local extended.js
-//   2. Find the very last closing  };  at the bottom
-//   3. Replace that  };  with a comma, then paste ALL lines below
-//      (these entries already end with the correct closing bracket)
-//
-// ════════════════════════════════════════════════════════════════════════════
-
-// ── PHASE 5af — data-extended.js entries (ids 581–610) ─────────────────────
-
   581: { locationType:"A", tags:["aksum","ethiopia","christianity","ezana","frumentius","ark-of-covenant","hancock","lalibela-precursor"] },
   582: { locationType:"A", tags:["nok","iron-smelting","west-africa","independent-invention","bantu","technology","nigeria"] },
   583: { locationType:"B", tags:["bantu","expansion","africa","migration","iron","agriculture","khoisan","dna","linguistics"],
@@ -2154,15 +1908,6 @@ function deriveEra(startYear) {
   608: { locationType:"A", tags:["sogdian","letters","dunhuang","silk-road","merchant-diaspora","script","uyghur","mongol","manchu"] },
   609: { locationType:"A", tags:["pala","bengal","buddhism","nalanda","vikramashila","srivijaya","bronzes","india","maritime"] },
   610: { locationType:"A", tags:["chola","tamil","maritime","srivijaya","nataraja","brihadeeswarar","rajendra","india","navy","bronze"] },
-  // END PHASE 5af
-};,
-// ============================================================
-// PHASE 5ag APPEND — data-extended.js
-// CIV_META entries 611–640
-// INSTRUCTIONS: Open your local data-extended.js → find the final };
-// Replace }; with , then paste everything below, ending with };
-// ============================================================
-
   611: {
     locationType: "A",
     tags: ["bronze-age", "oracle-bones", "writing-system", "ancestor-worship", "yellow-river", "china"],
@@ -2414,22 +2159,7 @@ function deriveEra(startYear) {
     notableStructures: ["Huari capital site", "Pikillacta administrative centre", "Cerro Baúl"],
     primarySources: ["Isbell — Huari Administration Structure (1991)", "Schreiber — Wari Imperialism in Middle Horizon Peru (1992)"],
     researcherLinks: []
-  }
-
-// ============================================================
-// END PHASE 5ag APPEND — data-extended.js
-// After pasting: ensure the file ends with };
-// Total new records: 30 (ids 611–640)
-// ============================================================,
-// ============================================================
-// PHASE 5ah APPEND — data-extended.js
-// IDs 641–670
-// Append these records to the END of the CIV_META object
-// Instructions: open data-extended.js → find the final };
-// → replace it with a comma → paste everything below
-// → file ends with };
-// ============================================================
-
+  },
   641: {
     locationType: "A",
     tags: ["maritime", "thalassocracy", "buddhism", "trade", "southeast-asia", "strait-of-malacca"],
@@ -2645,12 +2375,6 @@ function deriveEra(startYear) {
     keyFacts: ["Concept originated with Augustus Le Plongeon, expanded by James Churchward", "Claimed derivation from secret Naacal tablets — no independent verification", "Mainstream geology rejects sunken Pacific continent hypothesis", "Polynesian oral traditions of sunken homelands cited as supporting evidence"],
     researchers: ["Graham Hancock", "Stephen Oppenheimer"]
   },
-// ============================================================
-// PHASE 5ai APPEND — data-extended.js
-// IDs 671–700
-// Append to END of CIV_META object in data-extended.js
-// Instructions: find final }; → replace with , → paste below → ends with };
-// ============================================================
 
   671: {
     locationType: "A",
@@ -2867,12 +2591,6 @@ function deriveEra(startYear) {
     keyFacts: ["YDB event dated to c.12,900 years ago — comet/asteroid airburst hypothesis", "Nanodiamond, platinum-group element, and magnetic spherule evidence at YDB layer across 4 continents", "Göbekli Tepe and sudden agricultural revolution cited as post-catastrophe knowledge-transmission evidence", "Mainstream geology contested but peer-reviewed geological support growing"],
     researchers: ["Graham Hancock", "Randall Carlson", "Richard Firestone"]
   },
-// ============================================================
-// PHASE 5aj APPEND — data-extended.js
-// IDs 701–730
-// Append to END of CIV_META object in data-extended.js
-// Instructions: find final }; → replace with , → paste below → ends with };
-// ============================================================
 
   701: {
     locationType: "A",
@@ -3084,12 +2802,6 @@ function deriveEra(startYear) {
     researchers: [],
     relatedCivs: [729, 728, 723]
   },
-// ============================================================
-// PHASE 5ak APPEND — data-extended.js
-// IDs 731–760
-// Append to END of CIV_META object in data-extended.js
-// Instructions: find final }; → replace with , → paste below → ends with };
-// ============================================================
 
   731: {
     locationType: "A",
@@ -3301,12 +3013,6 @@ function deriveEra(startYear) {
     researchers: [],
     relatedCivs: [757, 758, 759]
   },
-// ============================================================
-// PHASE 5al APPEND — data-extended.js
-// IDs 761–790
-// Append to END of CIV_META object in data-extended.js
-// Instructions: find final }; → replace with , → paste below → ends with };
-// ============================================================
 
   761: {
     locationType: "A",
@@ -3518,12 +3224,6 @@ function deriveEra(startYear) {
     researchers: [],
     relatedCivs: [785, 783, 789]
   },
-// ============================================================
-// PHASE 5am APPEND — data-extended.js
-// IDs 791–820
-// Append to END of CIV_META object in data-extended.js
-// Instructions: find final }; → replace with , → paste below → ends with };
-// ============================================================
 
   791: {
     locationType: "A",
@@ -3735,12 +3435,6 @@ function deriveEra(startYear) {
     researchers: [],
     relatedCivs: [811, 819, 813]
   },
-// ============================================================
-// PHASE 5an APPEND — data-extended.js
-// IDs 821–850
-// Append to END of CIV_META object in data-extended.js
-// Instructions: find final }; → replace with , → paste below → ends with };
-// ============================================================
 
   821: {
     locationType: "A",
@@ -3957,12 +3651,6 @@ function deriveEra(startYear) {
     researchers: [],
     relatedCivs: [849, 847, 691]
   },
-// ============================================================
-// PHASE 5ao APPEND — data-extended.js
-// IDs 851–880
-// Append to END of CIV_META object in data-extended.js
-// Instructions: find final }; → replace with , → paste below → ends with };
-// ============================================================
 
   851: {
     locationType: "A",
@@ -4174,18 +3862,6 @@ function deriveEra(startYear) {
     researchers: [],
     relatedCivs: [699, 749, 756]
   },
-// PHASE_5ap_APPEND_extended.js
-// Tempus Linea — CHRONOS
-// Civilizations 881–910 — Extended metadata
-// -----------------------------------------------------------------------
-// HOW TO APPLY:
-// 1. Open your local data-extended.js file
-// 2. Find the very last closing brace before the final };
-//    It will look like:     }     (the last entry in the CIV_META object)
-// 3. Add a comma after that closing brace:   },
-// 4. Paste all lines between the dashes below
-// 5. The file should still end with };  to close the CIV_META object
-// -----------------------------------------------------------------------
 
   881: {
     locationType: "A",
@@ -4603,24 +4279,7 @@ function deriveEra(startYear) {
       }
     ],
     plausibilityScore: { up: 445, dn: 534 }
-  }
-
-// -----------------------------------------------------------------------
-// END OF PHASE_5ap_APPEND_extended.js
-// The CIV_META object should still close with };  after this block
-// -----------------------------------------------------------------------,
-// PHASE_5aq_APPEND_extended.js
-// Tempus Linea — CHRONOS
-// Civilizations 911–940 — Extended metadata
-// -----------------------------------------------------------------------
-// HOW TO APPLY:
-// 1. Open your local data-extended.js file
-// 2. Find the very last closing brace before the final };
-// 3. Add a comma after that closing brace:   },
-// 4. Paste all lines between the dashes below
-// 5. The file should still end with };  to close the CIV_META object
-// -----------------------------------------------------------------------
-
+  },
   911: {
     locationType: "A",
     tags: ["north-america", "mound-builders", "mississippian", "maize", "ceremonial-complex", "chiefdom", "pre-columbian"],
@@ -5019,24 +4678,7 @@ function deriveEra(startYear) {
     ],
     notableStructures: ["Gonur Tepe palace-temple complex (Turkmenistan)", "Dashly 3 (Afghanistan)", "Togolok 21 sanctuary"],
     plausibilityScore: { up: 623, dn: 34 }
-  }
-
-// -----------------------------------------------------------------------
-// END OF PHASE_5aq_APPEND_extended.js
-// The CIV_META object should still close with };  after this block
-// -----------------------------------------------------------------------,
-// PHASE_5ar_APPEND_extended.js
-// Tempus Linea — CHRONOS
-// Civilizations 941–970 — Extended metadata
-// -----------------------------------------------------------------------
-// HOW TO APPLY:
-// 1. Open your local data-extended.js file
-// 2. Find the very last closing brace before the final };
-// 3. Add a comma after that closing brace:   },
-// 4. Paste all lines between the dashes below
-// 5. The file should still end with };  to close the CIV_META object
-// -----------------------------------------------------------------------
-
+  },
   941: {
     locationType: "A",
     tags: ["anatolia", "lydia", "coinage", "croesus", "sardis", "pactolus", "persian-conquest", "gold"],
@@ -5460,24 +5102,7 @@ function deriveEra(startYear) {
       }
     ],
     plausibilityScore: { up: 789, dn: 534 }
-  }
-
-// -----------------------------------------------------------------------
-// END OF PHASE_5ar_APPEND_extended.js
-// The CIV_META object should still close with };  after this block
-// -----------------------------------------------------------------------,
-// PHASE_5as_APPEND_extended.js
-// Tempus Linea — CHRONOS
-// Civilizations 971–1000 — Extended metadata
-// -----------------------------------------------------------------------
-// HOW TO APPLY:
-// 1. Open your local data-extended.js file
-// 2. Find the very last closing brace before the final };
-// 3. Add a comma after that closing brace:   },
-// 4. Paste all lines between the dashes below
-// 5. The file should still end with };  to close the CIV_META object
-// -----------------------------------------------------------------------
-
+  },
   971: {
     locationType: "A",
     tags: ["iran", "sassanid", "zoroastrianism", "persia", "iwan", "silk-weaving", "byzantium-rival", "islamic-precursor"],
@@ -5877,9 +5502,135 @@ function deriveEra(startYear) {
     ],
     plausibilityScore: { up: 3456, dn: 88 }
   }
-
-// -----------------------------------------------------------------------
-// END OF PHASE_5as_APPEND_extended.js
-// The CIV_META object should still close with };  after this block
-// -----------------------------------------------------------------------
 };
+
+// ── FILTER OPTION DEFINITIONS ────────────────────────────────
+// These power the checkboxes in the filter panel.
+// Add new keys here if you add new rel/gov/pop values above.
+
+const FILTER_DEFS = {
+  status: {
+    label: 'STATUS',
+    field: 't',
+    options: [
+      { key:'confirmed',  label:'Confirmed',  color:'#9a6e08' },
+      { key:'theorized',  label:'Theorized',  color:'#6b21a8' },
+      { key:'debated',    label:'Debated',    color:'#0c6a69' },
+    ]
+  },
+  era: {
+    label: 'ERA / EPOCH',
+    field: 'era',   // derived at runtime from start year
+    options: [
+      { key:'pre-yd',      label:'Pre-Younger Dryas (pre-10800 BCE)' },
+      { key:'younger-dryas',label:'Younger Dryas (10800–9700 BCE)'  },
+      { key:'neolithic',   label:'Neolithic (9700–3500 BCE)'         },
+      { key:'bronze',      label:'Bronze Age (3500–1200 BCE)'  },
+      { key:'iron',        label:'Iron Age (1200–500 BCE)'     },
+      { key:'classical',   label:'Classical (500 BCE–500 CE)'  },
+      { key:'medieval',    label:'Medieval (500–1500 CE)'      },
+      { key:'early-mod',   label:'Early Modern (1500–1800)'    },
+      { key:'modern',      label:'Modern (1800–present)'       },
+    ]
+  },
+  continent: {
+    label: 'REGION',
+    field: 'cont',
+    options: [
+      { key:'africa',     label:'Africa'          },
+      { key:'americas',   label:'Americas'        },
+      { key:'asia',       label:'Asia & Mid-East' },
+      { key:'middle-east',label:'Middle East'     },
+      { key:'europe',     label:'Europe'          },
+      { key:'pacific',    label:'Pacific'         },
+      { key:'oceania',    label:'Oceania'         },
+      { key:'atlantic',   label:'Atlantic'        },
+      { key:'global',     label:'Global / Unknown'},
+    ]
+  },
+  religion: {
+    label: 'RELIGION / BELIEF',
+    field: 'rel',
+    options: [
+      { key:'polytheist',  label:'Polytheistic'   },
+      { key:'monotheist',  label:'Monotheistic'   },
+      { key:'hindu',       label:'Hindu'           },
+      { key:'buddhist',    label:'Buddhist'        },
+      { key:'animist',     label:'Animist'         },
+      { key:'shamanic',    label:'Shamanic'        },
+      { key:'zoroastrian', label:'Zoroastrian'     },
+      { key:'theorized',   label:'Theorized/Other' },
+      { key:'unknown',     label:'Unknown'         },
+    ]
+  },
+  governance: {
+    label: 'GOVERNANCE',
+    field: 'gov',
+    options: [
+      { key:'empire',     label:'Empire'      },
+      { key:'kingdom',    label:'Kingdom'     },
+      { key:'republic',   label:'Republic'    },
+      { key:'city-state', label:'City-State'  },
+      { key:'theocracy',  label:'Theocracy'   },
+      { key:'tribal',     label:'Tribal / Chiefdom' },
+      { key:'federation', label:'Federation'  },
+      { key:'unknown',    label:'Unknown'     },
+    ]
+  },
+  language: {
+    label: 'LANGUAGE / SCRIPT',
+    field: 'lang',
+    options: [
+      { key:'semitic',       label:'Semitic (Akkadian, Arabic, Hebrew, Phoenician...)' },
+      { key:'indo-european', label:'Indo-European (Greek, Latin, Sanskrit, Celtic, Persian...)' },
+      { key:'sino-tibetan',  label:'Sino-Tibetan (Chinese, Tibetan...)' },
+      { key:'dravidian',     label:'Dravidian (Tamil, Telugu, Kannada...)' },
+      { key:'austronesian',  label:'Austronesian (Polynesian, Malay, Cham...)' },
+      { key:'niger-congo',   label:'Niger-Congo / Bantu (Swahili, Yoruba, Shona...)' },
+      { key:'afroasiatic',   label:"Afroasiatic (Egyptian, Berber, Ge'ez...)" },
+      { key:'mesoamerican',  label:'Mesoamerican (Maya, Nahuatl, Zapotec...)' },
+      { key:'andean',        label:'Andean (Quechua, Aymara...)' },
+      { key:'turkic-mongolic',label:'Turkic & Mongolic' },
+      { key:'japonic',       label:'Japonic (Japanese, Ryukyuan)' },
+      { key:'austro-asiatic',label:'Austro-Asiatic (Khmer, Mon...)' },
+      { key:'isolate',       label:'Linguistic Isolate (Sumerian, Etruscan, Basque...)' },
+      { key:'undeciphered',  label:'Undeciphered Script' },
+      { key:'reconstructed', label:'Reconstructed / Proto-Language' },
+      { key:'multiple',      label:'Multiple / Imperial Polyglot' },
+      { key:'unknown',       label:'Unknown / Oral Only' },
+    ]
+  },
+  population: {
+    label: 'PEAK POPULATION',
+    field: 'pop',
+    options: [
+      { key:'tiny',    label:'Tiny   (< 10k)'    },
+      { key:'small',   label:'Small  (10k–100k)' },
+      { key:'medium',  label:'Medium (100k–1M)'  },
+      { key:'large',   label:'Large  (1M–10M)'   },
+      { key:'massive', label:'Massive (10M+)'    },
+      { key:'unknown', label:'Unknown'           },
+    ]
+  },
+};
+
+// ── ERA DERIVATION ────────────────────────────────────────────
+// Assigns an 'era' key to each civilization based on its start year.
+function deriveEra(startYear) {
+  if (startYear < -10800)  return 'pre-yd';
+  if (startYear < -9700)   return 'younger-dryas';
+  if (startYear < -3500)   return 'neolithic';
+  if (startYear < -1200)   return 'bronze';
+  if (startYear < -500)    return 'iron';
+  if (startYear < 500)     return 'classical';
+  if (startYear < 1500)    return 'medieval';
+  if (startYear < 1800)    return 'early-mod';
+  return 'modern';
+}
+
+(function mergeMeta() {
+  CIVS.forEach(c => {
+    const ext = CIV_META[c.id] || {};
+    Object.assign(c, ext);
+  });
+})();

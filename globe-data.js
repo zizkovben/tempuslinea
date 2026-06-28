@@ -435,8 +435,572 @@ const GLOBE_DATA = (() => {
     397: { lat:  38.66, lng: -90.06 },   // Cahokia — Illinois (same as 276 main site)
     398: { lat:  48.00, lng:-100.00 },   // Younger Dryas Boundary — Laurentide centroid
     399: { lat:   0.00, lng:   0.00 },   // Pre-Flood Civilisation — global (no fixed point)
-    400: { lat:  47.00, lng:-114.00 },   // Missoula Megaflood — Glacial Lake Missoula
-
+    400: { lat:  47.00, lng:-114.00 },   // Missoula Megaflood — Glacial Lake Missoula,
+  431: { lat:39.6, lng:66.9, label:"Samarkand, Timurid Empire" },
+  432: { lat:-7.6, lng:112.2, label:"Trowulan, Majapahit capital, Java" },
+  433: { lat:13.4, lng:103.8, label:"Angkor, Khmer Empire, Cambodia" },
+  434: { lat:-2.9, lng:104.7, label:"Palembang, Srivijaya, Sumatra" },
+  435: { lat:15.3, lng:76.4, label:"Hampi, Vijayanagara, Karnataka" },
+  436: { lat:38.6, lng:-90.1, label:"Monks Mound, Cahokia, Illinois" },
+  437: { lat:20.1, lng:-99.3, label:"Tula / Tollan, Hidalgo, Mexico" },
+  438: { lat:37.5, lng:-88.5, label:"Kincaid Mounds, Illinois" },
+  439: { lat:14.1, lng:38.7, label:"Aksum, Ethiopia" },
+  440: { lat:6.4, lng:2.3, label:"Abomey, Kingdom of Dahomey, Benin" },
+  441: { lat:-6.3, lng:14.3, label:"Mbanza Kongo, Kingdom of Kongo, Angola" },
+  442: { lat:30.5, lng:-84.3, label:"Lake Jackson Mounds, Tallahassee, Florida" },
+  443: { lat:32.8, lng:-83.6, label:"Ocmulgee Mounds, Macon, Georgia" },
+  444: { lat:42.7, lng:11.8, label:"Vetulonia, Etruscan heartland, Tuscany" },
+  445: { lat:35.3, lng:25.1, label:"Knossos, Crete, Minoan Neopalatial" },
+  446: { lat:50.4, lng:86.6, label:"Pazyryk, Altai Mountains, Russia" },
+  447: { lat:29.5, lng:72.0, label:"Ghaggar-Hakra basin, Late Harappan" },
+  448: { lat:35.3, lng:25.1, label:"Knossos — Linear A archive, Crete" },
+  449: { lat:26.0, lng:50.5, label:"Bahrain — Dilmun heartland" },
+  450: { lat:28.7, lng:57.7, label:"Halil River basin, Jiroft, Iran" },
+  451: { lat:35.1, lng:-80.0, label:"Town Creek Mound, North Carolina" },
+  452: { lat:37.7, lng:22.7, label:"Mycenae, Peloponnese, Greece" },
+  453: { lat:37.2, lng:38.9, label:"Göbekli Tepe / Karahan Tepe network, Turkey" },
+  454: { lat:29.2, lng:76.2, label:"Rakhigarhi, Haryana, India" },
+  455: { lat:35.1, lng:-88.3, label:"Shiloh Mounds, Tennessee" },
+  456: { lat:38.5, lng:43.3, label:"Van / Tushpa, Urartu, eastern Turkey" },
+  457: { lat:32.7, lng:-87.6, label:"Moundville Phase II, Alabama" },
+  458: { lat:37.0, lng:-6.3, label:"Doñana / Tartessian heartland, Andalusia" },
+  459: { lat:29.9, lng:31.1, label:"Giza — AAH primary focus (theorized)" },
+  460: { lat:47.5, lng:-119.5, label:"Channeled Scablands, Washington State" },
+  461: { lat:33.1, lng:-90.7, label:"Winterville Mounds, Mississippi" },
+  462: { lat:19.0, lng:-70.0, label:"Hispaniola — Taino heartland, Caribbean" },
+  463: { lat:35.3, lng:-90.6, label:"Parkin Mounds, Arkansas" },
+  464: { lat:-22.2, lng:29.3, label:"Mapungubwe Hill, Limpopo, South Africa" },
+  465: { lat:33.6, lng:-90.9, label:"Carson Mounds, Yazoo Basin, Mississippi" },
+  466: { lat:31.0, lng:-87.8, label:"Bottle Creek Mounds, Mobile-Tensaw Delta, Alabama" },
+  467: { lat:14.1, lng:38.7, label:"Aksum — Queen of Sheba tradition, Ethiopia" },
+  468: { lat:31.5, lng:-91.3, label:"Anna Mounds, Natchez region, Mississippi" },
+  469: { lat:64.3, lng:-20.6, label:"Þingvellir, Althing site, Iceland" },
+  470: { lat:30.5, lng:-91.2, label:"Plaquemine culture heartland, Louisiana" },
+  471: { lat:32.0, lng:-81.1, label:"Irene Mound, Savannah, Georgia" },
+  472: { lat:22.5, lng:72.2, label:"Lothal, Gujarat, India" },
+  473: { lat:23.9, lng:70.2, label:"Dholavira, Kutch, Gujarat, India" },
+  474: { lat:32.7, lng:-87.6, label:"Moundville Phase III, Alabama" },
+  475: { lat:47.8, lng:34.1, label:"Scythian Royal Kurgans, Zaporizhzhia, Ukraine" },
+  476: { lat:35.1, lng:25.0, label:"Pre-Palatial Crete, Knossos region" },
+  477: { lat:43.0, lng:-88.9, label:"Aztalan, Wisconsin" },
+  478: { lat:37.0, lng:35.0, label:"Luwian heartland, southern Anatolia, Turkey" },
+  479: { lat:16.9, lng:33.7, label:"Meroe / Meroitic Kingdom, Sudan" },
+  480: { lat:36.5, lng:-78.1, label:"Medoc Mountain Mound, North Carolina" },
+  481: { lat:34.8, lng:35.8, label:"Ugarit, Canaanite heartland, Syria" },
+  482: { lat:37.2, lng:-79.5, label:"Deep Bottom / upper Roanoke, Virginia" },
+  483: { lat:32.9, lng:-87.5, label:"Moundville Outlier zone, Black Warrior Valley" },
+  484: { lat:34.4, lng:-119.7, label:"Chumash territory, Santa Barbara coast, California" },
+  485: { lat:30.4, lng:-107.9, label:"Casas Grandes / Paquimé, Chihuahua, Mexico" },
+  486: { lat:33.5, lng:-112.0, label:"Hohokam heartland, Phoenix Basin, Arizona" },
+  487: { lat:37.2, lng:-108.5, label:"Mesa Verde, Colorado" },
+  488: { lat:39.5, lng:-111.0, label:"Fremont culture heartland, Utah" },
+  489: { lat:32.8, lng:-91.5, label:"Watson Brake / Lower Mississippi Archaic, Louisiana" },
+  490: { lat:51.5, lng:84.7, label:"Denisova Cave, Altai — Asian distribution (theorized)" },
+  491: { lat:35.1, lng:-88.3, label:"Shiloh Phase II, Tennessee River Valley" },
+  492: { lat:43.0, lng:-1.5, label:"Solutrean heartland, Cantabrian Spain / SW France" },
+  493: { lat:51.2, lng:-1.8, label:"Bell Beaker — Stonehenge / Wessex, Britain" },
+  494: { lat:52.0, lng:20.0, label:"Corded Ware — North European Plain heartland" },
+  495: { lat:50.5, lng:13.0, label:"LBK / Linear Pottery — Bohemia / Central Europe" },
+  496: { lat:55.7, lng:12.5, label:"Funnel Beaker — Denmark / southern Scandinavia" },
+  497: { lat:53.0, lng:-8.0, label:"Bell Beaker — British Isles arrival zone, Ireland" },
+  498: { lat:37.7, lng:32.8, label:"Çatalhöyük, Konya Plain, Turkey" },
+  499: { lat:31.3, lng:45.6, label:"Uruk, Southern Mesopotamia, Iraq" },
+  500: { lat:48.0, lng:37.0, label:"Pontic-Caspian Steppe — PIE homeland (debated)" },
+  501: { lat:32.9, lng:-87.6, label:"Moundville Hinterland, Black Warrior Valley, Alabama" },
+  502: { lat:51.5, lng:84.7, label:"Afanasievo / Altai steppe, southern Siberia" },
+  503: { lat:53.0, lng:62.0, label:"Andronovo / Sintashta heartland, southern Urals" },
+  504: { lat:27.3, lng:68.1, label:"Mohenjo-daro, Sindh, Pakistan" },
+  505: { lat:30.6, lng:72.9, label:"Harappa city, Punjab, Pakistan" },
+  506: { lat:43.3, lng:11.3, label:"Villanovan / Etruscan heartland, Tuscany, Italy" },
+  507: { lat:42.5, lng:25.5, label:"Odrysian Kingdom heartland, Bulgaria" },
+  508: { lat:41.3, lng:19.8, label:"Illyrian heartland, Shkodër region, Albania" },
+  509: { lat:47.5, lng:7.5, label:"La Tène type site, Lake Neuchâtel, Switzerland" },
+  510: { lat:32.5, lng:-88.0, label:"Summerville phase, Tombigbee Valley, Alabama" },
+  511: { lat:35.3, lng:-84.6, label:"Dallas phase / Hiwassee confluence, Tennessee" },
+  512: { lat:39.0, lng:-83.4, label:"Adena heartland / Serpent Mound, Ohio" },
+  513: { lat:33.2, lng:-89.3, label:"Nanih Waiya, Choctaw sacred mound, Mississippi" },
+  514: { lat:32.8, lng:-83.6, label:"Ocmulgee / Muscogee Creek heartland, Georgia" },
+  515: { lat:53.5, lng:-132.0, label:"Haida Gwaii, British Columbia, Canada" },
+  516: { lat:57.0, lng:-135.3, label:"Sitka / Tlingit heartland, Alaska" },
+  517: { lat:17.5, lng:-94.8, label:"San Lorenzo, Veracruz, Mexico" },
+  518: { lat:18.1, lng:-94.1, label:"La Venta, Tabasco, Mexico" },
+  519: { lat:23.0, lng:-102.0, label:"Gran Chichimeca heartland, north-central Mexico" },
+  520: { lat:35.3, lng:-84.7, label:"Hiwassee Island, Tennessee" },
+  521: { lat:32.7, lng:-87.6, label:"Moundville Phase I, Black Warrior Valley, Alabama" },
+  522: { lat:-6.7, lng:-79.8, label:"Batán Grande / Sican heartland, Lambayeque, Peru" },
+  523: { lat:-8.1, lng:-79.0, label:"Huaca del Sol, Moche capital, northern Peru" },
+  524: { lat:-14.7, lng:-75.1, label:"Nazca Lines, Pampa Colorada, Peru" },
+  525: { lat:-16.5, lng:-68.7, label:"Kalasasaya / Tiwanaku astronomical complex, Bolivia" },
+  526: { lat:34.8, lng:-87.7, label:"Florence Mound, Tennessee Valley, Alabama" },
+  527: { lat:-13.8, lng:-76.3, label:"Paracas Peninsula, Ica, Peru" },
+  528: { lat:-9.6, lng:-77.2, label:"Chavín de Huántar, Ancash, Peru" },
+  529: { lat:-9.0, lng:-77.5, label:"Recuay / Callejón de Huaylas, Peru" },
+  530: { lat:-1.8, lng:-80.7, label:"Valdivia, coastal Ecuador" },
+  531: { lat:-10.9, lng:-77.5, label:"Norte Chico / Caral satellite sites, Supe Valley, Peru" },
+  532: { lat:-16.5, lng:-68.7, label:"Pumapunku, Tiwanaku complex, Bolivia" },
+  533: { lat:31.5, lng:-91.4, label:"Fatherland site, Natchez, Mississippi" },
+  534: { lat:31.6, lng:-91.4, label:"Grand Village of the Natchez, Mississippi" },
+  535: { lat:33.7, lng:-116.3, label:"Cahuilla territory, Coachella Valley, California" },
+  536: { lat:36.1, lng:-107.9, label:"Chaco road network hub, New Mexico" },
+  537: { lat:33.2, lng:-111.9, label:"Snaketown, Gila River, Arizona" },
+  538: { lat:36.1, lng:-107.9, label:"Pueblo Bonito, Chaco Canyon, New Mexico" },
+  539: { lat:32.5, lng:-91.7, label:"Watson Brake, Ouachita Parish, Louisiana" },
+  540: { lat:34.6, lng:-91.9, label:"Toltec Mounds, Arkansas" },
+  541: { lat:33.1, lng:-90.7, label:"Winterville Phase II, Mississippi" },
+  542: { lat:33.5, lng:-103.8, label:"Blackwater Draw / Clovis type site, New Mexico" },
+  543: { lat:-41.5, lng:-73.2, label:"Monte Verde, Chile — pre-Clovis site" },
+  544: { lat:-18.5, lng:-70.3, label:"Chinchorro mummy sites, Atacama coast, Chile" },
+  545: { lat:-15.9, lng:-69.1, label:"Lake Titicaca sacred landscape, Bolivia/Peru" },
+  546: { lat:36.3, lng:-89.0, label:"Obion Mounds, western Tennessee" },
+  547: { lat:-8.1, lng:-79.0, label:"Chan Chan, Chimú capital, Trujillo, Peru" },
+  548: { lat:5.0, lng:-74.0, label:"Bogotá savanna, Muisca heartland, Colombia" },
+  549: { lat:34.5, lng:-90.6, label:"Helena Crossing, Arkansas, Mississippi River" },
+  550: { lat:36.8, lng:-89.9, label:"Powers Fort / Powers Phase, southeastern Missouri" },
+  551: { lat:35.8, lng:-90.0, label:"Zebree site, Mississippi County, Arkansas" },
+  552: { lat:39.7, lng:-110.2, label:"Nine Mile Canyon, Carbon County, Utah" },
+  553: { lat:32.9, lng:-108.1, label:"Mimbres / Mogollon heartland, New Mexico" },
+  554: { lat:34.6, lng:-111.8, label:"Montezuma Castle, Verde Valley, Arizona" },
+  555: { lat:33.7, lng:-111.1, label:"Tonto Cliff Dwelling, Salado territory, Arizona" },
+  556: { lat:35.8, lng:-106.3, label:"Bandelier / Pajarito Plateau, New Mexico" },
+  557: { lat:36.8, lng:-107.9, label:"Aztec Ruins National Monument, New Mexico" },
+  558: { lat:36.6, lng:-89.7, label:"Lilbourn Mounds, Cairo Lowland, Missouri" },
+  559: { lat:35.5, lng:-111.4, label:"Wupatki Pueblo, San Francisco Peaks, Arizona" },
+  560: { lat:32.9, lng:-111.5, label:"Casa Grande, Coolidge, Arizona" },
+  561: { lat:37.4, lng:-109.1, label:"Hovenweep National Monument, Utah/Colorado" },
+  562: { lat:32.8, lng:-87.5, label:"Moundville related sites, Black Warrior Valley, Alabama" },
+  563: { lat:40.1, lng:-82.4, label:"Newark Earthworks, Licking County, Ohio" },
+  564: { lat:39.4, lng:-83.0, label:"Mound City / Hopewell NHP, Ross County, Ohio" },
+  565: { lat:39.3, lng:-83.2, label:"Seip Earthworks, Paint Creek, Ohio" },
+  566: { lat:33.1, lng:-88.3, label:"Lubbub Creek, Tombigbee River, Alabama" },
+  567: { lat:33.0, lng:-90.5, label:"Lake George Mounds, Yazoo Basin, Mississippi" },
+  568: { lat:33.5, lng:-90.4, label:"Pocahontas Mounds, Yazoo Basin, Mississippi" },
+  569: { lat:36.7, lng:-107.9, label:"Salmon Ruins, Bloomfield, New Mexico" },
+  570: { lat:33.6, lng:-90.2, label:"Ingomar Mounds, Yazoo Basin, Mississippi" },
+  571: { lat:40.4, lng:-90.2, label:"Havana Hopewell / Dickson Mounds, Illinois River" },
+  572: { lat:39.1, lng:-94.6, label:"Kansas City Hopewell heartland, Missouri" },
+  573: { lat:40.5, lng:-90.4, label:"Orendorf site, Illinois River valley, Illinois" },
+  574: { lat:38.6, lng:-90.1, label:"Cahokia Woodhenge / Monks Mound, Illinois" },
+  575: { lat:36.1, lng:-107.9, label:"Chetro Ketl, Chaco Canyon, New Mexico" },
+  576: { lat:31.1, lng:-91.9, label:"Marksville site, Avoyelles Parish, Louisiana" },
+  577: { lat:43.0, lng:-88.9, label:"Aztalan Phase II, Jefferson County, Wisconsin" },
+  578: { lat:37.5, lng:-108.8, label:"Lowry Pueblo, Montezuma County, Colorado" },
+  579: { lat:31.5, lng:-91.5, label:"Coles Creek heartland, Lower Mississippi Valley" },
+  580: { lat:37.5, lng:-108.8, label:"Yellow Jacket Pueblo, Montezuma County, Colorado" },
+  581: { lat:14.1, lng:38.7, label:"Aksum, Ethiopia — Christian phase" },
+  582: { lat:9.8,  lng:8.5,  label:"Nok, Kaduna State, Nigeria — iron smelting" },
+  583: { lat:5.0,  lng:12.0, label:"Cameroon-Nigeria borderland — Bantu homeland" },
+  584: { lat:12.0, lng:39.0, label:"Lalibela rock churches, Ethiopian Highlands" },
+  585: { lat:11.4, lng:-8.0, label:"Niani, Mali Empire heartland, Guinea" },
+  586: { lat:16.8, lng:-3.0, label:"Gao / Songhai capital, Mali" },
+  587: { lat:13.5, lng:14.0, label:"Ngazargamu, Kanem-Bornu capital, Nigeria" },
+  588: { lat:-16.5,lng:31.0, label:"Mutapa State, Zambezi Valley, Zimbabwe" },
+  589: { lat:-5.0, lng:22.0, label:"Kuba Kingdom, Kasai, DRC" },
+  590: { lat:-8.0, lng:26.0, label:"Luba Empire heartland, Katanga, DRC" },
+  591: { lat:31.5, lng:-84.9, label:"Kolomoki Mounds, Early County, Georgia" },
+  592: { lat:37.0, lng:39.0, label:"Pre-Göbekli Fertile Crescent, Şanlıurfa region" },
+  593: { lat:48.5, lng:30.5, label:"Talianky mega-site, Ukraine — Trypillia" },
+  594: { lat:35.3, lng:25.1, label:"Knossos Linear A archive, Crete" },
+  595: { lat:36.9, lng:21.6, label:"Palace of Nestor, Pylos, Greece" },
+  596: { lat:35.6, lng:35.8, label:"Ugarit, Latakia coast, Syria" },
+  597: { lat:32.2, lng:48.2, label:"Susa, Elamite capital, Khuzestan, Iran" },
+  598: { lat:36.8, lng:39.0, label:"Mittani heartland, Khabur triangle, Syria" },
+  599: { lat:32.5, lng:44.4, label:"Babylon, Kassite capital, Iraq" },
+  600: { lat:31.0, lng:46.1, label:"Eridu / Early Dynastic Sumer heartland, Iraq" },
+  601: { lat:33.3, lng:35.2, label:"Tyre, Phoenician city-state, Lebanon" },
+  602: { lat:36.4, lng:43.2, label:"Nineveh, Neo-Assyrian capital, Iraq" },
+  603: { lat:35.5, lng:46.0, label:"Ecbatana, Median capital, Hamadan, Iran" },
+  604: { lat:34.5, lng:38.3, label:"Palmyra, Syria — Palmyrene Empire" },
+  605: { lat:41.0, lng:36.5, label:"Amaseia, Kingdom of Pontus, Anatolia" },
+  606: { lat:36.7, lng:67.1, label:"Bactra / Greco-Bactrian capital, Afghanistan" },
+  607: { lat:34.5, lng:69.2, label:"Kapisa / Kushan heartland, Afghanistan" },
+  608: { lat:39.6, lng:66.9, label:"Samarkand — Sogdian letter network hub" },
+  609: { lat:25.0, lng:89.0, label:"Pala Empire heartland, Bengal, Bangladesh" },
+  610: { lat:10.8, lng:79.1, label:"Thanjavur, Chola Empire, Tamil Nadu, India" },
+  611: { lat: 34.0, lng: 113.5, label: "Shang Dynasty", type: "A" },
+  612: { lat: 34.3, lng: 108.9, label: "Zhou Dynasty (Western)", type: "A" },
+  613: { lat: 33.5, lng: 130.5, label: "Yayoi Culture", type: "A" },
+  614: { lat: 35.2, lng: 128.1, label: "Gaya Confederacy", type: "A" },
+  615: { lat: 36.5, lng: 127.1, label: "Baekje Kingdom", type: "A" },
+  616: { lat: 43.0, lng: 119.0, label: "Donghu Confederation", type: "A" },
+  617: { lat: 47.0, lng: 104.0, label: "Xiongnu Empire", type: "A" },
+  618: { lat: 46.0, lng: 106.0, label: "Rouran Khaganate", type: "A" },
+  619: { lat: 44.0, lng: 90.0, label: "Göktürk Khaganate", type: "A" },
+  620: { lat: 51.0, lng: 90.0, label: "Yenisei Kirghiz", type: "A" },
+  621: { lat: 37.0, lng: 46.5, label: "Kingdom of Mannea", type: "A" },
+  622: { lat: 23.5, lng: 58.0, label: "Land of Magan", type: "A" },
+  623: { lat: 14.5, lng: 45.5, label: "Qataban", type: "A" },
+  624: { lat: 15.5, lng: 49.0, label: "Hadramaut Kingdom", type: "A" },
+  625: { lat: 38.0, lng: 28.5, label: "Arzawa", type: "A" },
+  626: { lat: 40.0, lng: 34.6, label: "Hattian Culture", type: "A" },
+  627: { lat: 36.0, lng: 28.0, label: "Sea Peoples Network", type: "B" },
+  628: { lat: 9.5, lng: 78.1, label: "Pandya Kingdom", type: "A" },
+  629: { lat: 17.0, lng: 79.5, label: "Satavahana Empire", type: "A" },
+  630: { lat: 20.3, lng: 85.8, label: "Kalinga", type: "A" },
+  631: { lat: -15.0, lng: 168.0, label: "Lapita Cultural Complex", type: "A" },
+  632: { lat: 6.84, lng: 158.34, label: "Nan Madol", type: "A" },
+  633: { lat: -27.1, lng: -109.4, label: "Rapa Nui (Easter Island)", type: "A" },
+  634: { lat: 44.5, lng: 20.6, label: "Vinča Culture", type: "A" },
+  635: { lat: 43.0, lng: 34.0, label: "Black Sea Flood Civilization", type: "B" },
+  636: { lat: 19.6, lng: 30.4, label: "Kerma Classique", type: "A" },
+  637: { lat: 28.0, lng: 5.0, label: "Gaetuli", type: "A" },
+  638: { lat: 40.5, lng: 80.0, label: "Tocharian City-States", type: "A" },
+  639: { lat: 32.63, lng: -91.41, label: "Poverty Point (Peak Phase)", type: "A" },
+  640: { lat: -13.5, lng: -74.2, label: "Wari Empire", type: "A" },
+  641: { lat: -2.9441, lng: 104.9009, zoom: 5 },
+  642: { lat: 11.5625, lng: 104.9282, zoom: 5 },
+  643: { lat: 15.8801, lng: 108.3380, zoom: 5 },
+  644: { lat: 14.3500, lng: 100.5600, zoom: 5 },
+  645: { lat: 21.1717, lng: 94.8585, zoom: 5 },
+  646: { lat: 14.1213, lng: 38.7268, zoom: 5 },
+  647: { lat: 9.3500,  lng: 41.8500, zoom: 5 },
+  648: { lat: 9.5600,  lng: 44.0650, zoom: 5 },
+  649: { lat: 12.5200, lng: 39.4700, zoom: 5 },
+  650: { lat: 39.9334, lng: 32.8597, zoom: 5 },
+  651: { lat: 42.2679, lng: 42.6917, zoom: 5 },
+  652: { lat: 38.5010, lng: 43.3430, zoom: 5 },
+  653: { lat: 15.3547, lng: 44.2066, zoom: 5 },
+  654: { lat: 14.5450, lng: 44.3720, zoom: 5 },
+  655: { lat: 26.0667, lng: 50.5577, zoom: 5 },
+  656: { lat: 23.5880, lng: 58.3829, zoom: 5 },
+  657: { lat: 35.2985, lng: 25.1632, zoom: 5 },
+  658: { lat: 37.0900, lng: 25.1500, zoom: 5 },
+  659: { lat: 41.1000, lng: 85.2500, zoom: 5 },
+  660: { lat: 39.6542, lng: 66.9597, zoom: 5 },
+  661: { lat: 37.9260, lng: 65.9100, zoom: 5 },
+  662: { lat: 34.5268, lng: 69.1761, zoom: 5 },
+  663: { lat: 31.2001, lng: 29.9187, zoom: 5 },
+  664: { lat: 16.9333, lng: 33.7500, zoom: 5 },
+  665: { lat: 9.8716,  lng: 8.6674,  zoom: 5 },
+  666: { lat: -22.1975, lng: 29.3447, zoom: 5 },
+  667: { lat: 8.0000,  lng: 4.0000,  zoom: 5 },
+  668: { lat: 6.3350,  lng: 5.6267,  zoom: 5 },
+  669: { lat: 18.2208, lng: -66.5901, zoom: 4 },
+  670: { lat: 10.0000, lng: -150.0000, zoom: 3 },
+  671: { lat: -18.9137, lng: 47.5361,  zoom: 5 },
+  672: { lat: -7.5000,  lng: 26.5000,  zoom: 5 },
+  673: { lat: -6.1833,  lng: 14.4167,  zoom: 5 },
+  674: { lat: -16.5000, lng: 30.8333,  zoom: 5 },
+  675: { lat: 14.5000,  lng: 38.9167,  zoom: 5 },
+  676: { lat: 26.5833,  lng: 13.4167,  zoom: 5 },
+  677: { lat: 36.8528,  lng: 10.3233,  zoom: 5 },
+  678: { lat: 36.3640,  lng: 6.6147,   zoom: 5 },
+  679: { lat: 15.6167,  lng: 39.4500,  zoom: 5 },
+  680: { lat: -4.0435,  lng: 39.6682,  zoom: 5 },
+  681: { lat: 30.3285,  lng: 35.4444,  zoom: 5 },
+  682: { lat: 32.4279,  lng: 53.6880,  zoom: 5 },
+  683: { lat: 37.3360,  lng: 57.9246,  zoom: 5 },
+  684: { lat: 36.2021,  lng: 37.1343,  zoom: 5 },
+  685: { lat: 31.7683,  lng: 35.2137,  zoom: 5 },
+  686: { lat: 34.5503,  lng: 38.2696,  zoom: 5 },
+  687: { lat: 41.0082,  lng: 28.9784,  zoom: 5 },
+  688: { lat: 36.8190,  lng: 10.1658,  zoom: 5 },
+  689: { lat: 40.4168,  lng: -3.7038,  zoom: 5 },
+  690: { lat: 45.4654,  lng: 9.1866,   zoom: 5 },
+  691: { lat: 50.9333,  lng: 6.9667,   zoom: 5 },
+  692: { lat: 59.9139,  lng: 10.7522,  zoom: 5 },
+  693: { lat: 50.4501,  lng: 30.5234,  zoom: 5 },
+  694: { lat: 12.6392,  lng: -8.0029,  zoom: 5 },
+  695: { lat: 16.2667,  lng: 0.0400,   zoom: 5 },
+  696: { lat: 12.3647,  lng: -1.5333,  zoom: 5 },
+  697: { lat: 15.3540,  lng: -14.4524, zoom: 5 },
+  698: { lat: 37.2231,  lng: 38.9225,  zoom: 5 },
+  699: { lat: 36.2048,  lng: 138.2529, zoom: 5 },
+  700: { lat: 35.0000,  lng: 36.0000,  zoom: 4 },
+  701: { lat: 29.9234,  lng: 52.6793,  zoom: 4 },
+  702: { lat: 34.8000,  lng: 48.5153,  zoom: 5 },
+  703: { lat: 32.5355,  lng: 44.4208,  zoom: 5 },
+  704: { lat: 38.6189,  lng: 27.4333,  zoom: 5 },
+  705: { lat: 39.7767,  lng: 31.5202,  zoom: 5 },
+  706: { lat: 41.9965,  lng: 25.8576,  zoom: 5 },
+  707: { lat: 45.9443,  lng: 25.0094,  zoom: 5 },
+  708: { lat: 41.3275,  lng: 19.8187,  zoom: 5 },
+  709: { lat: 39.6650,  lng: 20.8537,  zoom: 5 },
+  710: { lat: 41.2867,  lng: 36.3300,  zoom: 5 },
+  711: { lat: 45.3550,  lng: 36.4736,  zoom: 5 },
+  712: { lat: 39.1329,  lng: 27.1845,  zoom: 5 },
+  713: { lat: 40.1826,  lng: 29.0609,  zoom: 5 },
+  714: { lat: 38.6431,  lng: 34.8307,  zoom: 5 },
+  715: { lat: 40.1811,  lng: 44.5136,  zoom: 5 },
+  716: { lat: 41.6938,  lng: 44.8015,  zoom: 5 },
+  717: { lat: 40.4093,  lng: 49.8671,  zoom: 5 },
+  718: { lat: 35.0174,  lng: 69.1708,  zoom: 5 },
+  719: { lat: 36.7069,  lng: 67.1100,  zoom: 5 },
+  720: { lat: 37.5500,  lng: 66.9750,  zoom: 5 },
+  721: { lat: 25.3176,  lng: 82.9739,  zoom: 5 },
+  722: { lat: 12.8185,  lng: 80.0339,  zoom: 5 },
+  723: { lat: 17.3850,  lng: 76.8200,  zoom: 5 },
+  724: { lat: 10.5276,  lng: 76.2144,  zoom: 5 },
+  725: { lat: 15.9162,  lng: 75.6770,  zoom: 5 },
+  726: { lat: 27.1767,  lng: 78.0081,  zoom: 5 },
+  727: { lat: 25.0000,  lng: 88.0000,  zoom: 5 },
+  728: { lat: 10.7905,  lng: 79.1378,  zoom: 5 },
+  729: { lat: 12.9716,  lng: 76.5222,  zoom: 5 },
+  730: { lat: 15.3350,  lng: 76.4600,  zoom: 5 },
+  731: { lat: 18.5204,  lng: 73.8567,  zoom: 5 },
+  732: { lat: 28.6139,  lng: 77.2090,  zoom: 4 },
+  733: { lat: 28.7041,  lng: 77.1025,  zoom: 4 },
+  734: { lat: 17.3850,  lng: 78.4867,  zoom: 5 },
+  735: { lat: 17.9689,  lng: 77.5195,  zoom: 5 },
+  736: { lat: 26.7509,  lng: 94.2037,  zoom: 5 },
+  737: { lat: 18.7883,  lng: 98.9853,  zoom: 5 },
+  738: { lat: 14.3528,  lng: 100.5683, zoom: 5 },
+  739: { lat: 17.0154,  lng: 99.8237,  zoom: 5 },
+  740: { lat: 13.4125,  lng: 103.8670, zoom: 5 },
+  741: { lat: -7.5731,  lng: 112.2309, zoom: 5 },
+  742: { lat: -7.9111,  lng: 112.6044, zoom: 5 },
+  743: { lat: -7.8014,  lng: 110.3647, zoom: 5 },
+  744: { lat: 17.9757,  lng: 102.6331, zoom: 5 },
+  745: { lat: 21.8456,  lng: 95.9909,  zoom: 5 },
+  746: { lat: 18.9311,  lng: 96.4606,  zoom: 5 },
+  747: { lat: 21.9588,  lng: 96.0891,  zoom: 5 },
+  748: { lat: 26.2124,  lng: 127.6809, zoom: 5 },
+  749: { lat: 37.5665,  lng: 126.9780, zoom: 5 },
+  750: { lat: 37.9910,  lng: 126.5560, zoom: 5 },
+  751: { lat: 35.8562,  lng: 129.2247, zoom: 5 },
+  752: { lat: 41.9350,  lng: 126.1890, zoom: 5 },
+  753: { lat: 36.4800,  lng: 127.1500, zoom: 5 },
+  754: { lat: 44.5550,  lng: 129.6169, zoom: 5 },
+  755: { lat: 35.2700,  lng: 128.2700, zoom: 5 },
+  756: { lat: 34.2658,  lng: 108.9541, zoom: 5 },
+  757: { lat: 30.2741,  lng: 120.1551, zoom: 5 },
+  758: { lat: 32.0603,  lng: 118.7969, zoom: 5 },
+  759: { lat: 39.9042,  lng: 116.4074, zoom: 5 },
+  760: { lat: 40.0000,  lng: 116.3833, zoom: 5 },
+  761: { lat: 34.3416,  lng: 108.9398, zoom: 5 },
+  762: { lat: 34.2658,  lng: 108.9541, zoom: 5 },
+  763: { lat: 34.7665,  lng: 113.6538, zoom: 5 },
+  764: { lat: 35.8000,  lng: 114.3000, zoom: 5 },
+  765: { lat: 47.9060,  lng: 106.9057, zoom: 5 },
+  766: { lat: 47.0000,  lng: 105.0000, zoom: 5 },
+  767: { lat: 43.0000,  lng: 89.0000,  zoom: 4 },
+  768: { lat: 48.0000,  lng: 101.0000, zoom: 5 },
+  769: { lat: 42.8580,  lng: 120.9660, zoom: 5 },
+  770: { lat: 45.7433,  lng: 126.6331, zoom: 5 },
+  771: { lat: 38.4682,  lng: 106.2729, zoom: 5 },
+  772: { lat: 47.8864,  lng: 106.9057, zoom: 4 },
+  773: { lat: 48.5000,  lng: 54.0000,  zoom: 5 },
+  774: { lat: 35.6892,  lng: 51.3890,  zoom: 5 },
+  775: { lat: 39.6542,  lng: 66.9597,  zoom: 5 },
+  776: { lat: 32.6546,  lng: 51.6680,  zoom: 5 },
+  777: { lat: 41.0082,  lng: 28.9784,  zoom: 4 },
+  778: { lat: 30.0444,  lng: 31.2357,  zoom: 5 },
+  779: { lat: 33.5102,  lng: 36.2913,  zoom: 5 },
+  780: { lat: 31.7683,  lng: 35.2137,  zoom: 5 },
+  781: { lat: 37.9750,  lng: 58.3960,  zoom: 5 },
+  782: { lat: 33.3406,  lng: 44.4009,  zoom: 5 },
+  783: { lat: 33.5102,  lng: 36.2913,  zoom: 5 },
+  784: { lat: 24.6877,  lng: 46.7219,  zoom: 5 },
+  785: { lat: 37.3891,  lng: -5.9845,  zoom: 5 },
+  786: { lat: 11.8636,  lng: -8.7302,  zoom: 5 },
+  787: { lat: 28.6139,  lng: 77.2090,  zoom: 5 },
+  788: { lat: 30.0444,  lng: 31.2357,  zoom: 5 },
+  789: { lat: 39.9179,  lng: 26.2520,  zoom: 5 },
+  790: { lat: 31.6295,  lng: -7.9811,  zoom: 5 },
+  791: { lat: 31.7917,  lng: -7.0926,  zoom: 5 },
+  792: { lat: 36.8190,  lng: 10.1658,  zoom: 5 },
+  793: { lat: 34.0209,  lng: -5.0097,  zoom: 5 },
+  794: { lat: 35.6969,  lng: -0.6331,  zoom: 5 },
+  795: { lat: 34.0549,  lng: -5.0100,  zoom: 5 },
+  796: { lat: 35.6781,  lng: 10.0993,  zoom: 5 },
+  797: { lat: 36.8190,  lng: 10.1658,  zoom: 5 },
+  798: { lat: 35.6500,  lng: 4.7500,   zoom: 5 },
+  799: { lat: 13.0532,  lng: 5.2390,   zoom: 5 },
+  800: { lat: 13.3156,  lng: 14.4557,  zoom: 5 },
+  801: { lat: 14.7645,  lng: -17.3660, zoom: 5 },
+  802: { lat: 7.1622,   lng: 1.9652,   zoom: 5 },
+  803: { lat: 6.6885,   lng: -1.6244,  zoom: 5 },
+  804: { lat: -28.3228, lng: 30.6546,  zoom: 5 },
+  805: { lat: -27.0000, lng: 32.0000,  zoom: 5 },
+  806: { lat: -19.8145, lng: 47.4759,  zoom: 5 },
+  807: { lat: 13.5500,  lng: 33.5300,  zoom: 5 },
+  808: { lat: -5.0000,  lng: 22.0000,  zoom: 5 },
+  809: { lat: -20.0000, lng: 30.5000,  zoom: 5 },
+  810: { lat: 9.0250,   lng: 38.7469,  zoom: 5 },
+  811: { lat: -13.5319, lng: -71.9675, zoom: 5 },
+  812: { lat: 19.4326,  lng: -99.1332, zoom: 5 },
+  813: { lat: 17.2510,  lng: -89.6230, zoom: 5 },
+  814: { lat: 20.6843,  lng: -88.5678, zoom: 5 },
+  815: { lat: 19.9130,  lng: -99.3050, zoom: 5 },
+  816: { lat: 19.6925,  lng: -98.8438, zoom: 5 },
+  817: { lat: 17.0436,  lng: -96.7677, zoom: 5 },
+  818: { lat: 17.5490,  lng: -97.9180, zoom: 5 },
+  819: { lat: 19.7008,  lng: -101.1844,zoom: 5 },
+  820: { lat: -8.1116,  lng: -79.0291, zoom: 5 },
+  821: { lat: -16.5540, lng: -68.6740,  zoom: 5 },
+  822: { lat: -13.2746, lng: -74.2236,  zoom: 5 },
+  823: { lat: -14.7390, lng: -75.1300,  zoom: 5 },
+  824: { lat: 38.6554,  lng: -90.0621,  zoom: 5 },
+  825: { lat: 36.0608,  lng: -107.9617, zoom: 5 },
+  826: { lat: 39.3780,  lng: -82.9960,  zoom: 5 },
+  827: { lat: 39.9612,  lng: -82.9988,  zoom: 5 },
+  828: { lat: 18.1085,  lng: -94.6898,  zoom: 5 },
+  829: { lat: -10.8931, lng: -77.5194,  zoom: 5 },
+  830: { lat: 34.4048,  lng: -103.2052, zoom: 4 },
+  831: { lat: 51.5965,  lng: -55.5194,  zoom: 5 },
+  832: { lat: 71.2906,  lng: -156.7887, zoom: 5 },
+  833: { lat: 63.7467,  lng: -68.5170,  zoom: 5 },
+  834: { lat: 32.6285,  lng: -91.4082,  zoom: 5 },
+  835: { lat: 43.0000,  lng: -75.5000,  zoom: 5 },
+  836: { lat: 32.8407,  lng: -83.6324,  zoom: 5 },
+  837: { lat: 35.5175,  lng: -83.9871,  zoom: 5 },
+  838: { lat: 43.9695,  lng: -103.7713, zoom: 5 },
+  839: { lat: 33.4255,  lng: -110.7890, zoom: 5 },
+  840: { lat: 23.0000,  lng: -106.0000, zoom: 4 },
+  841: { lat: 32.0000,  lng: -91.0000,  zoom: 4 },
+  842: { lat: 56.4907,  lng: -4.2026,   zoom: 5 },
+  843: { lat: 53.4239,  lng: -8.0930,   zoom: 5 },
+  844: { lat: 48.8566,  lng: 2.3522,    zoom: 5 },
+  845: { lat: 51.7520,  lng: -1.2577,   zoom: 5 },
+  846: { lat: 47.0500,  lng: 4.8671,    zoom: 5 },
+  847: { lat: 47.4979,  lng: 19.0402,   zoom: 5 },
+  848: { lat: 52.2297,  lng: 21.0122,   zoom: 5 },
+  849: { lat: 54.6872,  lng: 25.2797,   zoom: 5 },
+  850: { lat: 54.3520,  lng: 18.6466,   zoom: 5 },
+  851: { lat: 48.2082,  lng: 16.3738,  zoom: 4 },
+  852: { lat: 48.2082,  lng: 16.3738,  zoom: 4 },
+  853: { lat: 40.4168,  lng: -3.7038,  zoom: 4 },
+  854: { lat: 38.7223,  lng: -9.1393,  zoom: 5 },
+  855: { lat: 52.3676,  lng: 4.9041,   zoom: 5 },
+  856: { lat: 51.5074,  lng: -0.1278,  zoom: 4 },
+  857: { lat: 48.8566,  lng: 2.3522,   zoom: 4 },
+  858: { lat: 55.7558,  lng: 37.6173,  zoom: 4 },
+  859: { lat: 48.8566,  lng: 2.3522,   zoom: 5 },
+  860: { lat: 40.8518,  lng: 14.2681,  zoom: 5 },
+  861: { lat: 45.4408,  lng: 12.3155,  zoom: 5 },
+  862: { lat: 44.4056,  lng: 8.9463,   zoom: 5 },
+  863: { lat: 41.9029,  lng: 12.4534,  zoom: 5 },
+  864: { lat: 41.0082,  lng: 28.9784,  zoom: 5 },
+  865: { lat: 45.4654,  lng: 9.1866,   zoom: 5 },
+  866: { lat: 48.8566,  lng: 2.3522,   zoom: 5 },
+  867: { lat: 51.5074,  lng: -0.1278,  zoom: 5 },
+  868: { lat: 31.7683,  lng: 35.2137,  zoom: 5 },
+  869: { lat: 51.5000,  lng: 31.2833,  zoom: 5 },
+  870: { lat: 55.7558,  lng: 37.6173,  zoom: 5 },
+  871: { lat: 44.0165,  lng: 21.0059,  zoom: 5 },
+  872: { lat: 43.2141,  lng: 27.9147,  zoom: 5 },
+  873: { lat: 43.0757,  lng: 25.6172,  zoom: 5 },
+  874: { lat: 45.8150,  lng: 15.9819,  zoom: 5 },
+  875: { lat: 45.0000,  lng: 34.1000,  zoom: 5 },
+  876: { lat: 55.7887,  lng: 49.1221,  zoom: 5 },
+  877: { lat: 37.5700,  lng: 45.0700,  zoom: 5 },
+  878: { lat: 43.2220,  lng: 76.8512,  zoom: 5 },
+  879: { lat: 46.0000,  lng: 86.0000,  zoom: 5 },
+  880: { lat: 35.6762,  lng: 139.6503, zoom: 5 },
+  881: { lat: -21.1393, lng: -175.2049, type: "A", label: "Tongatapu, Kingdom of Tonga" },
+  882: { lat: 6.8440,  lng: 158.3280,  type: "B", label: "Nan Madol, Pohnpei, Micronesia" },
+  883: { lat: -27.1127, lng: -109.3497, type: "A", label: "Easter Island (Rapa Nui)" },
+  884: { lat: 19.8968, lng: -155.5828,  type: "A", label: "Hawaii (Big Island) — Kamehameha capital region" },
+  885: { lat: -4.2085, lng: 152.8268,   type: "A", label: "Bismarck Archipelago — Lapita origin zone" },
+  886: { lat: -22.1897, lng: 29.3297,   type: "A", label: "Mapungubwe Hill, Limpopo, South Africa" },
+  887: { lat: -20.2674, lng: 30.9337,   type: "A", label: "Great Zimbabwe, Masvingo Province" },
+  888: { lat: -16.9166, lng: 31.0500,   type: "A", label: "Mutapa heartland, Zimbabwe Plateau" },
+  889: { lat: 26.2172, lng: 50.5753,    type: "A", label: "Qal'at al-Bahrain — Dilmun capital" },
+  890: { lat: 15.4667, lng: 45.3167,    type: "A", label: "Marib, Yemen — Sabaean capital" },
+  891: { lat: 30.3285, lng: 35.4444,    type: "A", label: "Petra, Jordan — Nabataean capital" },
+  892: { lat: 14.1208, lng: 38.7197,    type: "A", label: "Aksum, Tigray, Ethiopia" },
+  893: { lat: 16.9338, lng: 33.7494,    type: "A", label: "Meroe, River Nile, Sudan" },
+  894: { lat: 26.5620, lng: 13.3820,    type: "A", label: "Garama (Germa), Fezzan, Libya" },
+  895: { lat: -8.9553, lng: 39.5282,    type: "A", label: "Kilwa Kisiwani, Tanzania — primary Swahili hub" },
+  896: { lat: 13.4125, lng: 103.8670,   type: "A", label: "Angkor, Siem Reap, Cambodia" },
+  897: { lat: -7.5281, lng: 112.2260,   type: "A", label: "Trowulan, East Java — Majapahit capital" },
+  898: { lat: -2.9761, lng: 104.7754,   type: "A", label: "Palembang, Sumatra — Srivijaya capital" },
+  899: { lat: 15.3352, lng: 76.4601,    type: "A", label: "Hampi (Vijayanagara), Karnataka, India" },
+  900: { lat: 10.7870, lng: 79.1317,    type: "A", label: "Thanjavur, Tamil Nadu — Chola capital" },
+  901: { lat: 21.1717, lng: 94.8585,    type: "A", label: "Bagan, Mandalay Region, Myanmar" },
+  902: { lat: 14.3692, lng: 100.5877,   type: "A", label: "Ayutthaya, Thailand" },
+  903: { lat: 41.7833, lng: 126.1833,   type: "A", label: "Ji'an / Hwando — Goguryeo capital region" },
+  904: { lat: 35.8468, lng: 129.2254,   type: "A", label: "Gyeongju, North Gyeongsang — Silla capital" },
+  905: { lat: 37.9667, lng: 126.5500,   type: "A", label: "Kaesong, North Korea — Goryeo capital" },
+  906: { lat: 10.3000, lng: 105.0167,   type: "A", label: "Óc Eo / Angkor Borei, Mekong Delta, Vietnam" },
+  907: { lat: 15.7756, lng: 108.2210,   type: "A", label: "My Son Sanctuary, Quảng Nam, Vietnam" },
+  908: { lat: 37.2231, lng: 38.9225,    type: "B", label: "Göbekli Tepe, Şanlıurfa, Turkey" },
+  911: { lat: 38.6270,  lng: -90.1994,  type: "A", label: "Cahokia / St. Louis region — Mississippian heartland" },
+  912: { lat: 36.0608,  lng: -107.9913, type: "A", label: "Chaco Canyon, New Mexico — Ancestral Puebloan centre" },
+  913: { lat: 39.4264,  lng: -83.8382,  type: "A", label: "Fort Ancient, Warren County, Ohio" },
+  914: { lat: 18.7357,  lng: -70.1627,  type: "A", label: "Hispaniola — Taíno primary chiefdom region" },
+  915: { lat: 5.0667,   lng: -74.0833,  type: "A", label: "Bacatá / Bogotá savannah — Muisca Zipa capital" },
+  916: { lat: -16.5553, lng: -68.6731,  type: "B", label: "Tiwanaku, Bolivia — early formative phase" },
+  917: { lat: -10.8961, lng: -77.5200,  type: "A", label: "Caral, Supe Valley, Peru" },
+  918: { lat: -13.0667, lng: -74.1167,  type: "A", label: "Huari (Wari) capital, Ayacucho, Peru" },
+  919: { lat: 14.1208,  lng: 38.7197,   type: "A", label: "Aksum / Yeha — early pre-Christian Aksumite phase" },
+  920: { lat: 10.5105,  lng: 7.4165,    type: "A", label: "Nok cultural zone, Kaduna State, Nigeria" },
+  921: { lat: 7.4667,   lng: 4.5667,    type: "A", label: "Ile-Ife, Osun State, Nigeria — Yoruba sacred city" },
+  922: { lat: 6.3350,   lng: 5.6270,    type: "A", label: "Benin City, Edo State, Nigeria" },
+  923: { lat: 8.9333,   lng: 3.9333,    type: "A", label: "Old Oyo (Katunga), Oyo State, Nigeria" },
+  924: { lat: 7.1808,   lng: 1.9878,    type: "A", label: "Abomey, Zou Department, Benin Republic" },
+  925: { lat: -2.9956,  lng: 35.3497,   type: "A", label: "Olduvai Gorge, Tanzania — Oldowan / Acheulean" },
+  926: { lat: -34.4178, lng: 21.2167,   type: "A", label: "Blombos Cave, Western Cape, South Africa" },
+  927: { lat: -4.9500,  lng: 119.8667,  type: "A", label: "Leang Tedongnge cave system, Sulawesi, Indonesia" },
+  928: { lat: 51.3978,  lng: 84.6764,   type: "B", label: "Denisova Cave, Altai Mountains, Russia" },
+  929: { lat: 40.8297,  lng: 140.7019,  type: "A", label: "Sannai-Maruyama, Aomori — Jōmon primary site" },
+  930: { lat: 33.2500,  lng: 130.3000,  type: "A", label: "Yoshinogari, Saga Prefecture — Yayoi settlement" },
+  931: { lat: 34.5653,  lng: 135.5978,  type: "A", label: "Daisen Kofun, Sakai, Osaka — largest Kofun mound" },
+  932: { lat: 27.3242,  lng: 68.1385,   type: "A", label: "Mohenjo-daro, Sindh, Pakistan — Indus Valley capital" },
+  933: { lat: 35.2985,  lng: 25.1631,   type: "B", label: "Knossos, Crete — Minoan palatial centre" },
+  934: { lat: 37.7317,  lng: 22.7561,   type: "A", label: "Mycenae, Argolis, Greece" },
+  935: { lat: 42.6964,  lng: 11.8706,   type: "A", label: "Tarquinia, Lazio, Italy — Etruscan heartland" },
+  936: { lat: 33.2704,  lng: 35.2038,   type: "A", label: "Tyre (Sur), Lebanon — Phoenician primary city" },
+  937: { lat: 36.8528,  lng: 10.3233,   type: "A", label: "Carthage, Tunis, Tunisia" },
+  938: { lat: 47.8500,  lng: 33.4833,   type: "A", label: "Chertomlyk / Pontic steppe — Scythian heartland" },
+  939: { lat: 39.6270,  lng: 66.9750,   type: "A", label: "Afrasiab (ancient Samarkand), Uzbekistan" },
+  940: { lat: 37.8333,  lng: 62.1833,   type: "A", label: "Gonur Tepe, Mary Province, Turkmenistan — BMAC capital" },
+  941: { lat: 38.4833,  lng: 28.0333,   type: "A", label: "Sardis, Lydia, western Anatolia (Turkey)" },
+  942: { lat: 39.6503,  lng: 32.0000,   type: "A", label: "Gordion, Phrygia, central Anatolia (Turkey)" },
+  943: { lat: 38.5000,  lng: 43.3667,   type: "A", label: "Van Fortress (Tushpa), Lake Van, eastern Turkey" },
+  944: { lat: 34.7981,  lng: 48.5147,   type: "A", label: "Ecbatana (Hamadan), Median capital, Iran" },
+  945: { lat: 32.1983,  lng: 48.2586,   type: "A", label: "Susa, Khuzestan Province, Iran — Elamite capital" },
+  946: { lat: 40.0194,  lng: 34.6153,   type: "A", label: "Hattusa, Bogazkoy, Anatolia — Hittite capital" },
+  947: { lat: 36.8500,  lng: 40.7833,   type: "A", label: "Tell Fakhariyah — Washukanni (Mitanni capital candidate), Syria" },
+  948: { lat: 33.3369,  lng: 44.3922,   type: "A", label: "Dur-Kurigalzu (Aqar Quf), near Baghdad, Iraq — Kassite capital" },
+  949: { lat: 31.7767,  lng: 35.2345,   type: "A", label: "Jerusalem — Kingdom of Israel and Judah capital" },
+  950: { lat: 33.5102,  lng: 36.2913,   type: "A", label: "Damascus — primary Aramean city-state" },
+  951: { lat: 32.5355,  lng: 44.4205,   type: "A", label: "Babylon, Hillah, Iraq — Neo-Babylonian capital" },
+  952: { lat: 19.6167,  lng: 30.4167,   type: "A", label: "Kerma, Northern State, Sudan" },
+  953: { lat: 18.5333,  lng: 31.8167,   type: "A", label: "Jebel Barkal / Napata, Sudan — Napatan capital" },
+  954: { lat: 15.3333,  lng: 38.9333,   type: "B", label: "Eritrean coast — Kingdom of Punt primary candidate" },
+  955: { lat: 30.3378,  lng: 119.9578,  type: "A", label: "Liangzhu, Zhejiang Province, China" },
+  956: { lat: 36.2000,  lng: 117.1000,  type: "A", label: "Longshan / Taosi, Yellow River valley, China" },
+  957: { lat: 34.6833,  lng: 112.6333,  type: "B", label: "Erlitou, Yanshi, Henan — Xia Dynasty candidate site" },
+  959: { lat: 31.0128,  lng: 104.4194,  type: "A", label: "Sanxingdui, Guanghan, Sichuan, China" },
+  960: { lat: 19.8064,  lng: 105.7883,  type: "A", label: "Dong Son, Thanh Hoa Province, Vietnam" },
+  961: { lat: 24.8667,  lng: 102.7000,  type: "A", label: "Shizhaishan, Lake Dian, Yunnan, China — Dian Kingdom" },
+  962: { lat: 37.5139,  lng: 127.1058,  type: "A", label: "Mongchontoseong (early Baekje capital), Seoul, Korea" },
+  963: { lat: 44.6167,  lng: 129.7667,  type: "A", label: "Shangjing (Upper Capital) of Balhae, Heilongjiang, China" },
+  964: { lat: 12.8471,  lng: 80.2473,   type: "A", label: "Mahabalipuram (Mamallapuram), Tamil Nadu, India — Pallava coast capital" },
+  965: { lat: 15.9167,  lng: 75.6833,   type: "A", label: "Badami (Vatapi), Karnataka, India — Chalukya capital" },
+  966: { lat: 20.0269,  lng: 75.1797,   type: "A", label: "Ellora caves / Manyakheta, Maharashtra, India — Rashtrakuta" },
+  967: { lat: 25.6111,  lng: 85.1667,   type: "A", label: "Pataliputra (Patna), Bihar, India — Magadha capital" },
+  968: { lat: 34.5167,  lng: 69.1833,   type: "A", label: "Begram / Kapisi, Kabul region, Afghanistan — Kushan capital zone" },
+  969: { lat: 33.0944,  lng: 44.5814,   type: "A", label: "Ctesiphon, near Baghdad, Iraq — Parthian winter capital" },
+  971: { lat: 33.0944,  lng: 44.5814,   type: "A", label: "Ctesiphon / Taq Kasra, Iraq — Sassanid capital" },
+  972: { lat: 29.9353,  lng: 52.8911,   type: "A", label: "Persepolis (Takht-e Jamshid), Fars, Iran — Achaemenid capital" },
+  973: { lat: 36.2021,  lng: 36.1604,   type: "A", label: "Antioch on the Orontes (Antakya), Turkey — Seleucid capital" },
+  974: { lat: 31.2001,  lng: 29.9187,   type: "A", label: "Alexandria, Egypt — Ptolemaic capital" },
+  975: { lat: 36.7667,  lng: 66.9000,   type: "A", label: "Bactra (Balkh), Afghanistan — Greco-Bactrian capital" },
+  976: { lat: 25.6111,  lng: 85.1667,   type: "A", label: "Pataliputra (Patna), Bihar — Maurya capital" },
+  977: { lat: 25.3176,  lng: 82.9739,   type: "A", label: "Pataliputra / Varanasi region — Gupta imperial heartland" },
+  978: { lat: 27.0546,  lng: 79.9199,   type: "A", label: "Kanauj (Kannauj), Uttar Pradesh — Harsha capital" },
+  979: { lat: 16.9667,  lng: 81.7833,   type: "A", label: "Vengi (Pedavegi), Andhra Pradesh — Eastern Chalukya capital" },
+  980: { lat: 17.9784,  lng: 79.5941,   type: "A", label: "Warangal, Telangana — Kakatiya capital" },
+  981: { lat: 13.1667,  lng: 75.9833,   type: "A", label: "Halebidu (Dwarasamudra), Karnataka — Hoysala capital" },
+  982: { lat: 18.2341,  lng: 73.4411,   type: "A", label: "Raigad Fort, Maharashtra — Shivaji's Maratha capital" },
+  983: { lat: 15.3352,  lng: 76.4601,   type: "A", label: "Hampi (Vijayanagara), Karnataka — Sangama founding capital" },
+  984: { lat: 16.8302,  lng: 75.7100,   type: "A", label: "Bijapur (Vijayapura), Karnataka — Adil Shahi Deccan Sultanate" },
+  985: { lat: 39.6547,  lng: 66.9750,   type: "A", label: "Samarkand (Marakanda), Uzbekistan — Timurid capital" },
+  986: { lat: 32.6546,  lng: 51.6680,   type: "A", label: "Isfahan (Naqsh-e Jahan), Iran — Safavid capital" },
+  987: { lat: 30.0444,  lng: 31.2357,   type: "A", label: "Cairo Citadel, Egypt — Ayyubid capital" },
+  988: { lat: 30.0444,  lng: 31.2357,   type: "A", label: "Cairo, Egypt — Mamluk Sultanate capital" },
+  989: { lat: 30.0561,  lng: 31.2294,   type: "A", label: "Al-Azhar / Fatimid Cairo, Egypt" },
+  990: { lat: 33.3406,  lng: 44.4009,   type: "A", label: "Baghdad (Round City), Iraq — Abbasid capital" },
+  991: { lat: 33.5102,  lng: 36.2913,   type: "A", label: "Damascus, Syria — Umayyad capital" },
+  992: { lat: 24.4672,  lng: 39.6112,   type: "A", label: "Medina (Madinat al-Nabi), Saudi Arabia — Rashidun capital" },
+  993: { lat: 16.7735,  lng: -3.0074,   type: "A", label: "Timbuktu, Mali — Mali Empire cultural capital" },
+  994: { lat: 16.2667,  lng: 0.0500,    type: "A", label: "Gao, Mali — Songhai Empire capital" },
+  995: { lat: -6.2500,  lng: 14.2333,   type: "A", label: "Mbanza Kongo (São Salvador), Angola — Kingdom of Kongo capital" },
+  996: { lat: -20.0667, lng: 30.8167,   type: "A", label: "Khami, Bulawayo, Zimbabwe — Rozvi State capital" },
+  997: { lat: -28.3167, lng: 30.7167,   type: "A", label: "KwaBulawayo / Ulundi, KwaZulu-Natal, South Africa — Zulu capital" },
+  998: { lat: 12.3614,  lng: 37.3833,   type: "A", label: "Gondar, Amhara, Ethiopia — Solomonic imperial capital" },
+  1000: { lat: -30.0,   lng: 25.0,      type: "B", label: "Southern Africa — Out of Africa origin point (primary pin)" }
   };
 
   // ── EPOCH SNAPSHOTS ───────────────────────────────────────
@@ -571,875 +1135,6 @@ const GLOBE_DATA = (() => {
     getSnapshot,
     getSnapshotCivs,
     getCivCoords,
-// ════════════════════════════════════════════════════════════════════════════
-// PHASE 5z — APPEND TO globe-data.js
-// ════════════════════════════════════════════════════════════════════════════
-//
-// INSTRUCTIONS (owner):
-//   1. Open your local globe-data.js
-//   2. Find the very last  };  closing the CIV_COORDS object
-//   3. Replace that  };  with a comma, then paste ALL lines below it
-//
-// ════════════════════════════════════════════════════════════════════════════
-
-// ── PHASE 5z — globe-data.js entries (ids 401–430) ─────────────────────────
-// Append to CIV_COORDS object in globe-data.js
-
-  401: { lat:21.5, lng:31.6, label:"Kerma, Sudan" },            // Kerma archaeological site
-  402: { lat:39.0, lng:31.0, label:"Gordion, Anatolia" },       // Phrygian capital
-  403: { lat:38.5, lng:27.5, label:"Sardis, Anatolia" },        // Lydian capital
-  404: { lat:47.0, lng:47.0, label:"Itil / Atil, Volga Delta" },// Khazar capital
-  405: { lat:41.1, lng:85.2, label:"Tarim Basin, Xinjiang" },   // Tocharian heartland
-  406: { lat:39.6, lng:66.9, label:"Samarkand, Sogdia" },       // Sogdian hub
-  407: { lat:32.7, lng:-87.6, label:"Moundville, Alabama" },    // Moundville site
-  408: { lat:39.5, lng:-83.0, label:"Newark Earthworks, Ohio" },// Hopewell centre
-  409: { lat:32.6, lng:-91.4, label:"Poverty Point, Louisiana" },// Poverty Point
-  410: { lat:-16.5, lng:-68.7, label:"Tiwanaku, Bolivia" },     // Tiwanaku capital
-  411: { lat:-8.1, lng:-79.0, label:"Chan Chan, Peru" },        // Chimú capital
-  412: { lat:35.1, lng:-94.6, label:"Spiro Mounds, Oklahoma" }, // Spiro
-  413: { lat:17.0, lng:-96.8, label:"Monte Albán, Oaxaca" },    // Zapotec capital
-  414: { lat:17.5, lng:-97.5, label:"Mixteca Alta, Oaxaca" },   // Mixtec heartland
-  415: { lat:14.5, lng:39.0, label:"Yeha, Ethiopia" },          // D'mt / Yeha temple
-  416: { lat:26.4, lng:13.0, label:"Garama / Germa, Libya" },   // Garamantian capital
-  417: { lat:9.8, lng:8.5, label:"Nok, Kaduna State, Nigeria" },// Nok culture centre
-  418: { lat:-9.0, lng:39.5, label:"Kilwa Kisiwani, Tanzania" },// Swahili capital
-  419: { lat:-20.3, lng:30.9, label:"Great Zimbabwe, Zimbabwe" },// Great Zimbabwe
-  420: { lat:71.0, lng:25.0, label:"Northern Arctic (theorized)" }, // Hyperborea — no fixed location
-  421: { lat:45.9, lng:23.5, label:"Tărtăria, Romania" },       // Tablet findspot
-  422: { lat:-5.0, lng:150.0, label:"Central Pacific (theorized)" }, // Mu — no fixed location
-  423: { lat:25.0, lng:80.0, label:"Vedic Heartland, India" },  // Vedic sacred geography
-  424: { lat:-13.9, lng:-171.8, label:"Samoa — Polynesian homeland" }, // Polynesian origin
-  425: { lat:15.2, lng:145.7, label:"Saipan, Mariana Islands" },// Chamorro heartland
-  426: { lat:37.8, lng:-87.9, label:"Angel Mounds, Indiana" },  // Angel Mounds
-  427: { lat:-13.0, lng:-74.2, label:"Huari, Ayacucho, Peru" }, // Wari capital
-  428: { lat:36.1, lng:-107.9, label:"Chaco Canyon, New Mexico" }, // Chaco
-  429: { lat:34.2, lng:-84.7, label:"Etowah Mounds, Georgia" }, // Etowah
-  430: { lat:63.7, lng:-68.5, label:"Baffin Island, Arctic Canada" }, // Dorset heartland
-  // END PHASE 5z
-};,
-// ════════════════════════════════════════════════════════════════════════════
-// PHASE 5aa — APPEND TO globe.js
-// Civilizations 431–460
-// ════════════════════════════════════════════════════════════════════════════
-//
-// INSTRUCTIONS (owner):
-//   1. Open your local globe.js
-//   2. Find the very last closing  };  at the bottom
-//   3. Replace that  };  with a comma, then paste ALL lines below it
-//      (these entries already end with the correct closing bracket)
-//
-// ════════════════════════════════════════════════════════════════════════════
-
-// ── PHASE 5aa — globe-data.js entries (ids 431–460) ────────────────────────
-
-  431: { lat:39.6, lng:66.9, label:"Samarkand, Timurid Empire" },
-  432: { lat:-7.6, lng:112.2, label:"Trowulan, Majapahit capital, Java" },
-  433: { lat:13.4, lng:103.8, label:"Angkor, Khmer Empire, Cambodia" },
-  434: { lat:-2.9, lng:104.7, label:"Palembang, Srivijaya, Sumatra" },
-  435: { lat:15.3, lng:76.4, label:"Hampi, Vijayanagara, Karnataka" },
-  436: { lat:38.6, lng:-90.1, label:"Monks Mound, Cahokia, Illinois" },
-  437: { lat:20.1, lng:-99.3, label:"Tula / Tollan, Hidalgo, Mexico" },
-  438: { lat:37.5, lng:-88.5, label:"Kincaid Mounds, Illinois" },
-  439: { lat:14.1, lng:38.7, label:"Aksum, Ethiopia" },
-  440: { lat:6.4, lng:2.3, label:"Abomey, Kingdom of Dahomey, Benin" },
-  441: { lat:-6.3, lng:14.3, label:"Mbanza Kongo, Kingdom of Kongo, Angola" },
-  442: { lat:30.5, lng:-84.3, label:"Lake Jackson Mounds, Tallahassee, Florida" },
-  443: { lat:32.8, lng:-83.6, label:"Ocmulgee Mounds, Macon, Georgia" },
-  444: { lat:42.7, lng:11.8, label:"Vetulonia, Etruscan heartland, Tuscany" },
-  445: { lat:35.3, lng:25.1, label:"Knossos, Crete, Minoan Neopalatial" },
-  446: { lat:50.4, lng:86.6, label:"Pazyryk, Altai Mountains, Russia" },
-  447: { lat:29.5, lng:72.0, label:"Ghaggar-Hakra basin, Late Harappan" },
-  448: { lat:35.3, lng:25.1, label:"Knossos — Linear A archive, Crete" },
-  449: { lat:26.0, lng:50.5, label:"Bahrain — Dilmun heartland" },
-  450: { lat:28.7, lng:57.7, label:"Halil River basin, Jiroft, Iran" },
-  451: { lat:35.1, lng:-80.0, label:"Town Creek Mound, North Carolina" },
-  452: { lat:37.7, lng:22.7, label:"Mycenae, Peloponnese, Greece" },
-  453: { lat:37.2, lng:38.9, label:"Göbekli Tepe / Karahan Tepe network, Turkey" },
-  454: { lat:29.2, lng:76.2, label:"Rakhigarhi, Haryana, India" },
-  455: { lat:35.1, lng:-88.3, label:"Shiloh Mounds, Tennessee" },
-  456: { lat:38.5, lng:43.3, label:"Van / Tushpa, Urartu, eastern Turkey" },
-  457: { lat:32.7, lng:-87.6, label:"Moundville Phase II, Alabama" },
-  458: { lat:37.0, lng:-6.3, label:"Doñana / Tartessian heartland, Andalusia" },
-  459: { lat:29.9, lng:31.1, label:"Giza — AAH primary focus (theorized)" },
-  460: { lat:47.5, lng:-119.5, label:"Channeled Scablands, Washington State" },
-  // END PHASE 5aa
-};,
-// ════════════════════════════════════════════════════════════════════════════
-// PHASE 5ab — APPEND TO globe.js
-// Civilizations 461–490
-// ════════════════════════════════════════════════════════════════════════════
-//
-// INSTRUCTIONS (owner):
-//   1. Open your local globe.js
-//   2. Find the very last closing  };  at the bottom
-//   3. Replace that  };  with a comma, then paste ALL lines below
-//      (these entries already end with the correct closing bracket)
-//
-// ════════════════════════════════════════════════════════════════════════════
-
-// ── PHASE 5ab — globe-data.js entries (ids 461–490) ────────────────────────
-
-  461: { lat:33.1, lng:-90.7, label:"Winterville Mounds, Mississippi" },
-  462: { lat:19.0, lng:-70.0, label:"Hispaniola — Taino heartland, Caribbean" },
-  463: { lat:35.3, lng:-90.6, label:"Parkin Mounds, Arkansas" },
-  464: { lat:-22.2, lng:29.3, label:"Mapungubwe Hill, Limpopo, South Africa" },
-  465: { lat:33.6, lng:-90.9, label:"Carson Mounds, Yazoo Basin, Mississippi" },
-  466: { lat:31.0, lng:-87.8, label:"Bottle Creek Mounds, Mobile-Tensaw Delta, Alabama" },
-  467: { lat:14.1, lng:38.7, label:"Aksum — Queen of Sheba tradition, Ethiopia" },
-  468: { lat:31.5, lng:-91.3, label:"Anna Mounds, Natchez region, Mississippi" },
-  469: { lat:64.3, lng:-20.6, label:"Þingvellir, Althing site, Iceland" },
-  470: { lat:30.5, lng:-91.2, label:"Plaquemine culture heartland, Louisiana" },
-  471: { lat:32.0, lng:-81.1, label:"Irene Mound, Savannah, Georgia" },
-  472: { lat:22.5, lng:72.2, label:"Lothal, Gujarat, India" },
-  473: { lat:23.9, lng:70.2, label:"Dholavira, Kutch, Gujarat, India" },
-  474: { lat:32.7, lng:-87.6, label:"Moundville Phase III, Alabama" },
-  475: { lat:47.8, lng:34.1, label:"Scythian Royal Kurgans, Zaporizhzhia, Ukraine" },
-  476: { lat:35.1, lng:25.0, label:"Pre-Palatial Crete, Knossos region" },
-  477: { lat:43.0, lng:-88.9, label:"Aztalan, Wisconsin" },
-  478: { lat:37.0, lng:35.0, label:"Luwian heartland, southern Anatolia, Turkey" },
-  479: { lat:16.9, lng:33.7, label:"Meroe / Meroitic Kingdom, Sudan" },
-  480: { lat:36.5, lng:-78.1, label:"Medoc Mountain Mound, North Carolina" },
-  481: { lat:34.8, lng:35.8, label:"Ugarit, Canaanite heartland, Syria" },
-  482: { lat:37.2, lng:-79.5, label:"Deep Bottom / upper Roanoke, Virginia" },
-  483: { lat:32.9, lng:-87.5, label:"Moundville Outlier zone, Black Warrior Valley" },
-  484: { lat:34.4, lng:-119.7, label:"Chumash territory, Santa Barbara coast, California" },
-  485: { lat:30.4, lng:-107.9, label:"Casas Grandes / Paquimé, Chihuahua, Mexico" },
-  486: { lat:33.5, lng:-112.0, label:"Hohokam heartland, Phoenix Basin, Arizona" },
-  487: { lat:37.2, lng:-108.5, label:"Mesa Verde, Colorado" },
-  488: { lat:39.5, lng:-111.0, label:"Fremont culture heartland, Utah" },
-  489: { lat:32.8, lng:-91.5, label:"Watson Brake / Lower Mississippi Archaic, Louisiana" },
-  490: { lat:51.5, lng:84.7, label:"Denisova Cave, Altai — Asian distribution (theorized)" },
-  // END PHASE 5ab
-};,
-// ════════════════════════════════════════════════════════════════════════════
-// PHASE 5ac — APPEND TO globe.js
-// Civilizations 491–520
-// ════════════════════════════════════════════════════════════════════════════
-//
-// INSTRUCTIONS (owner):
-//   1. Open your local globe.js
-//   2. Find the very last closing  };  at the bottom
-//   3. Replace that  };  with a comma, then paste ALL lines below
-//      (these entries already end with the correct closing bracket)
-//
-// ════════════════════════════════════════════════════════════════════════════
-
-// ── PHASE 5ac — globe-data.js entries (ids 491–520) ────────────────────────
-
-  491: { lat:35.1, lng:-88.3, label:"Shiloh Phase II, Tennessee River Valley" },
-  492: { lat:43.0, lng:-1.5, label:"Solutrean heartland, Cantabrian Spain / SW France" },
-  493: { lat:51.2, lng:-1.8, label:"Bell Beaker — Stonehenge / Wessex, Britain" },
-  494: { lat:52.0, lng:20.0, label:"Corded Ware — North European Plain heartland" },
-  495: { lat:50.5, lng:13.0, label:"LBK / Linear Pottery — Bohemia / Central Europe" },
-  496: { lat:55.7, lng:12.5, label:"Funnel Beaker — Denmark / southern Scandinavia" },
-  497: { lat:53.0, lng:-8.0, label:"Bell Beaker — British Isles arrival zone, Ireland" },
-  498: { lat:37.7, lng:32.8, label:"Çatalhöyük, Konya Plain, Turkey" },
-  499: { lat:31.3, lng:45.6, label:"Uruk, Southern Mesopotamia, Iraq" },
-  500: { lat:48.0, lng:37.0, label:"Pontic-Caspian Steppe — PIE homeland (debated)" },
-  501: { lat:32.9, lng:-87.6, label:"Moundville Hinterland, Black Warrior Valley, Alabama" },
-  502: { lat:51.5, lng:84.7, label:"Afanasievo / Altai steppe, southern Siberia" },
-  503: { lat:53.0, lng:62.0, label:"Andronovo / Sintashta heartland, southern Urals" },
-  504: { lat:27.3, lng:68.1, label:"Mohenjo-daro, Sindh, Pakistan" },
-  505: { lat:30.6, lng:72.9, label:"Harappa city, Punjab, Pakistan" },
-  506: { lat:43.3, lng:11.3, label:"Villanovan / Etruscan heartland, Tuscany, Italy" },
-  507: { lat:42.5, lng:25.5, label:"Odrysian Kingdom heartland, Bulgaria" },
-  508: { lat:41.3, lng:19.8, label:"Illyrian heartland, Shkodër region, Albania" },
-  509: { lat:47.5, lng:7.5, label:"La Tène type site, Lake Neuchâtel, Switzerland" },
-  510: { lat:32.5, lng:-88.0, label:"Summerville phase, Tombigbee Valley, Alabama" },
-  511: { lat:35.3, lng:-84.6, label:"Dallas phase / Hiwassee confluence, Tennessee" },
-  512: { lat:39.0, lng:-83.4, label:"Adena heartland / Serpent Mound, Ohio" },
-  513: { lat:33.2, lng:-89.3, label:"Nanih Waiya, Choctaw sacred mound, Mississippi" },
-  514: { lat:32.8, lng:-83.6, label:"Ocmulgee / Muscogee Creek heartland, Georgia" },
-  515: { lat:53.5, lng:-132.0, label:"Haida Gwaii, British Columbia, Canada" },
-  516: { lat:57.0, lng:-135.3, label:"Sitka / Tlingit heartland, Alaska" },
-  517: { lat:17.5, lng:-94.8, label:"San Lorenzo, Veracruz, Mexico" },
-  518: { lat:18.1, lng:-94.1, label:"La Venta, Tabasco, Mexico" },
-  519: { lat:23.0, lng:-102.0, label:"Gran Chichimeca heartland, north-central Mexico" },
-  520: { lat:35.3, lng:-84.7, label:"Hiwassee Island, Tennessee" },
-  // END PHASE 5ac
-};,
-// ════════════════════════════════════════════════════════════════════════════
-// PHASE 5ad — APPEND TO globe.js
-// Civilizations 521–550
-// ════════════════════════════════════════════════════════════════════════════
-//
-// INSTRUCTIONS (owner):
-//   1. Open your local globe.js
-//   2. Find the very last closing  };  at the bottom
-//   3. Replace that  };  with a comma, then paste ALL lines below
-//      (these entries already end with the correct closing bracket)
-//
-// ════════════════════════════════════════════════════════════════════════════
-
-// ── PHASE 5ad — globe-data.js entries (ids 521–550) ────────────────────────
-
-  521: { lat:32.7, lng:-87.6, label:"Moundville Phase I, Black Warrior Valley, Alabama" },
-  522: { lat:-6.7, lng:-79.8, label:"Batán Grande / Sican heartland, Lambayeque, Peru" },
-  523: { lat:-8.1, lng:-79.0, label:"Huaca del Sol, Moche capital, northern Peru" },
-  524: { lat:-14.7, lng:-75.1, label:"Nazca Lines, Pampa Colorada, Peru" },
-  525: { lat:-16.5, lng:-68.7, label:"Kalasasaya / Tiwanaku astronomical complex, Bolivia" },
-  526: { lat:34.8, lng:-87.7, label:"Florence Mound, Tennessee Valley, Alabama" },
-  527: { lat:-13.8, lng:-76.3, label:"Paracas Peninsula, Ica, Peru" },
-  528: { lat:-9.6, lng:-77.2, label:"Chavín de Huántar, Ancash, Peru" },
-  529: { lat:-9.0, lng:-77.5, label:"Recuay / Callejón de Huaylas, Peru" },
-  530: { lat:-1.8, lng:-80.7, label:"Valdivia, coastal Ecuador" },
-  531: { lat:-10.9, lng:-77.5, label:"Norte Chico / Caral satellite sites, Supe Valley, Peru" },
-  532: { lat:-16.5, lng:-68.7, label:"Pumapunku, Tiwanaku complex, Bolivia" },
-  533: { lat:31.5, lng:-91.4, label:"Fatherland site, Natchez, Mississippi" },
-  534: { lat:31.6, lng:-91.4, label:"Grand Village of the Natchez, Mississippi" },
-  535: { lat:33.7, lng:-116.3, label:"Cahuilla territory, Coachella Valley, California" },
-  536: { lat:36.1, lng:-107.9, label:"Chaco road network hub, New Mexico" },
-  537: { lat:33.2, lng:-111.9, label:"Snaketown, Gila River, Arizona" },
-  538: { lat:36.1, lng:-107.9, label:"Pueblo Bonito, Chaco Canyon, New Mexico" },
-  539: { lat:32.5, lng:-91.7, label:"Watson Brake, Ouachita Parish, Louisiana" },
-  540: { lat:34.6, lng:-91.9, label:"Toltec Mounds, Arkansas" },
-  541: { lat:33.1, lng:-90.7, label:"Winterville Phase II, Mississippi" },
-  542: { lat:33.5, lng:-103.8, label:"Blackwater Draw / Clovis type site, New Mexico" },
-  543: { lat:-41.5, lng:-73.2, label:"Monte Verde, Chile — pre-Clovis site" },
-  544: { lat:-18.5, lng:-70.3, label:"Chinchorro mummy sites, Atacama coast, Chile" },
-  545: { lat:-15.9, lng:-69.1, label:"Lake Titicaca sacred landscape, Bolivia/Peru" },
-  546: { lat:36.3, lng:-89.0, label:"Obion Mounds, western Tennessee" },
-  547: { lat:-8.1, lng:-79.0, label:"Chan Chan, Chimú capital, Trujillo, Peru" },
-  548: { lat:5.0, lng:-74.0, label:"Bogotá savanna, Muisca heartland, Colombia" },
-  549: { lat:34.5, lng:-90.6, label:"Helena Crossing, Arkansas, Mississippi River" },
-  550: { lat:36.8, lng:-89.9, label:"Powers Fort / Powers Phase, southeastern Missouri" },
-  // END PHASE 5ad
-};,
-// ════════════════════════════════════════════════════════════════════════════
-// PHASE 5ae — APPEND TO globe.js
-// Civilizations 551–580
-// ════════════════════════════════════════════════════════════════════════════
-//
-// INSTRUCTIONS (owner):
-//   1. Open your local globe.js
-//   2. Find the very last closing  };  at the bottom
-//   3. Replace that  };  with a comma, then paste ALL lines below
-//      (these entries already end with the correct closing bracket)
-//
-// ════════════════════════════════════════════════════════════════════════════
-
-// ── PHASE 5ae — globe-data.js entries (ids 551–580) ────────────────────────
-
-  551: { lat:35.8, lng:-90.0, label:"Zebree site, Mississippi County, Arkansas" },
-  552: { lat:39.7, lng:-110.2, label:"Nine Mile Canyon, Carbon County, Utah" },
-  553: { lat:32.9, lng:-108.1, label:"Mimbres / Mogollon heartland, New Mexico" },
-  554: { lat:34.6, lng:-111.8, label:"Montezuma Castle, Verde Valley, Arizona" },
-  555: { lat:33.7, lng:-111.1, label:"Tonto Cliff Dwelling, Salado territory, Arizona" },
-  556: { lat:35.8, lng:-106.3, label:"Bandelier / Pajarito Plateau, New Mexico" },
-  557: { lat:36.8, lng:-107.9, label:"Aztec Ruins National Monument, New Mexico" },
-  558: { lat:36.6, lng:-89.7, label:"Lilbourn Mounds, Cairo Lowland, Missouri" },
-  559: { lat:35.5, lng:-111.4, label:"Wupatki Pueblo, San Francisco Peaks, Arizona" },
-  560: { lat:32.9, lng:-111.5, label:"Casa Grande, Coolidge, Arizona" },
-  561: { lat:37.4, lng:-109.1, label:"Hovenweep National Monument, Utah/Colorado" },
-  562: { lat:32.8, lng:-87.5, label:"Moundville related sites, Black Warrior Valley, Alabama" },
-  563: { lat:40.1, lng:-82.4, label:"Newark Earthworks, Licking County, Ohio" },
-  564: { lat:39.4, lng:-83.0, label:"Mound City / Hopewell NHP, Ross County, Ohio" },
-  565: { lat:39.3, lng:-83.2, label:"Seip Earthworks, Paint Creek, Ohio" },
-  566: { lat:33.1, lng:-88.3, label:"Lubbub Creek, Tombigbee River, Alabama" },
-  567: { lat:33.0, lng:-90.5, label:"Lake George Mounds, Yazoo Basin, Mississippi" },
-  568: { lat:33.5, lng:-90.4, label:"Pocahontas Mounds, Yazoo Basin, Mississippi" },
-  569: { lat:36.7, lng:-107.9, label:"Salmon Ruins, Bloomfield, New Mexico" },
-  570: { lat:33.6, lng:-90.2, label:"Ingomar Mounds, Yazoo Basin, Mississippi" },
-  571: { lat:40.4, lng:-90.2, label:"Havana Hopewell / Dickson Mounds, Illinois River" },
-  572: { lat:39.1, lng:-94.6, label:"Kansas City Hopewell heartland, Missouri" },
-  573: { lat:40.5, lng:-90.4, label:"Orendorf site, Illinois River valley, Illinois" },
-  574: { lat:38.6, lng:-90.1, label:"Cahokia Woodhenge / Monks Mound, Illinois" },
-  575: { lat:36.1, lng:-107.9, label:"Chetro Ketl, Chaco Canyon, New Mexico" },
-  576: { lat:31.1, lng:-91.9, label:"Marksville site, Avoyelles Parish, Louisiana" },
-  577: { lat:43.0, lng:-88.9, label:"Aztalan Phase II, Jefferson County, Wisconsin" },
-  578: { lat:37.5, lng:-108.8, label:"Lowry Pueblo, Montezuma County, Colorado" },
-  579: { lat:31.5, lng:-91.5, label:"Coles Creek heartland, Lower Mississippi Valley" },
-  580: { lat:37.5, lng:-108.8, label:"Yellow Jacket Pueblo, Montezuma County, Colorado" },
-  // END PHASE 5ae
-};,
-// ════════════════════════════════════════════════════════════════════════════
-// PHASE 5af — APPEND TO globe.js
-// Civilizations 581–610
-// ════════════════════════════════════════════════════════════════════════════
-//
-// INSTRUCTIONS (owner):
-//   1. Open your local globe.js
-//   2. Find the very last closing  };  at the bottom
-//   3. Replace that  };  with a comma, then paste ALL lines below
-//      (these entries already end with the correct closing bracket)
-//
-// ════════════════════════════════════════════════════════════════════════════
-
-// ── PHASE 5af — globe-data.js entries (ids 581–610) ────────────────────────
-
-  581: { lat:14.1, lng:38.7, label:"Aksum, Ethiopia — Christian phase" },
-  582: { lat:9.8,  lng:8.5,  label:"Nok, Kaduna State, Nigeria — iron smelting" },
-  583: { lat:5.0,  lng:12.0, label:"Cameroon-Nigeria borderland — Bantu homeland" },
-  584: { lat:12.0, lng:39.0, label:"Lalibela rock churches, Ethiopian Highlands" },
-  585: { lat:11.4, lng:-8.0, label:"Niani, Mali Empire heartland, Guinea" },
-  586: { lat:16.8, lng:-3.0, label:"Gao / Songhai capital, Mali" },
-  587: { lat:13.5, lng:14.0, label:"Ngazargamu, Kanem-Bornu capital, Nigeria" },
-  588: { lat:-16.5,lng:31.0, label:"Mutapa State, Zambezi Valley, Zimbabwe" },
-  589: { lat:-5.0, lng:22.0, label:"Kuba Kingdom, Kasai, DRC" },
-  590: { lat:-8.0, lng:26.0, label:"Luba Empire heartland, Katanga, DRC" },
-  591: { lat:31.5, lng:-84.9, label:"Kolomoki Mounds, Early County, Georgia" },
-  592: { lat:37.0, lng:39.0, label:"Pre-Göbekli Fertile Crescent, Şanlıurfa region" },
-  593: { lat:48.5, lng:30.5, label:"Talianky mega-site, Ukraine — Trypillia" },
-  594: { lat:35.3, lng:25.1, label:"Knossos Linear A archive, Crete" },
-  595: { lat:36.9, lng:21.6, label:"Palace of Nestor, Pylos, Greece" },
-  596: { lat:35.6, lng:35.8, label:"Ugarit, Latakia coast, Syria" },
-  597: { lat:32.2, lng:48.2, label:"Susa, Elamite capital, Khuzestan, Iran" },
-  598: { lat:36.8, lng:39.0, label:"Mittani heartland, Khabur triangle, Syria" },
-  599: { lat:32.5, lng:44.4, label:"Babylon, Kassite capital, Iraq" },
-  600: { lat:31.0, lng:46.1, label:"Eridu / Early Dynastic Sumer heartland, Iraq" },
-  601: { lat:33.3, lng:35.2, label:"Tyre, Phoenician city-state, Lebanon" },
-  602: { lat:36.4, lng:43.2, label:"Nineveh, Neo-Assyrian capital, Iraq" },
-  603: { lat:35.5, lng:46.0, label:"Ecbatana, Median capital, Hamadan, Iran" },
-  604: { lat:34.5, lng:38.3, label:"Palmyra, Syria — Palmyrene Empire" },
-  605: { lat:41.0, lng:36.5, label:"Amaseia, Kingdom of Pontus, Anatolia" },
-  606: { lat:36.7, lng:67.1, label:"Bactra / Greco-Bactrian capital, Afghanistan" },
-  607: { lat:34.5, lng:69.2, label:"Kapisa / Kushan heartland, Afghanistan" },
-  608: { lat:39.6, lng:66.9, label:"Samarkand — Sogdian letter network hub" },
-  609: { lat:25.0, lng:89.0, label:"Pala Empire heartland, Bengal, Bangladesh" },
-  610: { lat:10.8, lng:79.1, label:"Thanjavur, Chola Empire, Tamil Nadu, India" },
-  // END PHASE 5af
-};,
-// ============================================================
-// PHASE 5ag APPEND — globe-data.js
-// CIV_COORDS entries 611–640
-// INSTRUCTIONS: Open your local globe-data.js → find the final };
-// Replace }; with , then paste everything below, ending with };
-// ============================================================
-
-  611: { lat: 34.0, lng: 113.5, label: "Shang Dynasty", type: "A" },
-  612: { lat: 34.3, lng: 108.9, label: "Zhou Dynasty (Western)", type: "A" },
-  613: { lat: 33.5, lng: 130.5, label: "Yayoi Culture", type: "A" },
-  614: { lat: 35.2, lng: 128.1, label: "Gaya Confederacy", type: "A" },
-  615: { lat: 36.5, lng: 127.1, label: "Baekje Kingdom", type: "A" },
-  616: { lat: 43.0, lng: 119.0, label: "Donghu Confederation", type: "A" },
-  617: { lat: 47.0, lng: 104.0, label: "Xiongnu Empire", type: "A" },
-  618: { lat: 46.0, lng: 106.0, label: "Rouran Khaganate", type: "A" },
-  619: { lat: 44.0, lng: 90.0, label: "Göktürk Khaganate", type: "A" },
-  620: { lat: 51.0, lng: 90.0, label: "Yenisei Kirghiz", type: "A" },
-  621: { lat: 37.0, lng: 46.5, label: "Kingdom of Mannea", type: "A" },
-  622: { lat: 23.5, lng: 58.0, label: "Land of Magan", type: "A" },
-  623: { lat: 14.5, lng: 45.5, label: "Qataban", type: "A" },
-  624: { lat: 15.5, lng: 49.0, label: "Hadramaut Kingdom", type: "A" },
-  625: { lat: 38.0, lng: 28.5, label: "Arzawa", type: "A" },
-  626: { lat: 40.0, lng: 34.6, label: "Hattian Culture", type: "A" },
-  627: { lat: 36.0, lng: 28.0, label: "Sea Peoples Network", type: "B" },
-  628: { lat: 9.5, lng: 78.1, label: "Pandya Kingdom", type: "A" },
-  629: { lat: 17.0, lng: 79.5, label: "Satavahana Empire", type: "A" },
-  630: { lat: 20.3, lng: 85.8, label: "Kalinga", type: "A" },
-  631: { lat: -15.0, lng: 168.0, label: "Lapita Cultural Complex", type: "A" },
-  632: { lat: 6.84, lng: 158.34, label: "Nan Madol", type: "A" },
-  633: { lat: -27.1, lng: -109.4, label: "Rapa Nui (Easter Island)", type: "A" },
-  634: { lat: 44.5, lng: 20.6, label: "Vinča Culture", type: "A" },
-  635: { lat: 43.0, lng: 34.0, label: "Black Sea Flood Civilization", type: "B" },
-  636: { lat: 19.6, lng: 30.4, label: "Kerma Classique", type: "A" },
-  637: { lat: 28.0, lng: 5.0, label: "Gaetuli", type: "A" },
-  638: { lat: 40.5, lng: 80.0, label: "Tocharian City-States", type: "A" },
-  639: { lat: 32.63, lng: -91.41, label: "Poverty Point (Peak Phase)", type: "A" },
-  640: { lat: -13.5, lng: -74.2, label: "Wari Empire", type: "A" }
-
-// ============================================================
-// END PHASE 5ag APPEND — globe-data.js
-// After pasting: ensure the file ends with };
-// Total new records: 30 (ids 611–640)
-// ============================================================,
-// ============================================================
-// PHASE 5ah APPEND — globe-data.js
-// IDs 641–670
-// Append these records to the END of the CIV_COORDS object
-// Instructions: open globe-data.js → find the final };
-// → replace it with a comma → paste everything below
-// → file ends with };
-// ============================================================
-
-  641: { lat: -2.9441, lng: 104.9009, zoom: 5 },
-  642: { lat: 11.5625, lng: 104.9282, zoom: 5 },
-  643: { lat: 15.8801, lng: 108.3380, zoom: 5 },
-  644: { lat: 14.3500, lng: 100.5600, zoom: 5 },
-  645: { lat: 21.1717, lng: 94.8585, zoom: 5 },
-  646: { lat: 14.1213, lng: 38.7268, zoom: 5 },
-  647: { lat: 9.3500,  lng: 41.8500, zoom: 5 },
-  648: { lat: 9.5600,  lng: 44.0650, zoom: 5 },
-  649: { lat: 12.5200, lng: 39.4700, zoom: 5 },
-  650: { lat: 39.9334, lng: 32.8597, zoom: 5 },
-  651: { lat: 42.2679, lng: 42.6917, zoom: 5 },
-  652: { lat: 38.5010, lng: 43.3430, zoom: 5 },
-  653: { lat: 15.3547, lng: 44.2066, zoom: 5 },
-  654: { lat: 14.5450, lng: 44.3720, zoom: 5 },
-  655: { lat: 26.0667, lng: 50.5577, zoom: 5 },
-  656: { lat: 23.5880, lng: 58.3829, zoom: 5 },
-  657: { lat: 35.2985, lng: 25.1632, zoom: 5 },
-  658: { lat: 37.0900, lng: 25.1500, zoom: 5 },
-  659: { lat: 41.1000, lng: 85.2500, zoom: 5 },
-  660: { lat: 39.6542, lng: 66.9597, zoom: 5 },
-  661: { lat: 37.9260, lng: 65.9100, zoom: 5 },
-  662: { lat: 34.5268, lng: 69.1761, zoom: 5 },
-  663: { lat: 31.2001, lng: 29.9187, zoom: 5 },
-  664: { lat: 16.9333, lng: 33.7500, zoom: 5 },
-  665: { lat: 9.8716,  lng: 8.6674,  zoom: 5 },
-  666: { lat: -22.1975, lng: 29.3447, zoom: 5 },
-  667: { lat: 8.0000,  lng: 4.0000,  zoom: 5 },
-  668: { lat: 6.3350,  lng: 5.6267,  zoom: 5 },
-  669: { lat: 18.2208, lng: -66.5901, zoom: 4 },
-  670: { lat: 10.0000, lng: -150.0000, zoom: 3 },
-// ============================================================
-// PHASE 5ai APPEND — globe-data.js
-// IDs 671–700
-// Append to END of CIV_COORDS object in globe-data.js
-// Instructions: find final }; → replace with , → paste below → ends with };
-// ============================================================
-
-  671: { lat: -18.9137, lng: 47.5361,  zoom: 5 },
-  672: { lat: -7.5000,  lng: 26.5000,  zoom: 5 },
-  673: { lat: -6.1833,  lng: 14.4167,  zoom: 5 },
-  674: { lat: -16.5000, lng: 30.8333,  zoom: 5 },
-  675: { lat: 14.5000,  lng: 38.9167,  zoom: 5 },
-  676: { lat: 26.5833,  lng: 13.4167,  zoom: 5 },
-  677: { lat: 36.8528,  lng: 10.3233,  zoom: 5 },
-  678: { lat: 36.3640,  lng: 6.6147,   zoom: 5 },
-  679: { lat: 15.6167,  lng: 39.4500,  zoom: 5 },
-  680: { lat: -4.0435,  lng: 39.6682,  zoom: 5 },
-  681: { lat: 30.3285,  lng: 35.4444,  zoom: 5 },
-  682: { lat: 32.4279,  lng: 53.6880,  zoom: 5 },
-  683: { lat: 37.3360,  lng: 57.9246,  zoom: 5 },
-  684: { lat: 36.2021,  lng: 37.1343,  zoom: 5 },
-  685: { lat: 31.7683,  lng: 35.2137,  zoom: 5 },
-  686: { lat: 34.5503,  lng: 38.2696,  zoom: 5 },
-  687: { lat: 41.0082,  lng: 28.9784,  zoom: 5 },
-  688: { lat: 36.8190,  lng: 10.1658,  zoom: 5 },
-  689: { lat: 40.4168,  lng: -3.7038,  zoom: 5 },
-  690: { lat: 45.4654,  lng: 9.1866,   zoom: 5 },
-  691: { lat: 50.9333,  lng: 6.9667,   zoom: 5 },
-  692: { lat: 59.9139,  lng: 10.7522,  zoom: 5 },
-  693: { lat: 50.4501,  lng: 30.5234,  zoom: 5 },
-  694: { lat: 12.6392,  lng: -8.0029,  zoom: 5 },
-  695: { lat: 16.2667,  lng: 0.0400,   zoom: 5 },
-  696: { lat: 12.3647,  lng: -1.5333,  zoom: 5 },
-  697: { lat: 15.3540,  lng: -14.4524, zoom: 5 },
-  698: { lat: 37.2231,  lng: 38.9225,  zoom: 5 },
-  699: { lat: 36.2048,  lng: 138.2529, zoom: 5 },
-  700: { lat: 35.0000,  lng: 36.0000,  zoom: 4 },
-// ============================================================
-// PHASE 5aj APPEND — globe-data.js
-// IDs 701–730
-// Append to END of CIV_COORDS object in globe-data.js
-// Instructions: find final }; → replace with , → paste below → ends with };
-// ============================================================
-
-  701: { lat: 29.9234,  lng: 52.6793,  zoom: 4 },
-  702: { lat: 34.8000,  lng: 48.5153,  zoom: 5 },
-  703: { lat: 32.5355,  lng: 44.4208,  zoom: 5 },
-  704: { lat: 38.6189,  lng: 27.4333,  zoom: 5 },
-  705: { lat: 39.7767,  lng: 31.5202,  zoom: 5 },
-  706: { lat: 41.9965,  lng: 25.8576,  zoom: 5 },
-  707: { lat: 45.9443,  lng: 25.0094,  zoom: 5 },
-  708: { lat: 41.3275,  lng: 19.8187,  zoom: 5 },
-  709: { lat: 39.6650,  lng: 20.8537,  zoom: 5 },
-  710: { lat: 41.2867,  lng: 36.3300,  zoom: 5 },
-  711: { lat: 45.3550,  lng: 36.4736,  zoom: 5 },
-  712: { lat: 39.1329,  lng: 27.1845,  zoom: 5 },
-  713: { lat: 40.1826,  lng: 29.0609,  zoom: 5 },
-  714: { lat: 38.6431,  lng: 34.8307,  zoom: 5 },
-  715: { lat: 40.1811,  lng: 44.5136,  zoom: 5 },
-  716: { lat: 41.6938,  lng: 44.8015,  zoom: 5 },
-  717: { lat: 40.4093,  lng: 49.8671,  zoom: 5 },
-  718: { lat: 35.0174,  lng: 69.1708,  zoom: 5 },
-  719: { lat: 36.7069,  lng: 67.1100,  zoom: 5 },
-  720: { lat: 37.5500,  lng: 66.9750,  zoom: 5 },
-  721: { lat: 25.3176,  lng: 82.9739,  zoom: 5 },
-  722: { lat: 12.8185,  lng: 80.0339,  zoom: 5 },
-  723: { lat: 17.3850,  lng: 76.8200,  zoom: 5 },
-  724: { lat: 10.5276,  lng: 76.2144,  zoom: 5 },
-  725: { lat: 15.9162,  lng: 75.6770,  zoom: 5 },
-  726: { lat: 27.1767,  lng: 78.0081,  zoom: 5 },
-  727: { lat: 25.0000,  lng: 88.0000,  zoom: 5 },
-  728: { lat: 10.7905,  lng: 79.1378,  zoom: 5 },
-  729: { lat: 12.9716,  lng: 76.5222,  zoom: 5 },
-  730: { lat: 15.3350,  lng: 76.4600,  zoom: 5 },
-// ============================================================
-// PHASE 5ak APPEND — globe-data.js
-// IDs 731–760
-// Append to END of CIV_COORDS object in globe-data.js
-// Instructions: find final }; → replace with , → paste below → ends with };
-// ============================================================
-
-  731: { lat: 18.5204,  lng: 73.8567,  zoom: 5 },
-  732: { lat: 28.6139,  lng: 77.2090,  zoom: 4 },
-  733: { lat: 28.7041,  lng: 77.1025,  zoom: 4 },
-  734: { lat: 17.3850,  lng: 78.4867,  zoom: 5 },
-  735: { lat: 17.9689,  lng: 77.5195,  zoom: 5 },
-  736: { lat: 26.7509,  lng: 94.2037,  zoom: 5 },
-  737: { lat: 18.7883,  lng: 98.9853,  zoom: 5 },
-  738: { lat: 14.3528,  lng: 100.5683, zoom: 5 },
-  739: { lat: 17.0154,  lng: 99.8237,  zoom: 5 },
-  740: { lat: 13.4125,  lng: 103.8670, zoom: 5 },
-  741: { lat: -7.5731,  lng: 112.2309, zoom: 5 },
-  742: { lat: -7.9111,  lng: 112.6044, zoom: 5 },
-  743: { lat: -7.8014,  lng: 110.3647, zoom: 5 },
-  744: { lat: 17.9757,  lng: 102.6331, zoom: 5 },
-  745: { lat: 21.8456,  lng: 95.9909,  zoom: 5 },
-  746: { lat: 18.9311,  lng: 96.4606,  zoom: 5 },
-  747: { lat: 21.9588,  lng: 96.0891,  zoom: 5 },
-  748: { lat: 26.2124,  lng: 127.6809, zoom: 5 },
-  749: { lat: 37.5665,  lng: 126.9780, zoom: 5 },
-  750: { lat: 37.9910,  lng: 126.5560, zoom: 5 },
-  751: { lat: 35.8562,  lng: 129.2247, zoom: 5 },
-  752: { lat: 41.9350,  lng: 126.1890, zoom: 5 },
-  753: { lat: 36.4800,  lng: 127.1500, zoom: 5 },
-  754: { lat: 44.5550,  lng: 129.6169, zoom: 5 },
-  755: { lat: 35.2700,  lng: 128.2700, zoom: 5 },
-  756: { lat: 34.2658,  lng: 108.9541, zoom: 5 },
-  757: { lat: 30.2741,  lng: 120.1551, zoom: 5 },
-  758: { lat: 32.0603,  lng: 118.7969, zoom: 5 },
-  759: { lat: 39.9042,  lng: 116.4074, zoom: 5 },
-  760: { lat: 40.0000,  lng: 116.3833, zoom: 5 },
-// ============================================================
-// PHASE 5al APPEND — globe-data.js
-// IDs 761–790
-// Append to END of CIV_COORDS object in globe-data.js
-// Instructions: find final }; → replace with , → paste below → ends with };
-// ============================================================
-
-  761: { lat: 34.3416,  lng: 108.9398, zoom: 5 },
-  762: { lat: 34.2658,  lng: 108.9541, zoom: 5 },
-  763: { lat: 34.7665,  lng: 113.6538, zoom: 5 },
-  764: { lat: 35.8000,  lng: 114.3000, zoom: 5 },
-  765: { lat: 47.9060,  lng: 106.9057, zoom: 5 },
-  766: { lat: 47.0000,  lng: 105.0000, zoom: 5 },
-  767: { lat: 43.0000,  lng: 89.0000,  zoom: 4 },
-  768: { lat: 48.0000,  lng: 101.0000, zoom: 5 },
-  769: { lat: 42.8580,  lng: 120.9660, zoom: 5 },
-  770: { lat: 45.7433,  lng: 126.6331, zoom: 5 },
-  771: { lat: 38.4682,  lng: 106.2729, zoom: 5 },
-  772: { lat: 47.8864,  lng: 106.9057, zoom: 4 },
-  773: { lat: 48.5000,  lng: 54.0000,  zoom: 5 },
-  774: { lat: 35.6892,  lng: 51.3890,  zoom: 5 },
-  775: { lat: 39.6542,  lng: 66.9597,  zoom: 5 },
-  776: { lat: 32.6546,  lng: 51.6680,  zoom: 5 },
-  777: { lat: 41.0082,  lng: 28.9784,  zoom: 4 },
-  778: { lat: 30.0444,  lng: 31.2357,  zoom: 5 },
-  779: { lat: 33.5102,  lng: 36.2913,  zoom: 5 },
-  780: { lat: 31.7683,  lng: 35.2137,  zoom: 5 },
-  781: { lat: 37.9750,  lng: 58.3960,  zoom: 5 },
-  782: { lat: 33.3406,  lng: 44.4009,  zoom: 5 },
-  783: { lat: 33.5102,  lng: 36.2913,  zoom: 5 },
-  784: { lat: 24.6877,  lng: 46.7219,  zoom: 5 },
-  785: { lat: 37.3891,  lng: -5.9845,  zoom: 5 },
-  786: { lat: 11.8636,  lng: -8.7302,  zoom: 5 },
-  787: { lat: 28.6139,  lng: 77.2090,  zoom: 5 },
-  788: { lat: 30.0444,  lng: 31.2357,  zoom: 5 },
-  789: { lat: 39.9179,  lng: 26.2520,  zoom: 5 },
-  790: { lat: 31.6295,  lng: -7.9811,  zoom: 5 },
-// ============================================================
-// PHASE 5am APPEND — globe-data.js
-// IDs 791–820
-// Append to END of CIV_COORDS object in globe-data.js
-// Instructions: find final }; → replace with , → paste below → ends with };
-// ============================================================
-
-  791: { lat: 31.7917,  lng: -7.0926,  zoom: 5 },
-  792: { lat: 36.8190,  lng: 10.1658,  zoom: 5 },
-  793: { lat: 34.0209,  lng: -5.0097,  zoom: 5 },
-  794: { lat: 35.6969,  lng: -0.6331,  zoom: 5 },
-  795: { lat: 34.0549,  lng: -5.0100,  zoom: 5 },
-  796: { lat: 35.6781,  lng: 10.0993,  zoom: 5 },
-  797: { lat: 36.8190,  lng: 10.1658,  zoom: 5 },
-  798: { lat: 35.6500,  lng: 4.7500,   zoom: 5 },
-  799: { lat: 13.0532,  lng: 5.2390,   zoom: 5 },
-  800: { lat: 13.3156,  lng: 14.4557,  zoom: 5 },
-  801: { lat: 14.7645,  lng: -17.3660, zoom: 5 },
-  802: { lat: 7.1622,   lng: 1.9652,   zoom: 5 },
-  803: { lat: 6.6885,   lng: -1.6244,  zoom: 5 },
-  804: { lat: -28.3228, lng: 30.6546,  zoom: 5 },
-  805: { lat: -27.0000, lng: 32.0000,  zoom: 5 },
-  806: { lat: -19.8145, lng: 47.4759,  zoom: 5 },
-  807: { lat: 13.5500,  lng: 33.5300,  zoom: 5 },
-  808: { lat: -5.0000,  lng: 22.0000,  zoom: 5 },
-  809: { lat: -20.0000, lng: 30.5000,  zoom: 5 },
-  810: { lat: 9.0250,   lng: 38.7469,  zoom: 5 },
-  811: { lat: -13.5319, lng: -71.9675, zoom: 5 },
-  812: { lat: 19.4326,  lng: -99.1332, zoom: 5 },
-  813: { lat: 17.2510,  lng: -89.6230, zoom: 5 },
-  814: { lat: 20.6843,  lng: -88.5678, zoom: 5 },
-  815: { lat: 19.9130,  lng: -99.3050, zoom: 5 },
-  816: { lat: 19.6925,  lng: -98.8438, zoom: 5 },
-  817: { lat: 17.0436,  lng: -96.7677, zoom: 5 },
-  818: { lat: 17.5490,  lng: -97.9180, zoom: 5 },
-  819: { lat: 19.7008,  lng: -101.1844,zoom: 5 },
-  820: { lat: -8.1116,  lng: -79.0291, zoom: 5 },
-// ============================================================
-// PHASE 5an APPEND — globe-data.js
-// IDs 821–850
-// Append to END of CIV_COORDS object in globe-data.js
-// Instructions: find final }; → replace with , → paste below → ends with };
-// ============================================================
-
-  821: { lat: -16.5540, lng: -68.6740,  zoom: 5 },
-  822: { lat: -13.2746, lng: -74.2236,  zoom: 5 },
-  823: { lat: -14.7390, lng: -75.1300,  zoom: 5 },
-  824: { lat: 38.6554,  lng: -90.0621,  zoom: 5 },
-  825: { lat: 36.0608,  lng: -107.9617, zoom: 5 },
-  826: { lat: 39.3780,  lng: -82.9960,  zoom: 5 },
-  827: { lat: 39.9612,  lng: -82.9988,  zoom: 5 },
-  828: { lat: 18.1085,  lng: -94.6898,  zoom: 5 },
-  829: { lat: -10.8931, lng: -77.5194,  zoom: 5 },
-  830: { lat: 34.4048,  lng: -103.2052, zoom: 4 },
-  831: { lat: 51.5965,  lng: -55.5194,  zoom: 5 },
-  832: { lat: 71.2906,  lng: -156.7887, zoom: 5 },
-  833: { lat: 63.7467,  lng: -68.5170,  zoom: 5 },
-  834: { lat: 32.6285,  lng: -91.4082,  zoom: 5 },
-  835: { lat: 43.0000,  lng: -75.5000,  zoom: 5 },
-  836: { lat: 32.8407,  lng: -83.6324,  zoom: 5 },
-  837: { lat: 35.5175,  lng: -83.9871,  zoom: 5 },
-  838: { lat: 43.9695,  lng: -103.7713, zoom: 5 },
-  839: { lat: 33.4255,  lng: -110.7890, zoom: 5 },
-  840: { lat: 23.0000,  lng: -106.0000, zoom: 4 },
-  841: { lat: 32.0000,  lng: -91.0000,  zoom: 4 },
-  842: { lat: 56.4907,  lng: -4.2026,   zoom: 5 },
-  843: { lat: 53.4239,  lng: -8.0930,   zoom: 5 },
-  844: { lat: 48.8566,  lng: 2.3522,    zoom: 5 },
-  845: { lat: 51.7520,  lng: -1.2577,   zoom: 5 },
-  846: { lat: 47.0500,  lng: 4.8671,    zoom: 5 },
-  847: { lat: 47.4979,  lng: 19.0402,   zoom: 5 },
-  848: { lat: 52.2297,  lng: 21.0122,   zoom: 5 },
-  849: { lat: 54.6872,  lng: 25.2797,   zoom: 5 },
-  850: { lat: 54.3520,  lng: 18.6466,   zoom: 5 },
-// ============================================================
-// PHASE 5ao APPEND — globe-data.js
-// IDs 851–880
-// Append to END of CIV_COORDS object in globe-data.js
-// Instructions: find final }; → replace with , → paste below → ends with };
-// ============================================================
-
-  851: { lat: 48.2082,  lng: 16.3738,  zoom: 4 },
-  852: { lat: 48.2082,  lng: 16.3738,  zoom: 4 },
-  853: { lat: 40.4168,  lng: -3.7038,  zoom: 4 },
-  854: { lat: 38.7223,  lng: -9.1393,  zoom: 5 },
-  855: { lat: 52.3676,  lng: 4.9041,   zoom: 5 },
-  856: { lat: 51.5074,  lng: -0.1278,  zoom: 4 },
-  857: { lat: 48.8566,  lng: 2.3522,   zoom: 4 },
-  858: { lat: 55.7558,  lng: 37.6173,  zoom: 4 },
-  859: { lat: 48.8566,  lng: 2.3522,   zoom: 5 },
-  860: { lat: 40.8518,  lng: 14.2681,  zoom: 5 },
-  861: { lat: 45.4408,  lng: 12.3155,  zoom: 5 },
-  862: { lat: 44.4056,  lng: 8.9463,   zoom: 5 },
-  863: { lat: 41.9029,  lng: 12.4534,  zoom: 5 },
-  864: { lat: 41.0082,  lng: 28.9784,  zoom: 5 },
-  865: { lat: 45.4654,  lng: 9.1866,   zoom: 5 },
-  866: { lat: 48.8566,  lng: 2.3522,   zoom: 5 },
-  867: { lat: 51.5074,  lng: -0.1278,  zoom: 5 },
-  868: { lat: 31.7683,  lng: 35.2137,  zoom: 5 },
-  869: { lat: 51.5000,  lng: 31.2833,  zoom: 5 },
-  870: { lat: 55.7558,  lng: 37.6173,  zoom: 5 },
-  871: { lat: 44.0165,  lng: 21.0059,  zoom: 5 },
-  872: { lat: 43.2141,  lng: 27.9147,  zoom: 5 },
-  873: { lat: 43.0757,  lng: 25.6172,  zoom: 5 },
-  874: { lat: 45.8150,  lng: 15.9819,  zoom: 5 },
-  875: { lat: 45.0000,  lng: 34.1000,  zoom: 5 },
-  876: { lat: 55.7887,  lng: 49.1221,  zoom: 5 },
-  877: { lat: 37.5700,  lng: 45.0700,  zoom: 5 },
-  878: { lat: 43.2220,  lng: 76.8512,  zoom: 5 },
-  879: { lat: 46.0000,  lng: 86.0000,  zoom: 5 },
-  880: { lat: 35.6762,  lng: 139.6503, zoom: 5 },
-// PHASE_5ap_APPEND_globe.js
-// Tempus Linea — CHRONOS
-// Civilizations 881–910 — Globe coordinates
-// -----------------------------------------------------------------------
-// HOW TO APPLY:
-// 1. Open your local globe-data.js file
-// 2. Find the very last closing brace before the final };
-//    It will look like:     }     (the last coordinate entry)
-// 3. Add a comma after that closing brace:   },
-// 4. Paste all lines between the dashes below
-// 5. The file should still end with };  to close the CIV_COORDS object
-//
-// NOTE: ids 909 and 910 are Type C (heat map only).
-//       They have NO fixed pin. Do not add coordinate entries for them.
-//       Their location theories are handled in data-extended.js.
-// -----------------------------------------------------------------------
-
-  881: { lat: -21.1393, lng: -175.2049, type: "A", label: "Tongatapu, Kingdom of Tonga" },
-  882: { lat: 6.8440,  lng: 158.3280,  type: "B", label: "Nan Madol, Pohnpei, Micronesia" },
-  883: { lat: -27.1127, lng: -109.3497, type: "A", label: "Easter Island (Rapa Nui)" },
-  884: { lat: 19.8968, lng: -155.5828,  type: "A", label: "Hawaii (Big Island) — Kamehameha capital region" },
-  885: { lat: -4.2085, lng: 152.8268,   type: "A", label: "Bismarck Archipelago — Lapita origin zone" },
-  886: { lat: -22.1897, lng: 29.3297,   type: "A", label: "Mapungubwe Hill, Limpopo, South Africa" },
-  887: { lat: -20.2674, lng: 30.9337,   type: "A", label: "Great Zimbabwe, Masvingo Province" },
-  888: { lat: -16.9166, lng: 31.0500,   type: "A", label: "Mutapa heartland, Zimbabwe Plateau" },
-  889: { lat: 26.2172, lng: 50.5753,    type: "A", label: "Qal'at al-Bahrain — Dilmun capital" },
-  890: { lat: 15.4667, lng: 45.3167,    type: "A", label: "Marib, Yemen — Sabaean capital" },
-  891: { lat: 30.3285, lng: 35.4444,    type: "A", label: "Petra, Jordan — Nabataean capital" },
-  892: { lat: 14.1208, lng: 38.7197,    type: "A", label: "Aksum, Tigray, Ethiopia" },
-  893: { lat: 16.9338, lng: 33.7494,    type: "A", label: "Meroe, River Nile, Sudan" },
-  894: { lat: 26.5620, lng: 13.3820,    type: "A", label: "Garama (Germa), Fezzan, Libya" },
-  895: { lat: -8.9553, lng: 39.5282,    type: "A", label: "Kilwa Kisiwani, Tanzania — primary Swahili hub" },
-  896: { lat: 13.4125, lng: 103.8670,   type: "A", label: "Angkor, Siem Reap, Cambodia" },
-  897: { lat: -7.5281, lng: 112.2260,   type: "A", label: "Trowulan, East Java — Majapahit capital" },
-  898: { lat: -2.9761, lng: 104.7754,   type: "A", label: "Palembang, Sumatra — Srivijaya capital" },
-  899: { lat: 15.3352, lng: 76.4601,    type: "A", label: "Hampi (Vijayanagara), Karnataka, India" },
-  900: { lat: 10.7870, lng: 79.1317,    type: "A", label: "Thanjavur, Tamil Nadu — Chola capital" },
-  901: { lat: 21.1717, lng: 94.8585,    type: "A", label: "Bagan, Mandalay Region, Myanmar" },
-  902: { lat: 14.3692, lng: 100.5877,   type: "A", label: "Ayutthaya, Thailand" },
-  903: { lat: 41.7833, lng: 126.1833,   type: "A", label: "Ji'an / Hwando — Goguryeo capital region" },
-  904: { lat: 35.8468, lng: 129.2254,   type: "A", label: "Gyeongju, North Gyeongsang — Silla capital" },
-  905: { lat: 37.9667, lng: 126.5500,   type: "A", label: "Kaesong, North Korea — Goryeo capital" },
-  906: { lat: 10.3000, lng: 105.0167,   type: "A", label: "Óc Eo / Angkor Borei, Mekong Delta, Vietnam" },
-  907: { lat: 15.7756, lng: 108.2210,   type: "A", label: "My Son Sanctuary, Quảng Nam, Vietnam" },
-  908: { lat: 37.2231, lng: 38.9225,    type: "B", label: "Göbekli Tepe, Şanlıurfa, Turkey" }
-
-// ids 909 and 910 are Type C — heat map only — no entries in this file
-
-// -----------------------------------------------------------------------
-// END OF PHASE_5ap_APPEND_globe.js
-// The CIV_COORDS object should still close with };  after this block
-// -----------------------------------------------------------------------,
-// PHASE_5aq_APPEND_globe.js
-// Tempus Linea — CHRONOS
-// Civilizations 911–940 — Globe coordinates
-// -----------------------------------------------------------------------
-// HOW TO APPLY:
-// 1. Open your local globe-data.js file
-// 2. Find the very last closing brace before the final };
-// 3. Add a comma after that closing brace:   },
-// 4. Paste all lines between the dashes below
-// 5. The file should still end with };  to close the CIV_COORDS object
-// -----------------------------------------------------------------------
-
-  911: { lat: 38.6270,  lng: -90.1994,  type: "A", label: "Cahokia / St. Louis region — Mississippian heartland" },
-  912: { lat: 36.0608,  lng: -107.9913, type: "A", label: "Chaco Canyon, New Mexico — Ancestral Puebloan centre" },
-  913: { lat: 39.4264,  lng: -83.8382,  type: "A", label: "Fort Ancient, Warren County, Ohio" },
-  914: { lat: 18.7357,  lng: -70.1627,  type: "A", label: "Hispaniola — Taíno primary chiefdom region" },
-  915: { lat: 5.0667,   lng: -74.0833,  type: "A", label: "Bacatá / Bogotá savannah — Muisca Zipa capital" },
-  916: { lat: -16.5553, lng: -68.6731,  type: "B", label: "Tiwanaku, Bolivia — early formative phase" },
-  917: { lat: -10.8961, lng: -77.5200,  type: "A", label: "Caral, Supe Valley, Peru" },
-  918: { lat: -13.0667, lng: -74.1167,  type: "A", label: "Huari (Wari) capital, Ayacucho, Peru" },
-  919: { lat: 14.1208,  lng: 38.7197,   type: "A", label: "Aksum / Yeha — early pre-Christian Aksumite phase" },
-  920: { lat: 10.5105,  lng: 7.4165,    type: "A", label: "Nok cultural zone, Kaduna State, Nigeria" },
-  921: { lat: 7.4667,   lng: 4.5667,    type: "A", label: "Ile-Ife, Osun State, Nigeria — Yoruba sacred city" },
-  922: { lat: 6.3350,   lng: 5.6270,    type: "A", label: "Benin City, Edo State, Nigeria" },
-  923: { lat: 8.9333,   lng: 3.9333,    type: "A", label: "Old Oyo (Katunga), Oyo State, Nigeria" },
-  924: { lat: 7.1808,   lng: 1.9878,    type: "A", label: "Abomey, Zou Department, Benin Republic" },
-  925: { lat: -2.9956,  lng: 35.3497,   type: "A", label: "Olduvai Gorge, Tanzania — Oldowan / Acheulean" },
-  926: { lat: -34.4178, lng: 21.2167,   type: "A", label: "Blombos Cave, Western Cape, South Africa" },
-  927: { lat: -4.9500,  lng: 119.8667,  type: "A", label: "Leang Tedongnge cave system, Sulawesi, Indonesia" },
-  928: { lat: 51.3978,  lng: 84.6764,   type: "B", label: "Denisova Cave, Altai Mountains, Russia" },
-  929: { lat: 40.8297,  lng: 140.7019,  type: "A", label: "Sannai-Maruyama, Aomori — Jōmon primary site" },
-  930: { lat: 33.2500,  lng: 130.3000,  type: "A", label: "Yoshinogari, Saga Prefecture — Yayoi settlement" },
-  931: { lat: 34.5653,  lng: 135.5978,  type: "A", label: "Daisen Kofun, Sakai, Osaka — largest Kofun mound" },
-  932: { lat: 27.3242,  lng: 68.1385,   type: "A", label: "Mohenjo-daro, Sindh, Pakistan — Indus Valley capital" },
-  933: { lat: 35.2985,  lng: 25.1631,   type: "B", label: "Knossos, Crete — Minoan palatial centre" },
-  934: { lat: 37.7317,  lng: 22.7561,   type: "A", label: "Mycenae, Argolis, Greece" },
-  935: { lat: 42.6964,  lng: 11.8706,   type: "A", label: "Tarquinia, Lazio, Italy — Etruscan heartland" },
-  936: { lat: 33.2704,  lng: 35.2038,   type: "A", label: "Tyre (Sur), Lebanon — Phoenician primary city" },
-  937: { lat: 36.8528,  lng: 10.3233,   type: "A", label: "Carthage, Tunis, Tunisia" },
-  938: { lat: 47.8500,  lng: 33.4833,   type: "A", label: "Chertomlyk / Pontic steppe — Scythian heartland" },
-  939: { lat: 39.6270,  lng: 66.9750,   type: "A", label: "Afrasiab (ancient Samarkand), Uzbekistan" },
-  940: { lat: 37.8333,  lng: 62.1833,   type: "A", label: "Gonur Tepe, Mary Province, Turkmenistan — BMAC capital" }
-
-// -----------------------------------------------------------------------
-// END OF PHASE_5aq_APPEND_globe.js
-// The CIV_COORDS object should still close with };  after this block
-// -----------------------------------------------------------------------,
-// PHASE_5ar_APPEND_globe.js
-// Tempus Linea — CHRONOS
-// Civilizations 941–970 — Globe coordinates
-// -----------------------------------------------------------------------
-// HOW TO APPLY:
-// 1. Open your local globe-data.js file
-// 2. Find the very last closing brace before the final };
-// 3. Add a comma after that closing brace:   },
-// 4. Paste all lines between the dashes below
-// 5. The file should still end with };  to close the CIV_COORDS object
-//
-// NOTE: id 958 is Type C (heat map only — no fixed pin).
-//       id 970 is Type C (heat map only — no fixed pin).
-//       Do not add coordinate entries for these.
-//       Their location theories are in data-extended.js.
-// -----------------------------------------------------------------------
-
-  941: { lat: 38.4833,  lng: 28.0333,   type: "A", label: "Sardis, Lydia, western Anatolia (Turkey)" },
-  942: { lat: 39.6503,  lng: 32.0000,   type: "A", label: "Gordion, Phrygia, central Anatolia (Turkey)" },
-  943: { lat: 38.5000,  lng: 43.3667,   type: "A", label: "Van Fortress (Tushpa), Lake Van, eastern Turkey" },
-  944: { lat: 34.7981,  lng: 48.5147,   type: "A", label: "Ecbatana (Hamadan), Median capital, Iran" },
-  945: { lat: 32.1983,  lng: 48.2586,   type: "A", label: "Susa, Khuzestan Province, Iran — Elamite capital" },
-  946: { lat: 40.0194,  lng: 34.6153,   type: "A", label: "Hattusa, Bogazkoy, Anatolia — Hittite capital" },
-  947: { lat: 36.8500,  lng: 40.7833,   type: "A", label: "Tell Fakhariyah — Washukanni (Mitanni capital candidate), Syria" },
-  948: { lat: 33.3369,  lng: 44.3922,   type: "A", label: "Dur-Kurigalzu (Aqar Quf), near Baghdad, Iraq — Kassite capital" },
-  949: { lat: 31.7767,  lng: 35.2345,   type: "A", label: "Jerusalem — Kingdom of Israel and Judah capital" },
-  950: { lat: 33.5102,  lng: 36.2913,   type: "A", label: "Damascus — primary Aramean city-state" },
-  951: { lat: 32.5355,  lng: 44.4205,   type: "A", label: "Babylon, Hillah, Iraq — Neo-Babylonian capital" },
-  952: { lat: 19.6167,  lng: 30.4167,   type: "A", label: "Kerma, Northern State, Sudan" },
-  953: { lat: 18.5333,  lng: 31.8167,   type: "A", label: "Jebel Barkal / Napata, Sudan — Napatan capital" },
-  954: { lat: 15.3333,  lng: 38.9333,   type: "B", label: "Eritrean coast — Kingdom of Punt primary candidate" },
-  955: { lat: 30.3378,  lng: 119.9578,  type: "A", label: "Liangzhu, Zhejiang Province, China" },
-  956: { lat: 36.2000,  lng: 117.1000,  type: "A", label: "Longshan / Taosi, Yellow River valley, China" },
-  957: { lat: 34.6833,  lng: 112.6333,  type: "B", label: "Erlitou, Yanshi, Henan — Xia Dynasty candidate site" },
-  // id 958 — Type C — no fixed pin
-  959: { lat: 31.0128,  lng: 104.4194,  type: "A", label: "Sanxingdui, Guanghan, Sichuan, China" },
-  960: { lat: 19.8064,  lng: 105.7883,  type: "A", label: "Dong Son, Thanh Hoa Province, Vietnam" },
-  961: { lat: 24.8667,  lng: 102.7000,  type: "A", label: "Shizhaishan, Lake Dian, Yunnan, China — Dian Kingdom" },
-  962: { lat: 37.5139,  lng: 127.1058,  type: "A", label: "Mongchontoseong (early Baekje capital), Seoul, Korea" },
-  963: { lat: 44.6167,  lng: 129.7667,  type: "A", label: "Shangjing (Upper Capital) of Balhae, Heilongjiang, China" },
-  964: { lat: 12.8471,  lng: 80.2473,   type: "A", label: "Mahabalipuram (Mamallapuram), Tamil Nadu, India — Pallava coast capital" },
-  965: { lat: 15.9167,  lng: 75.6833,   type: "A", label: "Badami (Vatapi), Karnataka, India — Chalukya capital" },
-  966: { lat: 20.0269,  lng: 75.1797,   type: "A", label: "Ellora caves / Manyakheta, Maharashtra, India — Rashtrakuta" },
-  967: { lat: 25.6111,  lng: 85.1667,   type: "A", label: "Pataliputra (Patna), Bihar, India — Magadha capital" },
-  968: { lat: 34.5167,  lng: 69.1833,   type: "A", label: "Begram / Kapisi, Kabul region, Afghanistan — Kushan capital zone" },
-  969: { lat: 33.0944,  lng: 44.5814,   type: "A", label: "Ctesiphon, near Baghdad, Iraq — Parthian winter capital" }
-  // id 970 — Type C — no fixed pin
-
-// -----------------------------------------------------------------------
-// END OF PHASE_5ar_APPEND_globe.js
-// The CIV_COORDS object should still close with };  after this block
-// -----------------------------------------------------------------------,
-// PHASE_5as_APPEND_globe.js
-// Tempus Linea — CHRONOS
-// Civilizations 971–1000 — Globe coordinates
-// -----------------------------------------------------------------------
-// HOW TO APPLY:
-// 1. Open your local globe-data.js file
-// 2. Find the very last closing brace before the final };
-// 3. Add a comma after that closing brace:   },
-// 4. Paste all lines between the dashes below
-// 5. The file should still end with };  to close the CIV_COORDS object
-//
-// NOTE: id 999 is Type C (heat map only — no fixed pin).
-//       id 1000 is Type B (multiple location theories — primary pin placed at
-//       southern Africa origin point).
-// -----------------------------------------------------------------------
-
-  971: { lat: 33.0944,  lng: 44.5814,   type: "A", label: "Ctesiphon / Taq Kasra, Iraq — Sassanid capital" },
-  972: { lat: 29.9353,  lng: 52.8911,   type: "A", label: "Persepolis (Takht-e Jamshid), Fars, Iran — Achaemenid capital" },
-  973: { lat: 36.2021,  lng: 36.1604,   type: "A", label: "Antioch on the Orontes (Antakya), Turkey — Seleucid capital" },
-  974: { lat: 31.2001,  lng: 29.9187,   type: "A", label: "Alexandria, Egypt — Ptolemaic capital" },
-  975: { lat: 36.7667,  lng: 66.9000,   type: "A", label: "Bactra (Balkh), Afghanistan — Greco-Bactrian capital" },
-  976: { lat: 25.6111,  lng: 85.1667,   type: "A", label: "Pataliputra (Patna), Bihar — Maurya capital" },
-  977: { lat: 25.3176,  lng: 82.9739,   type: "A", label: "Pataliputra / Varanasi region — Gupta imperial heartland" },
-  978: { lat: 27.0546,  lng: 79.9199,   type: "A", label: "Kanauj (Kannauj), Uttar Pradesh — Harsha capital" },
-  979: { lat: 16.9667,  lng: 81.7833,   type: "A", label: "Vengi (Pedavegi), Andhra Pradesh — Eastern Chalukya capital" },
-  980: { lat: 17.9784,  lng: 79.5941,   type: "A", label: "Warangal, Telangana — Kakatiya capital" },
-  981: { lat: 13.1667,  lng: 75.9833,   type: "A", label: "Halebidu (Dwarasamudra), Karnataka — Hoysala capital" },
-  982: { lat: 18.2341,  lng: 73.4411,   type: "A", label: "Raigad Fort, Maharashtra — Shivaji's Maratha capital" },
-  983: { lat: 15.3352,  lng: 76.4601,   type: "A", label: "Hampi (Vijayanagara), Karnataka — Sangama founding capital" },
-  984: { lat: 16.8302,  lng: 75.7100,   type: "A", label: "Bijapur (Vijayapura), Karnataka — Adil Shahi Deccan Sultanate" },
-  985: { lat: 39.6547,  lng: 66.9750,   type: "A", label: "Samarkand (Marakanda), Uzbekistan — Timurid capital" },
-  986: { lat: 32.6546,  lng: 51.6680,   type: "A", label: "Isfahan (Naqsh-e Jahan), Iran — Safavid capital" },
-  987: { lat: 30.0444,  lng: 31.2357,   type: "A", label: "Cairo Citadel, Egypt — Ayyubid capital" },
-  988: { lat: 30.0444,  lng: 31.2357,   type: "A", label: "Cairo, Egypt — Mamluk Sultanate capital" },
-  989: { lat: 30.0561,  lng: 31.2294,   type: "A", label: "Al-Azhar / Fatimid Cairo, Egypt" },
-  990: { lat: 33.3406,  lng: 44.4009,   type: "A", label: "Baghdad (Round City), Iraq — Abbasid capital" },
-  991: { lat: 33.5102,  lng: 36.2913,   type: "A", label: "Damascus, Syria — Umayyad capital" },
-  992: { lat: 24.4672,  lng: 39.6112,   type: "A", label: "Medina (Madinat al-Nabi), Saudi Arabia — Rashidun capital" },
-  993: { lat: 16.7735,  lng: -3.0074,   type: "A", label: "Timbuktu, Mali — Mali Empire cultural capital" },
-  994: { lat: 16.2667,  lng: 0.0500,    type: "A", label: "Gao, Mali — Songhai Empire capital" },
-  995: { lat: -6.2500,  lng: 14.2333,   type: "A", label: "Mbanza Kongo (São Salvador), Angola — Kingdom of Kongo capital" },
-  996: { lat: -20.0667, lng: 30.8167,   type: "A", label: "Khami, Bulawayo, Zimbabwe — Rozvi State capital" },
-  997: { lat: -28.3167, lng: 30.7167,   type: "A", label: "KwaBulawayo / Ulundi, KwaZulu-Natal, South Africa — Zulu capital" },
-  998: { lat: 12.3614,  lng: 37.3833,   type: "A", label: "Gondar, Amhara, Ethiopia — Solomonic imperial capital" },
-  // id 999 — Type C — Antediluvian Hypothesis — heat map only — no fixed pin
-  1000: { lat: -30.0,   lng: 25.0,      type: "B", label: "Southern Africa — Out of Africa origin point (primary pin)" }
-
-// -----------------------------------------------------------------------
-// END OF PHASE_5as_APPEND_globe.js
-// The CIV_COORDS object should still close with };  after this block
-// -----------------------------------------------------------------------
-};
+    getCivCoords,
+  };
+})();
