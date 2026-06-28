@@ -1,0 +1,1081 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tempus Linea — Community</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    /* ── COMMUNITY PAGE ──────────────────────────────────── */
+    .community-shell {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    .community-body {
+      display: flex;
+      flex: 1;
+      gap: 0;
+      overflow: hidden;
+    }
+
+    /* ── LEFT SIDEBAR — Civ list ─────────────────────────── */
+    #comm-sidebar {
+      width: 260px;
+      flex-shrink: 0;
+      border-right: 1px solid var(--border-dim);
+      overflow-y: auto;
+      background: var(--bg-panel);
+      scrollbar-width: thin;
+      scrollbar-color: rgba(20,55,130,.3) transparent;
+    }
+
+    .sidebar-search {
+      position: sticky;
+      top: 0;
+      padding: 10px 12px;
+      background: var(--bg-panel);
+      border-bottom: 1px solid var(--border-dim);
+      z-index: 2;
+    }
+    .sidebar-search input {
+      width: 100%;
+      background: rgba(10,18,40,.8);
+      border: 1px solid var(--border-dim);
+      color: var(--text-primary);
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: .5px;
+      padding: 5px 10px;
+      border-radius: 3px;
+      outline: none;
+      box-sizing: border-box;
+    }
+    .sidebar-search input:focus { border-color: var(--teal); }
+
+    .sidebar-section-label {
+      padding: 8px 12px 4px;
+      font-size: 8px;
+      letter-spacing: 2px;
+      color: var(--text-dim);
+      border-bottom: 1px solid rgba(12,35,80,.3);
+    }
+
+    .civ-list-item {
+      padding: 8px 12px;
+      cursor: pointer;
+      border-bottom: 1px solid rgba(12,35,80,.2);
+      transition: background 0.12s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .civ-list-item:hover   { background: var(--bg-hover); }
+    .civ-list-item.active  {
+      background: rgba(10,18,40,.9);
+      border-left: 2px solid var(--teal);
+      padding-left: 10px;
+    }
+    .civ-list-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .civ-list-name {
+      font-size: 10px;
+      letter-spacing: .5px;
+      color: var(--text-secondary);
+      flex: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .civ-list-item.active .civ-list-name { color: var(--text-primary); }
+    .civ-thread-count {
+      font-size: 8px;
+      color: var(--text-dim);
+      letter-spacing: 1px;
+    }
+
+    /* ── MAIN CONTENT AREA ───────────────────────────────── */
+    #comm-main {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px 24px;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(20,55,130,.3) transparent;
+    }
+
+    /* Welcome state */
+    #comm-welcome {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 60vh;
+      text-align: center;
+      gap: 16px;
+    }
+    .welcome-sigil {
+      font-size: 36px;
+      color: rgba(107,33,168,.4);
+      margin-bottom: 8px;
+    }
+    .welcome-title {
+      font-family: var(--font-display);
+      font-size: 20px;
+      color: rgba(140,100,200,.6);
+      letter-spacing: 4px;
+    }
+    .welcome-sub {
+      font-size: 11px;
+      color: var(--text-dim);
+      letter-spacing: 1px;
+      max-width: 380px;
+      line-height: 1.8;
+    }
+
+    /* Civ thread header */
+    #comm-civ-header {
+      display: none;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid rgba(12,35,80,.5);
+    }
+    .comm-civ-type {
+      font-size: 9px;
+      letter-spacing: 2px;
+      margin-bottom: 4px;
+    }
+    .comm-civ-title {
+      font-family: var(--font-display);
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      margin-bottom: 6px;
+    }
+    .comm-civ-meta {
+      font-size: 10px;
+      color: var(--text-dim);
+      letter-spacing: .5px;
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+    }
+    .comm-civ-desc {
+      font-size: 11px;
+      color: #4a6080;
+      line-height: 1.8;
+      max-width: 680px;
+    }
+
+    /* Tab bar */
+    .comm-tabs {
+      display: flex;
+      gap: 2px;
+      margin-bottom: 18px;
+      border-bottom: 1px solid var(--border-dim);
+    }
+    .comm-tab {
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid transparent;
+      color: var(--text-dim);
+      font-family: var(--font-mono);
+      font-size: 9px;
+      letter-spacing: 1.5px;
+      padding: 7px 14px;
+      cursor: pointer;
+      transition: all 0.15s;
+      margin-bottom: -1px;
+    }
+    .comm-tab:hover  { color: var(--text-secondary); }
+    .comm-tab.active {
+      color: var(--teal-text);
+      border-bottom-color: var(--teal);
+    }
+
+    /* Thread list */
+    .thread-list { display: flex; flex-direction: column; gap: 10px; }
+
+    .thread-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-dim);
+      border-radius: 5px;
+      padding: 12px 14px;
+      cursor: pointer;
+      transition: border-color 0.15s, background 0.15s;
+    }
+    .thread-card:hover {
+      background: var(--bg-hover);
+      border-color: var(--border-mid);
+    }
+    .thread-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 6px;
+      gap: 10px;
+    }
+    .thread-title {
+      font-size: 11px;
+      color: var(--text-primary);
+      letter-spacing: .5px;
+      line-height: 1.5;
+    }
+    .thread-meta {
+      font-size: 8px;
+      color: var(--text-dim);
+      letter-spacing: 1px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .thread-preview {
+      font-size: 10px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: 8px;
+    }
+    .thread-footer {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+    .thread-votes {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+    .thread-vote-btn {
+      background: transparent;
+      border: 1px solid var(--border-dim);
+      color: var(--text-dim);
+      font-family: var(--font-mono);
+      font-size: 9px;
+      padding: 2px 8px;
+      cursor: pointer;
+      border-radius: 2px;
+      transition: all 0.12s;
+    }
+    .thread-vote-btn:hover        { border-color: var(--teal); color: var(--teal-text); }
+    .thread-vote-btn.voted-up     { border-color: #22c55e; color: #22c55e; }
+    .thread-tag {
+      font-size: 8px;
+      letter-spacing: 1px;
+      padding: 2px 7px;
+      border-radius: 2px;
+      border: 1px solid;
+    }
+
+    /* New thread form */
+    #new-thread-form {
+      background: var(--bg-card);
+      border: 1px solid rgba(107,33,168,.25);
+      border-radius: 5px;
+      padding: 14px;
+      margin-bottom: 18px;
+    }
+    .form-row { margin-bottom: 10px; }
+    .form-row label {
+      display: block;
+      font-size: 8px;
+      letter-spacing: 2px;
+      color: var(--text-dim);
+      margin-bottom: 4px;
+    }
+    .form-row input,
+    .form-row textarea,
+    .form-row select {
+      width: 100%;
+      background: rgba(8,14,35,.6);
+      border: 1px solid var(--border-dim);
+      color: var(--text-primary);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      padding: 7px 10px;
+      border-radius: 3px;
+      outline: none;
+      box-sizing: border-box;
+      transition: border-color 0.15s;
+    }
+    .form-row input:focus,
+    .form-row textarea:focus   { border-color: var(--violet); }
+    .form-row textarea          { min-height: 80px; resize: vertical; }
+    .form-row select            { cursor: pointer; }
+    .form-actions {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .form-note {
+      font-size: 9px;
+      color: var(--text-dim);
+      letter-spacing: .5px;
+      flex: 1;
+    }
+
+    /* Phase 3 notice */
+    .phase3-notice {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      background: rgba(107,33,168,.06);
+      border: 1px solid rgba(107,33,168,.2);
+      border-radius: 4px;
+      margin-bottom: 16px;
+      font-size: 10px;
+      color: var(--text-dim);
+      letter-spacing: .5px;
+    }
+    .phase3-notice strong { color: var(--violet-text); }
+
+    /* ── RESPONSIVE ──────────────────────────────────────── */
+    @media (max-width: 700px) {
+      .community-body    { flex-direction: column; }
+      #comm-sidebar      { width: 100%; height: 160px; border-right: none;
+                           border-bottom: 1px solid var(--border-dim); }
+      #comm-main         { padding: 14px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="community-shell">
+
+  <!-- ══ HEADER ═══════════════════════════════════════════ -->
+  <header class="app-header">
+    <div>
+      <div class="logo-title">TEMPUS LINEA</div>
+      <div class="logo-sub">COMMUNITY · DEBATE · KNOWLEDGE PLATFORM</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;">
+      <span style="font-size:9px;color:var(--violet-text);letter-spacing:2px;
+                   border:1px solid rgba(107,33,168,.3);padding:4px 10px;border-radius:3px;">
+        ✦ PHASE 3 PREVIEW
+      </span>
+    </div>
+  </header>
+
+  <!-- ══ NAVIGATION ════════════════════════════════════════ -->
+  <nav class="app-nav">
+    <a href="index.html">TIMELINE</a>
+    <span class="nav-sep">·</span>
+    <a href="globe.html">GLOBE</a>
+    <span class="nav-sep">·</span>
+    <a href="community.html" class="active">COMMUNITY</a>
+    <span class="nav-sep">·</span>
+    <a href="portal.html">MY PORTAL</a>
+    <span class="nav-sep">·</span>
+    <a href="about.html">ABOUT</a>
+  </nav>
+
+  <div class="community-body">
+
+    <!-- ══ SIDEBAR — civilization list ══════════════════ -->
+    <div id="comm-sidebar">
+      <div class="sidebar-search">
+        <input id="comm-search" type="text" placeholder="Filter civilizations…">
+      </div>
+      <div id="comm-civ-list">
+        <!-- Populated by JS -->
+      </div>
+    </div>
+
+    <!-- ══ MAIN CONTENT ══════════════════════════════════ -->
+    <div id="comm-main">
+
+      <!-- Welcome state — shown until a civ is selected -->
+      <div id="comm-welcome">
+        <div class="welcome-sigil">◈</div>
+        <div class="welcome-title">COMMUNITY ARCHIVE</div>
+        <div class="welcome-sub">
+          Select a civilization from the list to view debate threads,
+          contribute theories, submit sources, and challenge dates.
+          All perspectives are welcome — ranked by community plausibility.
+        </div>
+        <button class="btn" style="margin-top:8px;border-color:rgba(107,33,168,.4);
+          color:var(--violet-text);" onclick="CLIO.open();CLIO.ask('What can I explore in the Tempus Linea Community?')">
+          ✦ Ask CLIO for a guided tour
+        </button>
+      </div>
+
+      <!-- Civ thread view — shown when a civ is selected -->
+      <div id="comm-civ-header"></div>
+
+      <div id="comm-tabs-wrap" style="display:none;">
+        <div class="comm-tabs">
+          <button class="comm-tab active" data-tab="threads">DEBATES</button>
+          <button class="comm-tab" data-tab="dates">DATE CHALLENGES</button>
+          <button class="comm-tab" data-tab="sources">SOURCES</button>
+          <button class="comm-tab" data-tab="analysis">ANALYSIS</button>
+        </div>
+
+        <div id="tab-threads">
+          <!-- Phase 3 live notice -->
+          <div class="phase3-notice">
+            <span>✦</span>
+            <span><strong>Community features are live in Phase 3.</strong>
+            Threads below are seeded examples showing the structure.
+            Real debate, voting, and sourcing go live with user accounts.</span>
+          </div>
+
+          <!-- New thread form -->
+          <div id="new-thread-form">
+            <div style="font-size:9px;letter-spacing:2px;color:var(--violet-text);
+                        margin-bottom:10px;">✦ START A NEW DEBATE THREAD</div>
+            <div class="form-row">
+              <label>THREAD TITLE</label>
+              <input id="thread-title-input" type="text"
+                placeholder="What aspect of this civilization are you debating?">
+            </div>
+            <div class="form-row">
+              <label>YOUR ARGUMENT</label>
+              <textarea id="thread-body-input"
+                placeholder="Present your position clearly. Cite your sources. Engage constructively."></textarea>
+            </div>
+            <div class="form-row">
+              <label>CATEGORY</label>
+              <select id="thread-cat-input">
+                <option value="dating">Dating / Chronology</option>
+                <option value="location">Location / Geography</option>
+                <option value="identity">Identity / Attribution</option>
+                <option value="technology">Technology / Capability</option>
+                <option value="connection">Cross-Civilization Connections</option>
+                <option value="source">Source Critique</option>
+                <option value="general">General Discussion</option>
+              </select>
+            </div>
+            <div class="form-actions">
+              <button class="btn" id="thread-submit-btn"
+                style="border-color:rgba(107,33,168,.4);color:var(--violet-text);">
+                ✦ SUBMIT THREAD
+              </button>
+              <span class="form-note">
+                Phase 3: threads will require an account.
+                Submissions are pre-screened by CLIO before publishing.
+              </span>
+            </div>
+          </div>
+
+          <!-- Thread list -->
+          <div class="thread-list" id="thread-list">
+            <!-- Populated by JS from seed data -->
+          </div>
+        </div>
+
+        <div id="tab-dates" style="display:none;">
+          <div class="phase3-notice">
+            <span>✦</span>
+            <span><strong>Date Challenge System — Phase 3.</strong>
+            Challenge the accepted start/end dates of any civilization with
+            alternative evidence. Accepted challenges render as ghost bars
+            on the timeline.</span>
+          </div>
+          <div id="date-challenge-list">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+
+        <div id="tab-sources" style="display:none;">
+          <div class="phase3-notice">
+            <span>✦</span>
+            <span><strong>Source Registry — Phase 3.</strong>
+            Submit links, PDFs, and citations. CLIO summarizes each source.
+            Community votes on reliability.</span>
+          </div>
+          <div id="source-list">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+
+        <div id="tab-analysis" style="display:none;">
+          <div class="phase3-notice">
+            <span>✦</span>
+            <span><strong>Structured Analysis — Phase 3.</strong>
+            Six-dimension framework analysis (Geography, Economy,
+            Sociopolitics, Culture, Technology, Conflict). Community
+            can contribute structured entries per dimension.</span>
+          </div>
+          <div id="analysis-content">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+
+      </div><!-- /comm-tabs-wrap -->
+    </div><!-- /comm-main -->
+  </div><!-- /community-body -->
+
+</div><!-- /community-shell -->
+
+<!-- ══ SCRIPTS ════════════════════════════════════════ -->
+<script src="data.js"></script>
+<script src="data-extended.js"></script>
+<script src="share.js"></script>
+<script src="share-ui-styles.js"></script>
+<script src="share-ui.js"></script>
+<script src="notifications.js"></script>
+<script src="notifications-ui.js"></script>
+<script src="clio-prompt.js"></script>
+<script src="clio-ui.js"></script>
+<script src="clio.js"></script>
+
+<script>
+// ── SEED THREAD DATA ──────────────────────────────────────
+// Example threads per civ — structure for Phase 3.
+const SEED_THREADS = {
+  3: [ // Atlantis
+    { id:1, title:"Plato as historian vs Plato as philosopher — which reading is correct?",
+      body:"The central question: did Plato intend Atlantis as a historical account or a philosophical allegory for the hubris of Athens? The Critias is unfinished. Timaeus introduces it as 'genuine history.' But the timing — exactly when Athens needed a moral counterpart — is suspicious.",
+      author:"Guest", cat:"general", up:847, dn:203, replies:24,
+      tag:"HIGHLY DEBATED", tagColor:"var(--teal)" },
+    { id:2, title:"The Azores plateau at glacial maximum — does the topography match?",
+      body:"Hancock's Azores candidate becomes much more plausible on the glacial globe. The plateau was substantially exposed at -120m sea level. Plato describes a plain surrounded by mountains — the Azores bank topography is worth examining seriously against this description.",
+      author:"GHancock_ref", cat:"location", up:612, dn:441, replies:18,
+      tag:"THEORIZED", tagColor:"var(--violet-text)" },
+    { id:3, title:"The 9,000 year figure — scribal error or deliberate encoding?",
+      body:"Galanopoulos proposed the figure is a scribal x10 error: 900 years before Plato points to the Minoan eruption at Thera (~1600 BCE). The Santorini theory is the strongest mainstream candidate. But it requires accepting a documented transcription error from Egyptian to Greek.",
+      author:"Acad_Source", cat:"dating", up:1203, dn:312, replies:31,
+      tag:"MAINSTREAM CANDIDATE", tagColor:"var(--gold-text)" },
+  ],
+  8: [ // Ancient Egypt
+    { id:4, title:"Schoch's water erosion evidence — why Egyptologists reject it and whether they should",
+      body:"Robert Schoch's geological argument is straightforward: the vertical weathering patterns on the Sphinx enclosure are consistent with heavy rainfall, not wind erosion. The last period of sustained rainfall in the region was ~7000-5000 BCE. Egyptologists dispute the interpretation, not the geology.",
+      author:"Geol_Source", cat:"dating", up:2103, dn:891, replies:47,
+      tag:"ACTIVELY DEBATED", tagColor:"var(--teal)" },
+    { id:5, title:"The Orion Correlation — precision or coincidence?",
+      body:"Bauval's 1994 correlation between the three Giza pyramids and Orion's Belt dates the layout to ~10,500 BCE by precession. The correlation is real. The question is whether it was intentional and what it implies about the builders' knowledge — or whether it reflects a later symbolic alignment.",
+      author:"Astro_ref", cat:"technology", up:1891, dn:1203, replies:38,
+      tag:"DEBATED", tagColor:"var(--teal)" },
+  ],
+  2: [ // Pre-Flood Culture
+    { id:6, title:"The Younger Dryas Impact Hypothesis — where does the evidence stand in 2025?",
+      body:"Randall Carlson and the Comet Research Group have accumulated significant physical evidence for a cosmic impact/airburst event at ~12,800 BCE: platinum anomalies across four continents, shocked quartz, glass spherules, and the Carolina Bays. The hypothesis has gone from fringe to a serious debate in the geological literature.",
+      author:"RC_ref", cat:"dating", up:3102, dn:891, replies:62,
+      tag:"GAINING EVIDENCE", tagColor:"var(--gold-text)" },
+  ],
+
+  // ── BATCH 3 — Threads 23–36 (Phase 5n) ──────────────────
+
+  184: [ // Benin Kingdom
+    { id:23, title:"The Benin Bronzes: stolen heritage, shared history, or both?",
+      body:"The 1897 British Punitive Expedition looted over 4,000 ceremonial bronzes from the Kingdom of Benin. They are now distributed across 160 institutions worldwide. The repatriation debate intensified after Germany's Humboldt Forum returned its collection in 2022. But ownership is only one layer: the bronzes themselves challenge the colonial narrative that sub-Saharan Africa had no sophisticated pre-contact material culture. The Benin court bronzes — their casting techniques, iconographic complexity, and historical narrative depth — are among the finest artworks ever produced by any civilization at any point in history. Why did it take Western institutions until the 21st century to acknowledge this openly?",
+      author:"AfricanHist_ref", cat:"general", up:2841, dn:312, replies:54,
+      tag:"ACTIVELY DEBATED", tagColor:"var(--teal)" },
+    { id:24, title:"Benin bronze casting — independent invention or transmitted knowledge?",
+      body:"The lost-wax (cire-perdue) casting technique used in Benin bronzes is sophisticated and requires precise temperature control, wax preparation, and clay investment. The Ife bronzes (12th–14th century) predate Benin's known corpus. Did this technology develop independently in West Africa, or was there transmission through trans-Saharan trade networks? The standard academic position favours independent development. The convergence with Near Eastern and Mediterranean techniques is striking enough to warrant serious comparative analysis.",
+      author:"Metallurgy_src", cat:"technology", up:1203, dn:441, replies:29,
+      tag:"DEBATED", tagColor:"var(--teal)" },
+  ],
+
+  187: [ // Khmer Empire
+    { id:25, title:"Angkor's hydraulic system — most sophisticated pre-industrial water network ever built?",
+      body:"The Khmer Empire built a water management system across Greater Angkor covering approximately 1,000 square kilometres — including the massive West Baray reservoir (8km × 2.1km), an interconnected network of canals, moats, and distribution channels. LiDAR surveys since 2012 have revealed the full extent of this system, larger and more complex than previously understood. The central question: did its eventual failure — catastrophic floods in the 14th–15th century appear to have contributed to Angkor's decline — constitute a lesson about hydraulic over-engineering that echoes across civilizations?",
+      author:"Archaeo_src", cat:"technology", up:1876, dn:203, replies:41,
+      tag:"CONFIRMED REMARKABLE", tagColor:"var(--gold-text)" },
+    { id:26, title:"Angkor Wat's astronomical alignment — deliberate precision or scholarly projection?",
+      body:"Eleanor Mannikka's 1996 analysis argued that Angkor Wat encodes a precise astronomical and calendrical programme: the axial alignment to the spring equinox sunrise, gallery lengths corresponding to the Hindu yugas, and sacred numbers embedded in the measurements. The work is compelling but contested. It raises a broader question applicable across the ancient world: at what point does pattern-detection in monumental architecture cross into over-interpretation? The Khmer case remains one of the strongest candidates for genuine intentional astronomical encoding.",
+      author:"Astro_arch_ref", cat:"technology", up:982, dn:567, replies:22,
+      tag:"DEBATED", tagColor:"var(--teal)" },
+  ],
+
+  210: [ // Denisovan Civilisation
+    { id:27, title:"Andrew Collins and the Denisovan builders thesis — extraordinary claim, extraordinary evidence?",
+      body:"Andrew Collins, in Denisovan Origins (2019, co-authored with Greg Little), argues that the Denisovans — an extinct hominin species known primarily from Siberian cave DNA — were responsible for megalithic construction traditions across Asia and possibly beyond. The thesis draws on genetic evidence showing Denisovan admixture in modern populations across Southeast Asia and Melanesia, and the anomalously early dates of some megalithic structures in that region. Collins links Göbekli Tepe's builders to Denisovan-admixed populations. This is speculative but not incoherent — the genetic evidence for Denisovans as a widespread, cognitively capable population is now well-established. What it doesn't yet provide is a direct material link between Denisovan genetics and megalithic construction.",
+      author:"Collins_ref", cat:"identity", up:1547, dn:891, replies:38,
+      tag:"THEORIZED", tagColor:"var(--violet-text)" },
+    { id:28, title:"What did Denisovans actually look like — and how cognitively capable were they?",
+      body:"The physical reconstruction of Denisovans from ancient DNA (published in Cell, 2019) suggests a robust, broad-faced hominin with features intermediate between Neanderthals and modern humans. The Xiahe mandible from Tibet (~160,000 years ago) indicates high-altitude adaptation. The Denisova Cave deposits include worked bone artefacts and a chlorite bracelet suggesting aesthetic sensibility. Their genome shows no obvious deficit relative to modern humans in regions associated with speech and cognition. We may have shared the planet with a second cognitively complex hominin far more recently than most people realize — with significant implications for how we define 'human' civilisation.",
+      author:"Paleo_genetics", cat:"general", up:2203, dn:312, replies:47,
+      tag:"EMERGING SCIENCE", tagColor:"var(--gold-text)" },
+  ],
+
+  205: [ // Sundaland
+    { id:29, title:"Sundaland: was the drowned shelf of Southeast Asia the cradle of civilisation?",
+      body:"Stephen Oppenheimer's Eden in the East (1998) proposed that Sundaland — the landmass now submerged beneath the South China Sea and Gulf of Thailand, above sea level during the glacial maximum — was the origin point of a sophisticated agricultural and maritime culture whose diaspora seeded civilisations across Asia and the Pacific after the post-Younger Dryas sea-level rise. The genetic and linguistic evidence for a major Southeast Asian migration event is real. Arysio Santos went further in Atlantis: The Lost Continent Finally Found (2005), identifying Sundaland directly with Plato's Atlantis. The core physical claim — that a culturally significant landmass was lost to the sea — is geologically certain. The civilisational elaboration remains a matter of vigorous debate.",
+      author:"Oppenheimer_ref", cat:"location", up:2108, dn:743, replies:44,
+      tag:"THEORIZED", tagColor:"var(--violet-text)" },
+  ],
+
+  204: [ // Richat Structure / Atlantis
+    { id:30, title:"The Richat Structure as Atlantis — Jimmy Corsetti's case examined closely",
+      body:"The Richat Structure (Eye of the Sahara) in Mauritania is a 50km-diameter geological formation with concentric rings superficially matching Plato's description of Atlantis: concentric rings of land and water, a central elevated area, dimensions roughly consistent with the text. Jimmy Corsetti (Bright Insight) has popularised this identification across millions of viewers. The problems: (1) The Richat shows no evidence of submersion in the relevant timeframe — it is a deeply eroded geological dome, not a sunken city; (2) Plato places Atlantis in the Atlantic Ocean, not in the Sahara; (3) the dimensional match requires selective reading of Plato's numbers. The visual resonance is undeniably striking. The geological case, as it currently stands, is not strong. Can it be strengthened?",
+      author:"Corsetti_ref", cat:"location", up:1893, dn:1241, replies:53,
+      tag:"HIGHLY DEBATED", tagColor:"var(--teal)" },
+  ],
+
+  208: [ // Pre-Clovis Americas
+    { id:31, title:"How complex was Pre-Clovis Americas — and is the standard model still defensible?",
+      body:"The Clovis First model — holding that humans entered the Americas no earlier than ~13,000 years ago via the Bering land bridge — has been systematically dismantled. Monte Verde (Chile) dates to at least 14,500 BCE. Chiquihuite Cave (Mexico) may push occupation to 26,000 BCE or earlier. Graham Hancock's America Before (2019) synthesizes these findings with a broader argument for a sophisticated pre-Clovis maritime civilisation with astronomical knowledge. Michael Heckenberger's work in The Ecology of Power (2005) demonstrates that Amazonian pre-Columbian complexity was vastly underestimated. What does the emerging picture actually look like, and how far does the evidence support the more elaborate civilisational claims?",
+      author:"Hancock_ref", cat:"dating", up:3201, dn:1102, replies:71,
+      tag:"ACTIVELY DEBATED", tagColor:"var(--teal)" },
+  ],
+
+  198: [ // Minoan Civilisation
+    { id:32, title:"Minoan Crete as Plato's Atlantis — the most credible mainstream candidate?",
+      body:"The identification of Minoan Crete — or more precisely the Thera/Santorini catastrophic eruption ~1600 BCE — with Atlantis has significant scholarly support. The Minoan civilisation was a sophisticated Bronze Age maritime empire that suffered a sudden, catastrophic end. Galanopoulos proposed a documented scribal x10 error: if 9,000 years before Plato is actually 900 years, it aligns with Thera. The geography requires reinterpretation — Crete is in the Mediterranean, not the Atlantic — but the civilisational sophistication and sudden disappearance fit more cleanly than almost any other candidate. Does the Minoan identification hold up under the full weight of Plato's text?",
+      author:"Class_arch_ref", cat:"identity", up:1654, dn:891, replies:36,
+      tag:"MAINSTREAM CANDIDATE", tagColor:"var(--gold-text)" },
+  ],
+
+  206: [ // Dwarka
+    { id:33, title:"Dwarka: the underwater city of Krishna — archaeology, mythology, and the marine evidence",
+      body:"Marine archaeologists from India's National Institute of Ocean Technology surveyed a submerged site off Dwarka, Gujarat in 2000–2002, finding structural remains including walls, a grid-like settlement pattern, and artefacts at depths suggesting submersion ~9,000 years ago. The site is associated with the ancient city of Dvārakā in the Mahabharata — said to have been built by Krishna and reclaimed by the sea at his death. David Frawley's work on Vedic astronomical dating in Gods, Sages and Kings (1991) supports an extremely ancient origin for these texts. The marine evidence is real but incompletely excavated. The connection to Vedic mythology is suggestive and warrants continued investigation.",
+      author:"Frawley_ref", cat:"location", up:1987, dn:654, replies:42,
+      tag:"DEBATED", tagColor:"var(--teal)" },
+  ],
+
+  200: [ // Celtic / Druidic
+    { id:34, title:"The Druids: what did they actually know, and how did they preserve it for 20 years of training?",
+      body:"Classical sources — Caesar, Strabo, Pliny — agree the Druids maintained an oral tradition of extraordinary depth, requiring up to 20 years of memorisation training. Caesar notes they were learned in astronomy, natural philosophy, and theology, but committed nothing to writing. The oral preservation of the Vedas offers a direct parallel: an ancient knowledge tradition maintained with remarkable fidelity across millennia without text. The question is what specifically the Druids knew — and whether any of it survives in the Welsh Triads, Irish mythological cycles, or early medieval texts that may preserve pre-Christian Druidic content in coded or allegorical form.",
+      author:"Celtic_scholar", cat:"general", up:1432, dn:312, replies:29,
+      tag:"DEBATED", tagColor:"var(--teal)" },
+  ],
+
+  193: [ // Cahokia
+    { id:35, title:"Cahokia human sacrifice — evidence, context, and what it tells us about Mississippian power",
+      body:"Mound 72 at Cahokia contains the remains of over 270 individuals, many in mass graves associated with a high-status central burial known as the Beaded Burial. Timothy Pauketat's analysis in Cahokia (2009) interprets the mass burials as sacrificial events tied to founding rituals around 1050 CE — what archaeologists call Cahokia's 'Big Bang', a rapid urban transformation unprecedented in North America. The victims show signs of selection: predominantly young women, some with evidence of violent death. What does the violence at Mound 72 tell us about how Cahokia's rulers consolidated power — and what parallels does it have with other civilisational founding moments?",
+      author:"Pauketat_ref", cat:"general", up:1876, dn:441, replies:38,
+      tag:"CONFIRMED EVIDENCE", tagColor:"var(--gold-text)" },
+  ],
+
+  209: [ // Anunnaki / Sitchin
+    { id:36, title:"The Anunnaki debate: ancient mythology, mistranslated cuneiform, or encoded historical memory?",
+      body:"Zecharia Sitchin's Earth Chronicles series (1976–2007) proposes that the Sumerian Anunnaki — the major deities of the pantheon — were extraterrestrial beings from a hypothetical planet called Nibiru who genetically engineered Homo sapiens as a labour species. The thesis rests on Sitchin's personal translations of Sumerian texts, which mainstream Assyriologists uniformly reject as mistranslation. The Anunnaki do appear in authentic Sumerian literature as powerful sky-gods associated with Eridu. Michael Tellinger extended the framework to southern African stone circles in Adam's Calendar (2008). What is the threshold of evidence required to take a theory of this magnitude seriously — and does Sitchin's work, or Tellinger's, meet it?",
+      author:"Sitchin_ref", cat:"identity", up:2543, dn:2891, replies:88,
+      tag:"HIGHLY CONTESTED", tagColor:"var(--teal)" },
+  ],
+
+  // ── BATCH 4 — Threads 37–48 (Phase 5u–5y civs, ids 271–400) ─
+
+  287: [ // Göbekli Tepe Builders
+    { id:37, title:"Göbekli Tepe rewrites the timeline: hunter-gatherers built cathedrals before agriculture — what does this mean?",
+      body:"The discovery and excavation of Göbekli Tepe (~9600 BCE) by Klaus Schmidt overturned a foundational assumption of the standard model: that complex monumental architecture required a settled, agricultural surplus economy. The T-pillars at Göbekli Tepe — weighing up to 20 tonnes, carved with sophisticated animal reliefs, arranged in precise enclosures — predate the earliest known farming settlements by at least 1,000 years. Andrew Collins's analysis in Göbekli Tepe: Genesis of the Gods (2014) connects the site's iconography to Cygnus astronomy and argues for Denisovan-admixed builders. The mainstream interpretation holds that Göbekli Tepe may have driven the agricultural revolution rather than followed it — that the organizational demands of monument construction forced sedentism. Which causation direction is better supported, and what remains genuinely unexplained about the site?",
+      author:"Collins_ref", cat:"general", up:4102, dn:891, replies:83,
+      tag:"PARADIGM SHIFTING", tagColor:"var(--gold-text)" },
+    { id:38, title:"Who built Göbekli Tepe — and where did they go? The deliberate burial problem.",
+      body:"Around 8000 BCE, Göbekli Tepe was deliberately buried. Not abandoned — filled intentionally under thousands of tonnes of sediment. The builders entombed their own sanctuary. No human remains have been found at the site. We do not know their language, their social structure beyond the scale of collective labour required, or what cosmological imperative drove them to inter their greatest monument. The nearby Karahan Tepe and broader Taş Tepeler complex now being excavated suggest a regional tradition of extraordinary sophistication across multiple sites. Andrew Collins and others argue these builders were a distinct population — possibly with Denisovan genetic heritage — eventually absorbed by incoming agricultural peoples. What would constitute sufficient evidence to identify the Göbekli Tepe builders?",
+      author:"Collins_ref", cat:"identity", up:2891, dn:743, replies:61,
+      tag:"OPEN QUESTION", tagColor:"var(--teal)" },
+  ],
+
+  281: [ // Yamnaya
+    { id:39, title:"The Yamnaya expansion: the most transformative migration in human history?",
+      body:"The Yamnaya culture of the Pontic-Caspian steppe (~3300–2600 BCE) is now understood through ancient DNA analysis to have driven one of the most consequential population movements in history. Yamnaya-related ancestry accounts for 40–60% of the ancestry of modern Western and Northern Europeans, substantially replacing the existing Neolithic farming population. They brought the domesticated horse, wheeled transport, and almost certainly proto-Indo-European — the ancestor language of a family spoken today from Iceland to Bangladesh. This single steppe culture is the demographic ancestor of speakers of English, Russian, Persian, Hindi, and Latin. Yet the Yamnaya left no monumental architecture, no writing, and relatively sparse material culture beyond their kurgans. What does the scale of their success reveal about the factors that actually drive civilisational dominance — and why has this story taken so long to enter public awareness?",
+      author:"Reich_ref", cat:"general", up:3201, dn:654, replies:58,
+      tag:"CONFIRMED REMARKABLE", tagColor:"var(--gold-text)" },
+  ],
+
+  280: [ // Caral / Norte Chico
+    { id:40, title:"Caral and the Norte Chico civilisation: complex society without ceramics, writing, or warfare?",
+      body:"The Caral-Supe civilisation of coastal Peru (~3000–1800 BCE) challenges nearly every assumption about what a complex society requires. Caral features large platform mounds, amphitheatres, and clear evidence of sophisticated social organisation — but no ceramics, no evidence of warfare in the archaeological record, and a communication system based on quipus (knotted strings) rather than writing. Ruth Shady Solís's excavations showed that Caral is broadly contemporaneous with Old Kingdom Egypt and early dynastic Mesopotamia. Its economy appears to have been anchored in anchoveta fishing on the coast traded for agricultural products inland — an exchange system with no known parallel. Is Caral evidence that complex society can develop along radically different pathways than the standard civilisational model assumes? And what does the absence of warfare evidence tell us about the range of possible social structures?",
+      author:"Shady_ref", cat:"general", up:1891, dn:312, replies:37,
+      tag:"CONFIRMED REMARKABLE", tagColor:"var(--gold-text)" },
+  ],
+
+  279: [ // Cucuteni-Trypillia
+    { id:41, title:"Cucuteni-Trypillia mega-sites: Europe's largest prehistoric settlements — and why they were burned",
+      body:"The Cucuteni-Trypillia culture (~5500–2750 BCE) of present-day Ukraine, Moldova, and Romania built settlements of up to 15,000 people — among the largest human settlements on Earth at their time, a thousand years before Ur. Every settlement appears to have been deliberately and systematically burned at the end of its occupation cycle, roughly every 60–80 years, after which a new settlement was built nearby. The burning was total and intentional. No scholarly consensus exists on why: ritual renewal, population cycling, disease control, and social reset mechanisms have all been proposed. The culture left no writing and was eventually absorbed — likely by Yamnaya expansion. The deliberate, cyclical destruction of entire cities is one of the most puzzling documented behaviours in the prehistoric record. What does it tell us about Trypillian cosmology, social organisation, and their understanding of time?",
+      author:"Archaeo_src", cat:"general", up:2103, dn:441, replies:44,
+      tag:"ACTIVELY DEBATED", tagColor:"var(--teal)" },
+  ],
+
+  289: [ // Nabataean
+    { id:42, title:"Petra's hydraulic engineering: how did the Nabataeans sustain a desert city of 30,000?",
+      body:"The Nabataean civilisation (~400 BCE–106 CE) built Petra in one of the most water-scarce environments on Earth and sustained a population of perhaps 20,000–30,000 people. Their hydraulic infrastructure — channels cut into sandstone cliffs, cisterns, ceramic pipe networks, flood diversion dams, and seasonal water-harvesting catchments — is among the most sophisticated in the ancient world relative to its environmental constraints. Recent surveys have revealed far more of this system than previously mapped. The Nabataeans also controlled the incense and spice trade routes between Arabia and the Mediterranean, accumulating wealth sufficient to fund extraordinary monumental rock-cutting. Their script is the direct ancestor of the Arabic script used today. Yet they remain almost entirely absent from popular accounts of ancient civilisation. Why has such a technically accomplished and commercially dominant culture been so systematically overlooked?",
+      author:"Archaeo_src", cat:"technology", up:1654, dn:203, replies:31,
+      tag:"CONFIRMED REMARKABLE", tagColor:"var(--gold-text)" },
+  ],
+
+  363: [ // Sumerian
+    { id:43, title:"Did Sumerian civilisation emerge fully-formed? The antecedents problem and the King List",
+      body:"The standard archaeological account traces a recognisable Sumerian developmental sequence from the Ubaid culture (~6500 BCE) through Uruk (~4000 BCE) to the early dynastic period. But several features of early Sumerian civilisation resist purely local explanation: the Sumerian King List records kings reigning for tens of thousands of years before the Flood, suggesting a deliberate mythological encoding of deep antecedents rather than fantasy; the sophisticated astronomical knowledge embedded in early Sumerian texts; and the fact that the Sumerian language has no demonstrated linguistic relatives. Matthew LaCroix, in The Stage of Time (2018), argues the King List encodes genuine historical memory of pre-Flood civilisational continuity, with post-Flood kings representing a transmission and rebuilding effort. Mainstream Assyriology treats the antediluvian section as mythological. What empirical test could distinguish between these interpretations?",
+      author:"LaCroix_ref", cat:"dating", up:2891, dn:1102, replies:67,
+      tag:"HIGHLY DEBATED", tagColor:"var(--teal)" },
+  ],
+
+  364: [ // Egypt Old Kingdom
+    { id:44, title:"Old Kingdom construction logistics: the engineering numbers that mainstream accounts still struggle to close",
+      body:"The Great Pyramid contains approximately 2.3 million stone blocks averaging 2.5 tonnes, with some granite blocks in the King's Chamber reaching 50–80 tonnes, transported from Aswan 800km away. The accepted construction window is approximately 20 years under Khufu (~2560 BCE). This requires positioning roughly 800 blocks per day, every day, for two decades — including precision-fitting granite elements with tolerances measured in fractions of a millimetre. Engineer Christopher Dunn argued in The Giza Power Plant (1998) that some granite surface tolerances exceed what copper chisels and diorite pounders can plausibly achieve. Robert Bauval's Orion Correlation dates the site's conceptual layout to ~10,500 BCE by precession. The logistics of the mainstream model are not impossible, but the detailed evidence for the process — ramps, tools, organisation — remains sparse relative to the scale of the achievement. Where do the genuine open questions now sit?",
+      author:"Schoch_ref", cat:"technology", up:3891, dn:1203, replies:94,
+      tag:"ACTIVELY DEBATED", tagColor:"var(--teal)" },
+  ],
+
+  292: [ // Scythian
+    { id:45, title:"Scythian golden art and shamanic culture: sophisticated civilisation without cities or writing",
+      body:"The Scythians (~800–300 BCE) of the Eurasian steppe left no cities, no writing system, and no monumental architecture — yet their goldwork, preserved in frozen kurgan burial mounds across Ukraine and Siberia, represents some of the most technically refined and aesthetically distinctive metalwork of the ancient world. Their animal-style art — coiled predators, combat scenes, mythological hybrid creatures — directly influenced Thracian, Persian, Greek, and eventually medieval European decorative traditions. Herodotus described their burial practices, tactical mobility, and cosmology in considerable detail. Recent DNA analysis confirms complex genetic diversity in Scythian populations. The Scythians are a test case for our models of civilisational assessment: should sophisticated art, long-range trade networks, complex ritual practice, and military dominance over vast territories constitute civilisation, even in the absence of urbanism and literacy?",
+      author:"Archaeo_src", cat:"general", up:1432, dn:312, replies:34,
+      tag:"CONFIRMED REMARKABLE", tagColor:"var(--gold-text)" },
+  ],
+
+  371: [ // Classical Greece
+    { id:46, title:"Greek astronomical knowledge before Hipparchus: how much did the pre-Socratics inherit vs. originate?",
+      body:"Mainstream history of science credits Hipparchus (~190–120 BCE) with discovering precession — the ~26,000-year wobble of Earth's rotational axis. But Giorgio de Santillana and Hertha von Dechend's Hamlet's Mill (1969) argues that precessional knowledge is encoded in mythological cycles across dozens of cultures predating the Greeks by millennia. Thales of Miletus (~624–548 BCE) reportedly predicted a solar eclipse using what must have been Babylonian saros-cycle data. Anaximander proposed the Earth suspended freely in space. The pre-Socratic tradition drew heavily on Babylonian and Egyptian sources. The Antikythera Mechanism (~100 BCE) demonstrates Greek computational astronomy of extraordinary complexity — but it also reflects Babylonian arithmetical astronomy. How much of the 'Greek miracle' in astronomy was inheritance, synthesis, and refinement — rather than origination? And what were the actual transmission channels?",
+      author:"deSantillana_ref", cat:"technology", up:1876, dn:654, replies:43,
+      tag:"DEBATED", tagColor:"var(--teal)" },
+  ],
+
+  398: [ // Younger Dryas Boundary
+    { id:47, title:"The Younger Dryas Impact Hypothesis: where the evidence stands and why the debate matters for ancient history",
+      body:"The Younger Dryas Impact Hypothesis (YDIH) — proposing a cosmic impact or airburst event at ~12,800 BCE triggered the Younger Dryas cooling, megafauna extinctions across multiple continents, and the collapse of the Clovis culture — has accumulated significant physical evidence since Richard Firestone and colleagues published in PNAS in 2007: platinum anomalies across four continents, high-temperature spherules, nano-diamonds, and the Hiawatha impact crater beneath the Greenland ice sheet discovered in 2018. Randall Carlson's geological fieldwork across the Channeled Scablands and Carolina Bays documents the catastrophic flood and blast signatures. The YDIH matters far beyond geology: if correct, it provides the physical mechanism for Graham Hancock's pre-Flood civilisation hypothesis. It reframes human prehistory as one punctuated by catastrophe rather than continuous gradual development. Where does the balance of evidence now sit — and what is the state of resistance in mainstream geological literature?",
+      author:"Carlson_ref", cat:"dating", up:4103, dn:1241, replies:89,
+      tag:"GAINING EVIDENCE", tagColor:"var(--gold-text)" },
+  ],
+
+  399: [ // Pre-Flood Civilisation Hypothesis
+    { id:48, title:"The Pre-Flood Civilisation Hypothesis: what would constitute proof — and are we closer than we think?",
+      body:"Graham Hancock's central thesis — across Fingerprints of the Gods (1995), Magicians of the Gods (2015), America Before (2019), and Ancient Apocalypse (Netflix, 2022) — is that a technically sophisticated civilisation existed before the Younger Dryas catastrophe at ~12,800 BCE and was largely destroyed by it, with survivors seeding the early civilisations of Egypt, Mesopotamia, and the Americas. The hypothesis synthesises Schoch's Sphinx water erosion dating, the YDIH physical evidence, pre-Clovis American archaeology, and a global survey of flood mythology and astronomical encoding. Mainstream archaeology's specific objection remains: no pre-YD city, no pre-YD writing, no pre-YD metal artefact has been found. Hancock's response is that the most probable coastal sites lie under 60–120 metres of ocean — and that underwater archaeology of the continental shelves is still in its infancy. The discovery of a single confirmed pre-YD complex structure on a submerged continental shelf would change everything. What exactly would constitute sufficient evidence to move this hypothesis from theorized to debated — and what would conclusively falsify it?",
+      author:"Hancock_ref", cat:"general", up:6102, dn:2891, replies:147,
+      tag:"HIGHLY CONTESTED", tagColor:"var(--teal)" },
+  ],
+
+  // ── BATCH 5 — Threads 49–60 (Phase 5z civs, ids 401–430) ─────────────────
+
+  401: [ // Kerma / Early Kush
+    { id:49, title:"Kerma: Africa's forgotten peer civilisation — why has Egypt's southern rival been so systematically overlooked?",
+      body:"At its height (~1700–1550 BCE), the Kingdom of Kerma in present-day Sudan fielded armies capable of threatening Middle Kingdom Egypt, controlled Nile trade routes deep into sub-Saharan Africa, and built monumental mudbrick structures — the Western and Eastern Deffufas — that are among the largest ancient buildings in Africa outside Egypt. Kerma burial mounds (tumuli) involved the sacrifice of hundreds of retainers, indicating a state religion and political system of extraordinary power. Yet Kerma is absent from virtually every popular account of the ancient world. Colonial-era Egyptology treated Nubian cultures as peripheral or derivative of Egypt; decades of subsequent scholarship have worked to reverse this, with George Reisner's early excavations and later work by Charles Bonnet substantially reconstructing the city. Is the continued obscurity of Kerma a legacy of colonial historiography — and what does correcting it change about our model of early African civilisation?",
+      author:"Bonnet_ref", cat:"general", up:1876, dn:312, replies:41,
+      tag:"CONFIRMED — UNDERREPRESENTED", tagColor:"var(--gold-text)" },
+  ],
+
+  403: [ // Lydian Empire
+    { id:50, title:"Did the Lydians really invent coinage — and why does the answer matter more than it seems?",
+      body:"Herodotus credits the Lydians with being the first people to use gold and silver coins (~600 BCE), and archaeological evidence from Sardis and the Temple of Artemis at Ephesus supports the early production of electrum (gold-silver alloy) coins stamped with the Lydian lion seal. However, the question of whether this constitutes 'invention' of coinage is contested: commodity money, weighed metal, and token exchange systems existed earlier in Mesopotamia and China. What the Lydians introduced was the standardised, state-guaranteed, stamped coin — a political technology as much as an economic one. The implications ripple forward: coined money enabled the Greek market economy, Roman fiscal infrastructure, and ultimately the entire architecture of Western capitalism. King Croesus's legendary wealth and his catastrophically misjudged campaign against Cyrus the Great also gave Western philosophy its foundational parable about the limits of material fortune. What does Lydia's role as a technological origin point reveal about how civilisational innovations actually spread?",
+      author:"Archaeo_src", cat:"technology", up:1543, dn:287, replies:38,
+      tag:"CONFIRMED REMARKABLE", tagColor:"var(--gold-text)" },
+  ],
+
+  404: [ // Khazar Khaganate
+    { id:51, title:"The Khazar conversion to Judaism: the only mass political conversion in post-biblical Jewish history — what really happened?",
+      body:"Sometime in the 8th or 9th century CE, the ruling elite of the Khazar Khaganate — a powerful Turkic steppe empire controlling the region between the Black Sea and the Caspian — converted to Judaism. The sources for this event include the famous Khazar Correspondence (letters between the Khazar king Joseph and the Jewish scholar Hasdai ibn Shaprut, ~960 CE) and accounts by Arab, Byzantine, and Hebrew chroniclers. The reasons debated by historians include: a deliberate act of diplomatic neutrality between the Islamic Caliphate and Christian Byzantium; genuine theological persuasion; and the influence of a significant existing Jewish merchant diaspora in Khazar territory. Arthur Koestler's The Thirteenth Tribe (1976) controversially argued that the Khazar conversion made Ashkenazi Jews primarily of Khazar rather than Levantine descent — a thesis that population genetics has largely not supported but which continues to generate discussion. What does the Khazar conversion reveal about the political uses of religious identity in medieval statecraft?",
+      author:"Koestler_ref", cat:"identity", up:2341, dn:876, replies:63,
+      tag:"HISTORICALLY FASCINATING", tagColor:"var(--gold-text)" },
+  ],
+
+  405: [ // Tocharian
+    { id:52, title:"The Tarim Basin mummies: red-haired, fair-skinned Bronze Age people in western China — who were they?",
+      body:"The Tarim Basin mummies of Xinjiang — naturally preserved by the extreme desert conditions of the Taklamakan — have been known since the late 19th century but became a subject of intense scholarly and political controversy from the 1990s onward. Many mummies from ~2000–500 BCE display distinctly Western physical features: reddish or blonde hair, tall stature, and clothing with tartan-like woven patterns reminiscent of Bronze Age European textiles. Ancient DNA analysis published in Nature in 2021 confirmed the Tarim Basin population was genetically isolated with origins in the Ancient North Eurasian (ANE) lineage — not migrants from the West or East but a remnant of a much older population. These people almost certainly spoke proto-Tocharian, an Indo-European language whose closest relatives are Celtic and Italic — meaning people speaking a language ancestral to Latin and Gaelic were living in western China 4,000 years ago. What does this tell us about the population history of Eurasia and the movement of Indo-European languages?",
+      author:"Reich_ref", cat:"identity", up:3102, dn:543, replies:72,
+      tag:"PARADIGM SHIFTING", tagColor:"var(--gold-text)" },
+  ],
+
+  409: [ // Poverty Point
+    { id:53, title:"Poverty Point: hunter-gatherers building a city 3,700 years ago in Louisiana — the North American Göbekli Tepe?",
+      body:"Poverty Point (~1700–1100 BCE) in present-day Louisiana was built by people who were, by every conventional definition, hunter-gatherers — no domesticated crops, no pottery in the earliest phases, no agricultural surplus. Yet they constructed a complex of six concentric C-shaped earthen ridges covering 400 acres, plus several large mounds, requiring the movement of an estimated 238,000 cubic metres of earth. The largest mound, Mound A, stands 22 metres tall. Poverty Point was also a major long-distance trade hub, drawing in copper from the Great Lakes, galena from Missouri, and stone from the Appalachians. It predates any other major earthwork complex in North America by a thousand years. Like Göbekli Tepe, Poverty Point fundamentally challenges the assumption that monumental architecture requires agriculture. How many other pre-agricultural monument-building cultures remain undiscovered — or unrecognised for what they are?",
+      author:"Archaeo_src", cat:"general", up:2109, dn:398, replies:49,
+      tag:"PARADIGM SHIFTING", tagColor:"var(--gold-text)" },
+  ],
+
+  413: [ // Zapotec
+    { id:54, title:"The Zapotec writing system: Mesoamerica's earliest script — and why it still hasn't been fully deciphered",
+      body:"The Zapotec script of ancient Oaxaca (~500 BCE onward) is among the oldest writing systems in the Americas and possibly the oldest in Mesoamerica, predating the better-known Maya script. Carved on stone monuments (danzantes) at Monte Albán, the signs include what appear to be logograms, calendrical glyphs, and possibly phonetic elements — but no complete decipherment has been achieved. The reasons are partly practical: the corpus is small, no bilingual key exists, and the modern Zapotec languages may have diverged sufficiently from ancient Zapotec to prevent direct phonetic reconstruction. The script's relationship to the later Isthmian/Epi-Olmec script and to the Maya script remains debated. The Zapotecs also independently developed the 260-day ritual calendar and 365-day solar calendar combination — an intellectual achievement they share with the Maya, raising the question of independent invention versus diffusion. What would a decipherment of Zapotec unlock about early Mesoamerican history?",
+      author:"Archaeo_src", cat:"technology", up:1432, dn:276, replies:35,
+      tag:"OPEN QUESTION", tagColor:"var(--teal)" },
+  ],
+
+  416: [ // Garamantian
+    { id:55, title:"The Garamantes' underground city of water: 3,500km of hand-dug tunnels beneath the Sahara",
+      body:"The Garamantian civilisation of the central Sahara (present-day Fezzan, Libya) built what may be the most ambitious hydraulic engineering project in the ancient world: a network of underground irrigation tunnels — foggaras — stretching over 3,500km in total length, hand-excavated through sandstone to tap fossil water aquifers lying tens of metres below the desert surface. This system, built and maintained over approximately 1,000 years, sustained oasis agriculture and a population of perhaps 100,000 people in one of Earth's most hostile environments. At their peak (~1st–3rd century CE), the Garamantes controlled trans-Saharan trade routes that linked sub-Saharan Africa to Roman North Africa, trading in gold, slaves, and exotic animals. Roman military records document them as a significant regional power. The fossil aquifers were eventually depleted, and the Garamantian civilisation collapsed — a documented historical case of a complex society destroyed by exhaustion of its primary non-renewable resource. What are the modern resonances of this collapse?",
+      author:"Archaeo_src", cat:"technology", up:1876, dn:203, replies:44,
+      tag:"CONFIRMED REMARKABLE", tagColor:"var(--gold-text)" },
+  ],
+
+  418: [ // Swahili City-States
+    { id:56, title:"The Swahili Coast: medieval Africa's Indian Ocean civilisation that connected four continents",
+      body:"Between approximately 800–1500 CE, the Swahili city-states of the East African coast — Kilwa Kisiwani, Mombasa, Pate, Malindi, Zanzibar, Sofala — formed one of the medieval world's most sophisticated commercial networks, linking the gold, ivory, and iron of inland Africa to Arabia, Persia, India, and China. Ibn Battuta, visiting Kilwa in 1331 CE, called it one of the most beautiful cities in the world — a coral-stone town of mosques, palaces, and busy markets. Chinese Ming Dynasty records document Zheng He's fleets reaching the East African coast in 1418–1422, with Swahili envoys sending giraffes to the imperial court. The Swahili material culture is a genuine synthesis — not a derivative — of African, Arab, Persian, and Indian traditions, producing a distinctive architectural and artistic vocabulary. The Portuguese arrival in 1498 began the violent dismantling of this system through bombardment, coercion, and the redirection of Indian Ocean trade. How should the Swahili Coast reframe our understanding of medieval Africa's global integration?",
+      author:"Archaeo_src", cat:"general", up:2341, dn:287, replies:52,
+      tag:"CONFIRMED — UNDERREPRESENTED", tagColor:"var(--gold-text)" },
+  ],
+
+  420: [ // Hyperborea
+    { id:57, title:"Hyperborea: Greek myth, encoded memory, or evidence for Hapgood's crustal displacement?",
+      body:"The Hyperboreans appear across Greek sources — Pindar, Herodotus, Hecataeus of Abdera, Diodorus Siculus — as a blessed, long-lived people living in a land of perpetual sunshine beyond the north wind, associated with Apollo's worship and described as sending offerings to Delos. The tradition is too consistent across too many independent sources to dismiss as pure fantasy — but what does it encode? Mainstream classical scholarship treats it as a utopian literary device. Charles Hapgood's crustal displacement hypothesis (Earth's Shifting Crust, 1958) proposed that a pre-displacement polar configuration placed the Arctic in a temperate zone, making 'Hyperborea' a genuine geographic memory of habitable northern lands. Rand Flem-Ath extended this to connect Hyperborea to his Antarctic Atlantis thesis. The persistence of the northern paradise tradition across Greek, Norse (Asgard), Hindu (Uttarakuru), and Celtic (Tír na nÓg) mythologies raises the question: are these independent inventions of a utopian north, or convergent memories of something real? What framework could distinguish between these interpretations?",
+      author:"Hapgood_ref", cat:"general", up:1654, dn:987, replies:58,
+      tag:"HIGHLY DEBATED", tagColor:"var(--teal)" },
+  ],
+
+  421: [ // Tartaria / Proto-Writing
+    { id:58, title:"The Tartaria tablets and the Vinča script: did Europe develop writing before Sumer?",
+      body:"The Tartaria tablets — three clay tablets found in Romania in 1961 and radiocarbon-dated to approximately 5300 BCE — bear inscribed signs that, if genuinely that old, predate the earliest accepted Sumerian proto-cuneiform by over a millennium. Romanian archaeologist Nicolae Vlassa noted apparent similarities to early Sumerian signs. Subsequent scholars have argued the signs belong to the broader Vinča culture symbolic system — sometimes called the Danube Script or Old European Script — which produced hundreds of incised symbols across southeastern European pottery from ~5700–4500 BCE. Marija Gimbutas and Harald Haarmann argued this constitutes an independent writing system; mainstream archaeology counters that without phonetic or semantic decoding it remains a symbolic system, not writing. The dating controversy is also live: some scholars argue the tablets were intrusive, placed in a later context. If the Vinča system is genuine proto-writing, it upends the Near Eastern origin narrative for one of humanity's most transformative technologies. What would a convincing decipherment require?",
+      author:"Gimbutas_ref", cat:"technology", up:2109, dn:1032, replies:67,
+      tag:"ACTIVELY DEBATED", tagColor:"var(--teal)" },
+  ],
+
+  424: [ // Polynesian Navigation
+    { id:59, title:"Polynesian wayfinding: navigating 10 million square kilometres of open ocean without instruments — how?",
+      body:"Between approximately 300–1300 CE, Polynesian navigators settled every habitable island in the Pacific — from Hawaii to New Zealand to Easter Island — using double-hulled canoes and a navigation system maintained entirely in oral and embodied tradition, without compass, sextant, or chart. The wayfinding system, reconstructed through the work of scholars including David Lewis (We, the Navigators, 1972) and preserved by master navigators such as Mau Piailug of Satawal, integrated star paths (the rising and setting of specific stars used as directional beacons), ocean swell direction and feel, cloud formation patterns over islands, bird behaviour, phosphorescent wake patterns, and wind shifts. The precision required to locate a target island of a few kilometres across after weeks of open-ocean sailing is extraordinary. Thor Heyerdahl's Kon-Tiki experiment proposed significant eastward contact with South America; genetic studies published in 2020 confirmed pre-Columbian admixture between Polynesian and South American populations in eastern Polynesia. What does Polynesian navigation tell us about the cognitive and cultural capabilities of non-literate maritime societies?",
+      author:"Heyerdahl_ref", cat:"technology", up:3109, dn:432, replies:76,
+      tag:"CONFIRMED REMARKABLE", tagColor:"var(--gold-text)" },
+  ],
+
+  430: [ // Dorset / Tunit
+    { id:60, title:"The Tunit — the Dorset people in Inuit memory: what do oral traditions preserve about a vanished population?",
+      body:"The Dorset culture (~500 BCE–1500 CE) of the Canadian Arctic and Greenland were the primary human inhabitants of the high Arctic before the arrival of Thule Inuit ancestors from Alaska around 1000 CE. In Inuit oral tradition, the Dorset are remembered as the Tunit — a race of giants of extraordinary physical strength who were nevertheless easily startled and ultimately displaced. Ancient DNA analysis published in 2014 confirmed that the Dorset people were genetically entirely distinct from all living Arctic populations, including Inuit — a separate migration wave from Siberia that had occupied the Arctic for approximately 4,000 years before being replaced within a few generations. The Dorset left no dogs, no bows, no open-water boats — technological absences that may explain their vulnerability. Their replacement by Thule Inuit is one of the few documented cases of complete population replacement in the historical Arctic. The Tunit oral tradition is therefore one of the rare instances where Indigenous memory demonstrably preserves accurate information about a now-extinct human population. What does this tell us about the reliability of oral tradition as historical evidence across millennia?",
+      author:"Archaeo_src", cat:"identity", up:1987, dn:276, replies:47,
+      tag:"CONFIRMED REMARKABLE", tagColor:"var(--gold-text)" },
+  ],
+};
+
+// ── COMMUNITY PAGE JS ─────────────────────────────────────
+let activeCivId = null;
+let activeTab   = 'threads';
+let threadVotes = {};
+
+// Build sidebar civ list
+function buildSidebar(filter) {
+  const list = document.getElementById('comm-civ-list');
+  const q    = (filter || '').toLowerCase();
+  list.innerHTML = '';
+
+  const types = ['theorized','debated','confirmed'];
+  const labels = { theorized:'THEORIZED', debated:'DEBATED', confirmed:'CONFIRMED' };
+  const colors = { confirmed:'#9a6e08', theorized:'#6b21a8', debated:'#0c6a69' };
+
+  types.forEach(type => {
+    const civs = CIVS
+      .filter(c => c.t === type)
+      .filter(c => !q || c.n.toLowerCase().includes(q) || c.r.toLowerCase().includes(q))
+      .sort((a,b) => a.n.localeCompare(b.n));
+    if (!civs.length) return;
+
+    const sec = document.createElement('div');
+    sec.className = 'sidebar-section-label';
+    sec.textContent = labels[type];
+    list.appendChild(sec);
+
+    civs.forEach(c => {
+      const item = document.createElement('div');
+      item.className = 'civ-list-item' + (c.id === activeCivId ? ' active' : '');
+      item.dataset.id = c.id;
+      const threadCount = (SEED_THREADS[c.id] || []).length;
+      item.innerHTML = `
+        <div class="civ-list-dot" style="background:${colors[c.t]};"></div>
+        <span class="civ-list-name">${c.n}</span>
+        ${threadCount ? `<span class="civ-thread-count">${threadCount}</span>` : ''}`;
+      item.addEventListener('click', () => selectCiv(c.id));
+      list.appendChild(item);
+    });
+  });
+}
+
+function selectCiv(civId) {
+  activeCivId = civId;
+  const civ = CIVS.find(c => c.id === civId);
+  if (!civ) return;
+
+  // Tell CLIO the context
+  if (window.CLIO) CLIO.setActiveCiv(civ);
+
+  // Update sidebar active state
+  document.querySelectorAll('.civ-list-item').forEach(el => {
+    el.classList.toggle('active', parseInt(el.dataset.id) === civId);
+  });
+
+  // Show civ header
+  const tc  = { confirmed:'#c09010', theorized:'#9a60c0', debated:'#3aabb0' }[civ.t];
+  const dur = Math.abs(civ.e - civ.s);
+  const hdr = document.getElementById('comm-civ-header');
+  hdr.style.display = 'block';
+  hdr.innerHTML = `
+    <div class="comm-civ-type" style="color:${tc};">◈ ${civ.t.toUpperCase()} · ${civ.r}</div>
+    <div class="comm-civ-title" style="color:${tc};">${civ.n}</div>
+    <div class="comm-civ-meta">
+      <span>${fmtYear(civ.s)} → ${fmtYear(civ.e)}</span>
+      <span style="color:var(--text-dim);">${dur.toLocaleString()} years</span>
+      ${civ.lang && civ.lang !== 'unknown' ? `<span>LANG: ${civ.lang.replace(/-/g,' ').toUpperCase()}</span>` : ''}
+      ${civ.gov  && civ.gov  !== 'unknown' ? `<span>GOV: ${civ.gov.toUpperCase()}</span>` : ''}
+    </div>
+    <p class="comm-civ-desc">${civ.d}</p>
+    <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;">
+      <button class="btn" style="font-size:9px;"
+        onclick="CLIO.open();CLIO.ask('Tell me everything significant about ${civ.n.replace(/'/g,"\\'")}')">
+        ✦ Ask CLIO about ${civ.n}
+      </button>
+      <a href="index.html" class="btn" style="font-size:9px;text-decoration:none;">
+        VIEW ON TIMELINE →
+      </a>
+      <a href="globe.html" class="btn" style="font-size:9px;text-decoration:none;">
+        VIEW ON GLOBE →
+      </a>
+    </div>`;
+
+  document.getElementById('comm-welcome').style.display     = 'none';
+  document.getElementById('comm-tabs-wrap').style.display   = 'block';
+
+  renderTab('threads', civ);
+  renderTab('dates', civ);
+  renderTab('sources', civ);
+  renderTab('analysis', civ);
+}
+
+function renderTab(tab, civ) {
+  if (tab === 'threads') {
+    const list    = document.getElementById('thread-list');
+    const threads = SEED_THREADS[civ.id] || [];
+    list.innerHTML = '';
+    if (!threads.length) {
+      list.innerHTML = `<div style="font-size:10px;color:var(--text-dim);padding:16px 0;">
+        No threads yet for ${civ.n}. Be the first to start a debate.</div>`;
+      return;
+    }
+    threads.forEach(t => {
+      const v = threadVotes[t.id] || null;
+      const card = document.createElement('div');
+      card.className = 'thread-card';
+      card.innerHTML = `
+        <div class="thread-header">
+          <div class="thread-title">${t.title}</div>
+          <div class="thread-meta">${t.replies} replies</div>
+        </div>
+        <div class="thread-preview">${t.body.substring(0,200)}…</div>
+        <div class="thread-footer">
+          <div class="thread-votes">
+            <button class="thread-vote-btn ${v==='up'?'voted-up':''}"
+              data-tid="${t.id}" data-dir="up">▲ ${t.up + (v==='up'?1:0)}</button>
+            <button class="thread-vote-btn"
+              data-tid="${t.id}" data-dir="dn">▼ ${t.dn}</button>
+          </div>
+          <span class="thread-tag"
+            style="color:${t.tagColor};border-color:${t.tagColor}40;">${t.tag}</span>
+          <span style="font-size:8px;color:var(--text-dim);margin-left:auto;">
+            ${t.cat.toUpperCase()}</span>
+          <span id="follow-btn-${t.id}" style="margin-left:8px;"></span>
+        </div>`;
+      card.querySelectorAll('.thread-vote-btn').forEach(btn => {
+        btn.addEventListener('click', e => {
+          e.stopPropagation();
+          if (threadVotes[t.id]) return;
+          threadVotes[t.id] = btn.dataset.dir;
+          renderTab('threads', civ);
+          // Phase 9: auto-follow thread + push notification
+          if (typeof NotificationsEngine !== 'undefined') {
+            NotificationsEngine.onThreadVote(t.id, t.title, civ.id, civ.n, btn.dataset.dir);
+          }
+          if (btn.dataset.dir === 'up' && typeof ShareEngine !== 'undefined') {
+            ShareEngine.triggerShare({
+              type: 'vote',
+              civId: civ.id,
+              civName: civ.n,
+              threadId: t.id,
+              threadTitle: t.title,
+              voteCount: t.up + 1,
+              dnCount: t.dn,
+            });
+          }
+        });
+      });
+      list.appendChild(card);
+      // Inject Follow button after card is in the DOM
+      const followSlot = document.getElementById(`follow-btn-${t.id}`);
+      if (followSlot && typeof NotificationsUI !== 'undefined') {
+        followSlot.appendChild(NotificationsUI.makeFollowButton('thread', t.id, t.title));
+      }
+      card.addEventListener('click', () => {
+        if (window.CLIO) {
+          CLIO.open();
+          CLIO.ask(`In the context of ${civ.n}: "${t.title}" — what are the key arguments on both sides?`);
+        }
+      });
+    });
+  }
+
+  if (tab === 'dates') {
+    const el = document.getElementById('date-challenge-list');
+    el.innerHTML = `
+      <div class="thread-card" style="cursor:default;">
+        <div class="thread-title" style="margin-bottom:6px;">
+          ${civ.n} — Accepted Date Range</div>
+        <div style="font-size:10px;color:var(--text-secondary);margin-bottom:8px;">
+          ${fmtYear(civ.s)} → ${fmtYear(civ.e)}
+          <span style="color:var(--text-dim);margin-left:8px;">
+            (${Math.abs(civ.e-civ.s).toLocaleString()} years)</span>
+        </div>
+        <div style="font-size:9px;color:var(--text-dim);">
+          Phase 3: Submit alternative date theories with supporting evidence.
+          Accepted challenges will render as ghost bars on the main timeline.
+        </div>
+      </div>`;
+  }
+
+  if (tab === 'sources') {
+    const el = document.getElementById('source-list');
+    el.innerHTML = `<div style="font-size:10px;color:var(--text-dim);padding:8px 0;">
+      Phase 3: Community source submissions for ${civ.n} will appear here.
+      Submit Tier 1–3 sources, PDFs, or research links. CLIO summarizes each.
+    </div>`;
+  }
+
+  if (tab === 'analysis') {
+    const dims = ['Geography & Demography','Economy & Subsistence',
+      'Sociopolitical Organization','Culture, Religion & Cosmology',
+      'Science, Technology & Communication','Conflict & Dynamics'];
+    const el = document.getElementById('analysis-content');
+    el.innerHTML = dims.map(d => `
+      <div class="thread-card" style="cursor:default;margin-bottom:8px;">
+        <div style="font-size:9px;letter-spacing:2px;color:var(--text-dim);
+             margin-bottom:4px;">◈ ${d.toUpperCase()}</div>
+        <div style="font-size:10px;color:var(--text-secondary);">
+          Phase 3: Structured analysis for ${civ.n} — ${d}.
+          Community contribution invited.
+        </div>
+      </div>`).join('');
+  }
+}
+
+// Tab switching
+document.querySelectorAll('.comm-tab').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.comm-tab').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    activeTab = btn.dataset.tab;
+    ['threads','dates','sources','analysis'].forEach(t => {
+      document.getElementById('tab-' + t).style.display = t === activeTab ? 'block' : 'none';
+    });
+  });
+});
+
+// Thread submit
+document.getElementById('thread-submit-btn').addEventListener('click', () => {
+  const title = document.getElementById('thread-title-input').value.trim();
+  const body  = document.getElementById('thread-body-input').value.trim();
+  if (!title || !body) { alert('Please provide a title and argument.'); return; }
+  alert('Phase 3: Thread submission will go live with user accounts. ' +
+        'Your thread will be pre-screened by CLIO before publishing.');
+
+  // Phase 8: offer a share prompt for the new contribution
+  if (typeof ShareEngine !== 'undefined' && activeCivId != null) {
+    const civ = CIVS.find(c => c.id === activeCivId);
+    ShareEngine.triggerShare({
+      type: 'comment',
+      civId: activeCivId,
+      civName: civ ? civ.n : '',
+      threadTitle: title,
+    });
+  }
+  // Phase 9: auto-follow the new thread and push a notification
+  if (typeof NotificationsEngine !== 'undefined' && activeCivId != null) {
+    const civ = CIVS.find(c => c.id === activeCivId);
+    const syntheticId = Date.now();
+    NotificationsEngine.onThreadPost(syntheticId, title, civ ? civ.n : '');
+  }
+});
+
+// Search
+document.getElementById('comm-search').addEventListener('input', e => {
+  buildSidebar(e.target.value);
+});
+
+// Format year helper
+function fmtYear(y) {
+  if (y === 0) return '1 CE';
+  return y < 0 ? Math.abs(y).toLocaleString()+' BCE' : y.toLocaleString()+' CE';
+}
+
+// Init
+buildSidebar();
+</script>
+
+</body>
+</html>

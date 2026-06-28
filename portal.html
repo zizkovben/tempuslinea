@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tempus Linea — My Portal</title>
+  <meta name="description" content="Tempus Linea personal research portal — collect, study, and contribute to the archive.">
+  <meta property="og:title" content="Tempus Linea — My Research Portal">
+  <meta property="og:url" content="https://tempuslinea.com/portal">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    /* ── PORTAL SHELL ──────────────────────────────────────── */
+    .portal-shell {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    .portal-body {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    /* ── SIDEBAR ────────────────────────────────────────────── */
+    .portal-sidebar {
+      width: 220px;
+      flex-shrink: 0;
+      border-right: 1px solid var(--border-dim);
+      background: var(--bg-panel);
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+    }
+
+    .portal-user-chip {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 16px 14px 14px;
+      border-bottom: 1px solid var(--border-dim);
+    }
+
+    .user-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: rgba(107,33,168,.25);
+      border: 1px solid rgba(107,33,168,.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-display);
+      font-size: 14px;
+      color: var(--violet-text);
+      flex-shrink: 0;
+    }
+
+    .user-name-wrap { overflow: hidden; }
+
+    .user-name-display {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--text-primary);
+      letter-spacing: 1px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .user-role {
+      font-size: 8px;
+      color: var(--text-dim);
+      letter-spacing: 1.5px;
+      margin-top: 2px;
+    }
+
+    .sidebar-nav {
+      padding: 10px 0;
+      flex: 1;
+    }
+
+    .sidebar-nav-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 16px;
+      font-family: var(--font-mono);
+      font-size: 9px;
+      letter-spacing: 1.5px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: background .15s, color .15s;
+      user-select: none;
+    }
+
+    .sidebar-nav-item:hover {
+      background: var(--bg-hover);
+      color: var(--text-primary);
+    }
+
+    .sidebar-nav-item.active {
+      background: rgba(10,106,105,.12);
+      color: var(--teal-hi);
+      border-left: 2px solid var(--teal-hi);
+    }
+
+    .nav-badge {
+      font-size: 8px;
+      background: rgba(20,55,130,.4);
+      color: var(--text-secondary);
+      padding: 1px 6px;
+      border-radius: 10px;
+      min-width: 18px;
+      text-align: center;
+    }
+
+    /* Insights nav item gets a violet accent */
+    [data-panel="insights"].active {
+      background: rgba(107,33,168,.1);
+      color: var(--violet-hi);
+      border-left: 2px solid var(--violet-hi);
+    }
+
+    .sidebar-clio-btn {
+      padding: 14px;
+      border-top: 1px solid var(--border-dim);
+    }
+
+    /* ── MAIN CONTENT ───────────────────────────────────────── */
+    .portal-main {
+      flex: 1;
+      overflow-y: auto;
+      padding: 24px;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(20,55,130,.3) transparent;
+    }
+
+    /* ── PANELS ─────────────────────────────────────────────── */
+    .portal-panel { display: none; }
+    .portal-panel.active { display: block; }
+
+    /* ── OVERVIEW STATS ─────────────────────────────────────── */
+    .overview-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .stat-card {
+      background: var(--bg-card);
+      border: 1px solid rgba(20,55,130,.3);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      text-align: center;
+    }
+
+    .stat-number {
+      font-family: var(--font-display);
+      font-size: 28px;
+      color: var(--gold);
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+
+    .stat-label {
+      font-size: 8px;
+      color: var(--text-dim);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    /* ── ACTIVITY FEED ──────────────────────────────────────── */
+    .activity-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 6px 0;
+      border-bottom: 1px solid rgba(12,35,80,.2);
+      font-size: 10px;
+      color: var(--text-secondary);
+      font-family: var(--font-mono);
+    }
+
+    .activity-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      margin-top: 4px;
+    }
+
+    .activity-time {
+      color: var(--text-dim);
+      font-size: 9px;
+      flex-shrink: 0;
+    }
+
+    /* ── EMPTY STATES ───────────────────────────────────────── */
+    .empty-state { text-align: center; padding: 40px 20px; }
+
+    .empty-icon {
+      font-size: 32px;
+      color: var(--text-dim);
+      margin-bottom: 12px;
+    }
+
+    .empty-title {
+      font-family: var(--font-display);
+      font-size: 13px;
+      color: var(--text-secondary);
+      letter-spacing: 2px;
+      margin-bottom: 8px;
+    }
+
+    .empty-body {
+      font-size: 10px;
+      color: var(--text-dim);
+      line-height: 1.7;
+      max-width: 360px;
+      margin: 0 auto;
+    }
+
+    /* ── PROFILE FORM ───────────────────────────────────────── */
+    .profile-form { max-width: 520px; }
+
+    .profile-field { margin-bottom: 16px; }
+
+    .profile-field label {
+      display: block;
+      font-size: 8px;
+      letter-spacing: 2px;
+      color: var(--text-dim);
+      margin-bottom: 6px;
+      font-family: var(--font-mono);
+    }
+
+    .profile-field input,
+    .profile-field textarea {
+      width: 100%;
+      background: var(--bg-card);
+      border: 1px solid rgba(20,55,130,.35);
+      color: var(--text-primary);
+      font-family: var(--font-mono);
+      font-size: 10px;
+      padding: 8px 10px;
+      border-radius: 3px;
+      outline: none;
+      box-sizing: border-box;
+      transition: border-color .15s;
+    }
+
+    .profile-field input:focus,
+    .profile-field textarea:focus { border-color: var(--teal); }
+
+    .profile-field textarea { min-height: 80px; resize: vertical; }
+
+    .profile-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    /* ── SECTION HEADERS ────────────────────────────────────── */
+    .panel-section-title {
+      font-family: var(--font-display);
+      font-size: 11px;
+      letter-spacing: 3px;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      margin-bottom: 14px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border-dim);
+    }
+
+    /* ── SAVED CIVS ─────────────────────────────────────────── */
+    .saved-panel-tools {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+    .saved-panel-tools input {
+      flex: 1;
+      min-width: 160px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-dim);
+      color: var(--text-primary);
+      font-family: var(--font-mono);
+      font-size: 10px;
+      padding: 5px 10px;
+      border-radius: 3px;
+      outline: none;
+    }
+    .filter-chip {
+      background: transparent;
+      border: 1px solid var(--border-dim);
+      color: var(--text-dim);
+      font-family: var(--font-mono);
+      font-size: 8px;
+      letter-spacing: 1px;
+      padding: 4px 10px;
+      border-radius: 2px;
+      cursor: pointer;
+      transition: all .12s;
+    }
+    .filter-chip.active,
+    .filter-chip:hover {
+      border-color: var(--teal);
+      color: var(--teal-hi);
+    }
+    .saved-civ-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 7px 0;
+      border-bottom: 1px solid rgba(12,35,80,.2);
+      font-family: var(--font-mono);
+    }
+    .civ-type-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .dot-confirmed  { background: var(--gold-dim); }
+    .dot-theorized  { background: var(--violet); }
+    .dot-debated    { background: var(--teal); }
+    .saved-civ-name  { font-size: 10px; color: var(--text-primary); flex: 1; }
+    .saved-civ-region { font-size: 9px; color: var(--text-dim); }
+    .saved-civ-note-indicator { font-size: 8px; color: var(--gold-dim); letter-spacing: 1px; }
+    .saved-civ-remove {
+      background: transparent;
+      border: none;
+      color: var(--text-dim);
+      font-size: 14px;
+      cursor: pointer;
+      padding: 0 4px;
+      transition: color .12s;
+    }
+    .saved-civ-remove:hover { color: #c0302a; }
+
+    /* ── COLLECTIONS ────────────────────────────────────────── */
+    .collection-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 12px;
+      margin-top: 10px;
+    }
+    .collection-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-dim);
+      border-radius: 4px;
+      padding: 14px;
+      cursor: pointer;
+      transition: border-color .15s;
+    }
+    .collection-card:hover { border-color: var(--teal); }
+    .collection-card-name {
+      font-size: 11px;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+    }
+    .collection-card-meta {
+      font-size: 8px;
+      color: var(--text-dim);
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+    }
+    .collection-card-tags { display: flex; flex-wrap: wrap; gap: 4px; }
+    .coll-tag {
+      font-size: 8px;
+      background: rgba(20,55,130,.3);
+      color: var(--text-secondary);
+      padding: 2px 6px;
+      border-radius: 2px;
+    }
+    .new-collection-btn {
+      background: transparent;
+      border: 1px dashed rgba(10,106,105,.3);
+      color: var(--teal-hi);
+      font-family: var(--font-mono);
+      font-size: 9px;
+      letter-spacing: 1px;
+      padding: 10px;
+      border-radius: 4px;
+      cursor: pointer;
+      width: 100%;
+      transition: border-color .15s, background .15s;
+    }
+    .new-collection-btn:hover {
+      border-color: var(--teal-hi);
+      background: rgba(10,106,105,.06);
+    }
+    .btn-secondary {
+      background: transparent;
+      border: 1px solid var(--border-dim);
+      color: var(--text-secondary);
+      font-family: var(--font-mono);
+      font-size: 9px;
+      letter-spacing: 1px;
+      padding: 5px 12px;
+      border-radius: 2px;
+      cursor: pointer;
+      transition: all .12s;
+    }
+    .btn-secondary:hover { border-color: var(--teal); color: var(--teal-hi); }
+    .btn-primary {
+      background: rgba(10,106,105,.15);
+      border: 1px solid var(--teal);
+      color: var(--teal-hi);
+      font-family: var(--font-mono);
+      font-size: 9px;
+      letter-spacing: 1px;
+      padding: 5px 12px;
+      border-radius: 2px;
+      cursor: pointer;
+      transition: all .12s;
+    }
+    .btn-primary:hover { background: rgba(10,106,105,.25); }
+
+    /* ── NOTES ──────────────────────────────────────────────── */
+    .notes-layout {
+      display: grid;
+      grid-template-columns: 200px 1fr;
+      gap: 16px;
+      height: calc(100vh - 240px);
+    }
+    .notes-list-col {
+      border-right: 1px solid var(--border-dim);
+      overflow-y: auto;
+      scrollbar-width: thin;
+    }
+    .note-item {
+      padding: 8px 10px;
+      border-bottom: 1px solid rgba(12,35,80,.2);
+      cursor: pointer;
+      transition: background .12s;
+    }
+    .note-item:hover { background: var(--bg-hover); }
+    .note-item.active { background: rgba(10,106,105,.1); border-left: 2px solid var(--teal); }
+    .note-item-title { font-size: 10px; color: var(--text-primary); }
+    .note-item-meta  { font-size: 8px; color: var(--text-dim); margin-top: 2px; }
+    .note-editor-col {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      overflow: hidden;
+    }
+    .note-editor-col input,
+    .note-editor-col textarea {
+      background: var(--bg-card);
+      border: 1px solid var(--border-dim);
+      color: var(--text-primary);
+      font-family: var(--font-mono);
+      font-size: 10px;
+      padding: 7px 10px;
+      border-radius: 3px;
+      outline: none;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    .note-editor-col textarea {
+      flex: 1;
+      resize: none;
+      min-height: 300px;
+    }
+    .note-editor-col input:focus,
+    .note-editor-col textarea:focus { border-color: var(--violet); }
+    .note-actions { display: flex; gap: 8px; }
+    .note-empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      color: var(--text-dim);
+      font-size: 10px;
+      letter-spacing: 1px;
+      gap: 8px;
+    }
+
+    /* ── DRAFT QUEUE ────────────────────────────────────────── */
+    .queue-item {
+      background: var(--bg-card);
+      border: 1px solid var(--border-dim);
+      border-radius: 4px;
+      padding: 12px 14px;
+      margin-bottom: 10px;
+    }
+    .queue-item-header {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+    .queue-status {
+      font-size: 8px;
+      letter-spacing: 1.5px;
+      padding: 2px 7px;
+      border-radius: 2px;
+    }
+    .queue-status.draft  { background: rgba(107,33,168,.2); color: var(--violet-hi); }
+    .queue-status.ready  { background: rgba(10,106,105,.2); color: var(--teal-hi); }
+    .queue-item-title { font-size: 10px; color: var(--text-primary); }
+    .queue-item-body  { font-size: 9px;  color: var(--text-dim); line-height: 1.5; margin-bottom: 8px; }
+    .queue-item-actions { display: flex; gap: 8px; }
+
+    /* ── TOAST ──────────────────────────────────────────────── */
+    #portalToast {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%) translateY(10px);
+      background: rgba(10,106,105,.9);
+      border: 1px solid var(--teal-hi);
+      padding: 7px 18px;
+      border-radius: 3px;
+      font-family: var(--font-mono);
+      font-size: 9px;
+      letter-spacing: 2px;
+      color: var(--teal-hi);
+      opacity: 0;
+      pointer-events: none;
+      z-index: 8000;
+      transition: opacity .25s, transform .25s;
+    }
+    #portalToast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* ── COLLECTION MODAL ───────────────────────────────────── */
+    #collectionModal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(4,8,18,.72);
+      z-index: 7000;
+      align-items: center;
+      justify-content: center;
+    }
+    #collectionModal.open { display: flex; }
+    .modal-inner {
+      background: var(--bg-card);
+      border: 1px solid rgba(20,55,130,.45);
+      border-radius: 4px;
+      padding: 24px;
+      width: min(420px, 92vw);
+    }
+
+    /* ── RESPONSIVE ─────────────────────────────────────────── */
+    @media (max-width: 650px) {
+      .portal-sidebar { width: 100%; height: auto; }
+      .portal-body    { flex-direction: column; }
+      .notes-layout   { grid-template-columns: 1fr; height: auto; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="portal-shell">
+
+  <!-- ══ HEADER ═══════════════════════════════════════════ -->
+  <header class="app-header">
+    <div>
+      <div class="logo-title">TEMPUS LINEA</div>
+      <div class="logo-sub">MY RESEARCH PORTAL · PERSONAL ARCHIVE</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;">
+      <span style="font-size:9px;color:var(--violet-text);letter-spacing:2px;
+                   border:1px solid rgba(107,33,168,.3);padding:4px 10px;border-radius:3px;">
+        ✦ PHASE 3 PREVIEW
+      </span>
+    </div>
+  </header>
+
+  <!-- ══ NAVIGATION ════════════════════════════════════════ -->
+  <nav class="app-nav">
+    <a href="index.html">TIMELINE</a>
+    <span class="nav-sep">·</span>
+    <a href="globe.html">LIVING ATLAS</a>
+    <span class="nav-sep">·</span>
+    <a href="community.html">COMMUNITY</a>
+    <span class="nav-sep">·</span>
+    <a href="portal.html" class="active">MY PORTAL</a>
+    <span class="nav-sep">·</span>
+    <a href="about.html">ABOUT</a>
+  </nav>
+
+  <div class="portal-body">
+
+    <!-- ══ SIDEBAR ══════════════════════════════════════════ -->
+    <div class="portal-sidebar">
+
+      <div class="portal-user-chip">
+        <div class="user-avatar" id="userAvatar">?</div>
+        <div class="user-name-wrap">
+          <div class="user-name-display" id="userNameDisplay">Guest</div>
+          <div class="user-role">RESEARCHER</div>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <div class="sidebar-nav-item active" data-panel="overview">
+          OVERVIEW <span class="nav-badge">—</span>
+        </div>
+        <div class="sidebar-nav-item" data-panel="profile">
+          MY PROFILE <span class="nav-badge">—</span>
+        </div>
+        <div class="sidebar-nav-item" data-panel="saved">
+          SAVED CIVS <span id="badge-saved" class="nav-badge">0</span>
+        </div>
+        <div class="sidebar-nav-item" data-panel="collections">
+          COLLECTIONS <span id="badge-collections" class="nav-badge">0</span>
+        </div>
+        <div class="sidebar-nav-item" data-panel="notes">
+          NOTES <span id="badge-notes" class="nav-badge">0</span>
+        </div>
+        <div class="sidebar-nav-item" data-panel="queue">
+          DRAFT QUEUE <span id="badge-queue" class="nav-badge">0</span>
+        </div>
+        <div class="sidebar-nav-item" data-panel="bookmarks">
+          BOOKMARKS <span id="badge-bookmarks" class="nav-badge">0</span>
+        </div>
+        <!-- Phase 9: Insights — 8th panel -->
+        <div class="sidebar-nav-item" data-panel="insights">
+          INSIGHTS <span class="nav-badge">◈</span>
+        </div>
+      </nav>
+
+      <div class="sidebar-clio-btn">
+        <button class="btn" id="clioLaunchBtn"
+          style="width:100%;border-color:rgba(107,33,168,.35);
+                 color:var(--violet-text);font-size:9px;">
+          ✦ ASK CLIO
+        </button>
+      </div>
+
+    </div><!-- /portal-sidebar -->
+
+    <!-- ══ MAIN ══════════════════════════════════════════════ -->
+    <div class="portal-main">
+
+      <!-- ── OVERVIEW PANEL ─────────────────────────────────── -->
+      <div class="portal-panel active" id="panel-overview">
+        <div class="panel-section-title">YOUR RESEARCH OVERVIEW</div>
+
+        <div class="overview-stats">
+          <div class="stat-card">
+            <div class="stat-number" id="stat-saved">0</div>
+            <div class="stat-label">SAVED CIVS</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number" id="stat-notes">0</div>
+            <div class="stat-label">NOTES</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number" id="stat-collections">0</div>
+            <div class="stat-label">COLLECTIONS</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number" id="stat-queue">0</div>
+            <div class="stat-label">IN QUEUE</div>
+          </div>
+        </div>
+
+        <div class="panel-section-title">RECENT ACTIVITY</div>
+        <div id="activityList">
+          <div class="empty-state">
+            <div class="empty-icon">◈</div>
+            <div class="empty-title">No activity yet</div>
+            <div class="empty-body">Save civilisations from the Timeline or Atlas to begin building your research archive.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── PROFILE PANEL ──────────────────────────────────── -->
+      <div class="portal-panel" id="panel-profile">
+        <div class="panel-section-title">MY PROFILE</div>
+        <div class="profile-form">
+          <div class="profile-field">
+            <label>DISPLAY NAME</label>
+            <input id="profileName" type="text" placeholder="Your name or pseudonym">
+          </div>
+          <div class="profile-field">
+            <label>USERNAME</label>
+            <input id="profileUsername" type="text" placeholder="@username">
+          </div>
+          <div class="profile-field">
+            <label>BIO</label>
+            <textarea id="profileBio" placeholder="Brief description of your research interests…"></textarea>
+          </div>
+          <div class="profile-field">
+            <label>QUALIFICATIONS / EXPERTISE</label>
+            <input id="profileQuals" type="text" placeholder="Academic or professional background">
+          </div>
+          <div class="profile-field">
+            <label>PUBLISHED WORKS</label>
+            <input id="profileWorks" type="text" placeholder="Books, papers, or articles authored">
+          </div>
+          <div class="profile-field">
+            <label>WEBSITE / LINK</label>
+            <input id="profileLink" type="text" placeholder="https://…">
+          </div>
+          <div class="profile-actions">
+            <button class="btn" id="saveProfileBtn"
+              style="border-color:rgba(10,106,105,.4);color:var(--teal-hi);">
+              ✓ SAVE PROFILE
+            </button>
+            <button class="btn" id="clearProfileBtn">CLEAR FIELDS</button>
+          </div>
+          <div style="margin-top:16px;font-size:9px;color:var(--text-dim);
+                      letter-spacing:1px;line-height:1.7;">
+            Phase 3: Profiles with verified qualifications can be marked as
+            Verified Researcher. Submit evidence of expertise via the Community
+            platform when accounts go live.
+          </div>
+        </div>
+      </div>
+
+      <!-- ── SAVED CIVS PANEL ───────────────────────────────── -->
+      <div class="portal-panel" id="panel-saved">
+        <div class="panel-section-title">SAVED CIVILIZATIONS</div>
+        <div class="saved-panel-tools">
+          <input id="savedSearch" type="text" placeholder="Search saved civs…">
+          <button class="filter-chip active" data-filter="all">ALL</button>
+          <button class="filter-chip" data-filter="confirmed">CONFIRMED</button>
+          <button class="filter-chip" data-filter="debated">DEBATED</button>
+          <button class="filter-chip" data-filter="theorized">THEORIZED</button>
+        </div>
+        <!-- ID matches portal-panels.js: savedList -->
+        <div id="savedList"></div>
+      </div>
+
+      <!-- ── COLLECTIONS PANEL ──────────────────────────────── -->
+      <div class="portal-panel" id="panel-collections">
+        <div class="panel-section-title">MY COLLECTIONS</div>
+        <div style="display:flex;gap:8px;margin-bottom:12px;">
+          <input id="collectionSearch" type="text"
+            placeholder="Search collections…"
+            style="flex:1;background:var(--bg-card);border:1px solid var(--border-dim);
+                   color:var(--text-primary);font-family:var(--font-mono);font-size:10px;
+                   padding:5px 10px;border-radius:3px;outline:none;">
+          <button class="btn" id="newCollectionBtn"
+            style="border-color:rgba(10,106,105,.35);color:var(--teal-hi);font-size:9px;">
+            + NEW
+          </button>
+        </div>
+        <!-- ID matches portal-panels.js: collectionGrid -->
+        <div class="collection-grid" id="collectionGrid"></div>
+      </div>
+
+      <!-- ── NOTES PANEL ────────────────────────────────────── -->
+      <div class="portal-panel" id="panel-notes">
+        <div class="panel-section-title" style="display:flex;justify-content:space-between;
+             align-items:center;">
+          RESEARCH NOTES
+          <button class="btn" id="newNoteBtn"
+            style="font-size:8px;border-color:rgba(107,33,168,.35);
+                   color:var(--violet-hi);">+ NEW NOTE</button>
+        </div>
+        <div class="notes-layout">
+          <div class="notes-list-col">
+            <!-- ID matches portal-panels.js: notesList -->
+            <div id="notesList"></div>
+          </div>
+          <div class="note-editor-col" id="noteEditor" style="display:none;">
+            <input id="noteTitleInput" type="text" placeholder="Note title…">
+            <input id="noteLinkInput"  type="text" placeholder="Link or source URL…">
+            <textarea id="noteBodyInput" placeholder="Write your research notes here…"></textarea>
+            <div class="note-actions">
+              <button class="btn" id="saveNoteBtn"
+                style="border-color:rgba(10,106,105,.4);color:var(--teal-hi);font-size:9px;">
+                ✓ SAVE
+              </button>
+              <button class="btn" id="deleteNoteBtn"
+                style="border-color:rgba(180,30,30,.25);color:#a04040;font-size:9px;">
+                DELETE
+              </button>
+            </div>
+          </div>
+          <div class="note-empty-state" id="noteEmptyState">
+            <div style="font-size:24px;color:var(--text-dim);">◈</div>
+            <div>Select a note or create a new one</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── DRAFT QUEUE PANEL ──────────────────────────────── -->
+      <div class="portal-panel" id="panel-queue">
+        <div class="panel-section-title" style="display:flex;justify-content:space-between;
+             align-items:center;">
+          DRAFT QUEUE
+          <button class="btn" id="newDraftBtn"
+            style="font-size:8px;border-color:rgba(212,160,23,.3);color:var(--gold);">
+            + NEW DRAFT
+          </button>
+        </div>
+        <!-- ID matches portal-panels.js: queueList -->
+        <div id="queueList"></div>
+      </div>
+
+      <!-- ── BOOKMARKS PANEL ────────────────────────────────── -->
+      <div class="portal-panel" id="panel-bookmarks">
+        <div class="panel-section-title">BOOKMARKS</div>
+        <!-- ID matches portal-panels.js: bookmarkList -->
+        <div id="bookmarkList"></div>
+      </div>
+
+      <!-- ── INSIGHTS PANEL (Phase 9 — 8th panel) ──────────── -->
+      <div class="portal-panel" id="panel-insights">
+        <!-- Populated by PortalPanels.renderInsights() -->
+        <div class="empty-state">
+          <div class="empty-icon">◈</div>
+          <div class="empty-title">Loading Insights…</div>
+          <div class="empty-body">Your contribution summary, milestone badges,
+            and activity feed will appear here.</div>
+        </div>
+      </div>
+
+    </div><!-- /portal-main -->
+  </div><!-- /portal-body -->
+
+</div><!-- /portal-shell -->
+
+<!-- ══ TOAST ════════════════════════════════════════════ -->
+<div id="portalToast"></div>
+
+<!-- ══ COLLECTION MODAL ════════════════════════════════ -->
+<div id="collectionModal">
+  <div class="modal-inner">
+    <div style="font-size:9px;letter-spacing:2px;color:var(--teal-hi);
+                margin-bottom:16px;">◈ NEW COLLECTION</div>
+    <div class="profile-field">
+      <label>COLLECTION NAME</label>
+      <input id="newCollectionName" type="text"
+        placeholder="e.g. Pre-Flood Cultures, Ancient Americas…">
+    </div>
+    <div class="profile-field">
+      <label>DESCRIPTION</label>
+      <textarea id="newCollectionDesc"
+        placeholder="What is this collection about?"></textarea>
+    </div>
+    <div style="display:flex;gap:10px;margin-top:12px;">
+      <button class="btn" id="confirmCollectionBtn"
+        style="border-color:rgba(10,106,105,.4);color:var(--teal-hi);">
+        ✓ CREATE
+      </button>
+      <button class="btn" id="cancelCollectionBtn">CANCEL</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SCRIPTS (order matters) ═══════════════════════════ -->
+<script src="data.js"></script>
+<script src="data-extended.js"></script>
+<script src="portal.js"></script>
+<script src="portal-panels.js"></script>
+<script src="share.js"></script>
+<script src="share-ui-styles.js"></script>
+<script src="share-ui.js"></script>
+<script src="notifications.js"></script>
+<script src="notifications-ui.js"></script>
+<script src="clio-prompt.js"></script>
+<script src="clio-ui.js"></script>
+<script src="clio.js"></script>
+
+</body>
+</html>

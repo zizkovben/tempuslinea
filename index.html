@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tempus Linea — The Civilization Timeline</title>
+  <meta name="description" content="Tempus Linea — the definitive interactive archive of all human civilizations, past, present and ancient.">
+  <meta property="og:title" content="Tempus Linea — The Civilization Timeline">
+  <meta property="og:url" content="https://tempuslinea.com">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="app-shell">
+
+  <!-- ══ HEADER ═══════════════════════════════════════════ -->
+  <header class="app-header">
+    <div>
+      <div class="logo-title">TEMPUS LINEA</div>
+      <div class="logo-sub">THE CIVILIZATION TIMELINE · INTERACTIVE ARCHIVE</div>
+    </div>
+
+    <!-- Search -->
+    <div style="display:flex;align-items:center;gap:8px;">
+      <input id="search-box" type="text" placeholder="Search civilizations..."
+        style="background:rgba(10,18,40,.8);border:1px solid rgba(12,35,80,.6);
+               color:#667799;font-family:var(--font-mono);font-size:10px;
+               letter-spacing:1px;padding:5px 12px;border-radius:3px;width:200px;
+               outline:none;">
+      <span id="search-hint" style="font-size:9px;color:var(--text-dim);letter-spacing:1px;"></span>
+    </div>
+  </header>
+
+  <!-- ══ NAVIGATION ════════════════════════════════════════ -->
+  <nav class="app-nav">
+    <a href="index.html" class="active">TIMELINE</a>
+    <span class="nav-sep">·</span>
+    <a href="globe.html">LIVING ATLAS</a>
+    <span class="nav-sep">·</span>
+    <a href="community.html">COMMUNITY</a>
+    <span class="nav-sep">·</span>
+    <a href="portal.html">MY PORTAL</a>
+    <span class="nav-sep">·</span>
+    <a href="about.html">ABOUT</a>
+  </nav>
+
+  <!-- ══ PRESET ZOOM TOOLBAR ═══════════════════════════════ -->
+  <div class="toolbar">
+    <span class="section-label">ZOOM :</span>
+    <div id="preset-btns" style="display:flex;gap:4px;flex-wrap:wrap;"></div>
+
+    <div class="toolbar-sep"></div>
+
+    <!-- Legend -->
+    <div class="legend">
+      <div class="legend-item">
+        <div class="legend-dot" style="background:var(--gold-dim)"></div>
+        <span style="color:var(--gold-text);">CONFIRMED</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-dot" style="background:var(--violet)"></div>
+        <span style="color:var(--violet-text);">THEORIZED</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-dot" style="background:var(--teal)"></div>
+        <span style="color:var(--teal-text);">DEBATED</span>
+      </div>
+    </div>
+
+    <div class="toolbar-sep"></div>
+    <button id="filter-toggle" class="btn">⚙ FILTERS<span id="filter-badge"></span></button>
+    <div class="status-bar">SCROLL TO ZOOM · DRAG TO PAN · TAP TO EXPLORE</div>
+  </div>
+
+  <!-- ══ FILTER PANEL (collapsible) ════════════════════════ -->
+  <div id="filter-panel" style="display:none;"></div>
+
+  <!-- ══ ACTIVE FILTER CHIPS ═══════════════════════════════ -->
+  <div id="filter-chips"
+    style="display:none;align-items:center;gap:6px;flex-wrap:wrap;
+           padding:6px 20px;border-bottom:1px solid rgba(12,35,80,.4);
+           background:rgba(5,10,22,.9);">
+  </div>
+
+  <!-- ══ TIMELINE CANVAS ═══════════════════════════════════ -->
+  <div id="timeline-wrap" style="position:relative;overflow:hidden;touch-action:none;flex:1;">
+    <canvas id="timeline-canvas" style="display:block;cursor:grab;"></canvas>
+  </div>
+
+  <!-- ══ CIVILIZATION DETAIL PANEL ═════════════════════════ -->
+  <div id="info-panel" class="info-panel">
+    <div id="info-inner" class="info-inner"></div>
+  </div>
+
+  <!-- ══ FOOTER ════════════════════════════════════════════ -->
+  <footer style="padding:10px 20px;border-top:1px solid var(--border-dim);
+                 display:flex;justify-content:space-between;align-items:center;
+                 flex-wrap:wrap;gap:8px;background:var(--bg-panel);">
+    <span style="font-size:9px;color:var(--text-dim);letter-spacing:1px;">
+      TEMPUS LINEA · TIMELINE ENGINE
+    </span>
+    <span style="font-size:9px;color:var(--text-dim);letter-spacing:1px;">
+      300 CIVILIZATIONS · CONTRIBUTE IN COMMUNITY
+    </span>
+    <span style="font-size:9px;color:var(--text-dim);letter-spacing:1px;">
+      tempuslinea.com
+    </span>
+  </footer>
+
+</div><!-- /app-shell -->
+
+<!-- ══ SCRIPTS (order matters) ══════════════════════════════ -->
+<script src="data.js"></script>
+<script src="data-extended.js"></script>
+<script src="timeline.js"></script>
+<script src="timeline-ghosts.js"></script>
+<script src="filters.js"></script>
+<script src="ui.js"></script>
+<script src="celestial-data.js"></script>
+<script src="celestial-data-events.js"></script>
+<script src="celestial-data-traditions.js"></script>
+<script src="celestial-data-indigenous.js"></script>
+<script src="celestial.js"></script>
+<script src="share.js"></script>
+<script src="share-ui-styles.js"></script>
+<script src="share-ui.js"></script>
+<script src="notifications.js"></script>
+<script src="notifications-ui.js"></script>
+<script src="clio-prompt.js"></script>
+<script src="clio-ui.js"></script>
+<script src="clio.js"></script>
+
+</body>
+</html>

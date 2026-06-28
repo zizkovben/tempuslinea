@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tempus Linea — About</title>
+<meta name="description" content="Tempus Linea is the definitive interactive archive of human civilizations — past, present, and ancient. Timeline, Living Atlas, and community debate platform.">
+<link rel="canonical" href="https://tempuslinea.com/about">
+<meta property="og:title" content="Tempus Linea — About">
+<meta property="og:description" content="The definitive interactive archive of human civilizations — past, present, and ancient.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://tempuslinea.com/about">
+<meta property="og:site_name" content="Tempus Linea">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg-void:        #06080f;
+  --bg-panel:       #0a0d18;
+  --bg-card:        #0d1120;
+  --bg-hover:       #111828;
+  --gold:           #d4a017;
+  --gold-dim:       #9a6e08;
+  --gold-glow:      rgba(212,160,23,.07);
+  --violet:         #6b21a8;
+  --violet-hi:      #8b41c8;
+  --violet-glow:    rgba(107,33,168,.10);
+  --teal:           #0c6a69;
+  --teal-hi:        #1a9a99;
+  --teal-glow:      rgba(12,106,105,.10);
+  --text-primary:   #8899aa;
+  --text-secondary: #556677;
+  --text-dim:       #1a3040;
+  --border:         rgba(136,153,170,.10);
+  --border-hi:      rgba(136,153,170,.20);
+  --font-display:   'Cinzel', Georgia, serif;
+  --font-mono:      'IBM Plex Mono', 'Courier New', monospace;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg-void);
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.7;
+  min-height: 100vh;
+}
+
+/* ── NAV ── */
+.nav {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(6,8,15,.92); backdrop-filter: blur(12px);
+  border-bottom: 0.5px solid var(--border);
+  padding: 0 2rem; display: flex; align-items: center;
+  justify-content: space-between; height: 52px;
+}
+.nav-brand { font-family: var(--font-display); font-size: 15px; letter-spacing: .18em; color: var(--gold); text-decoration: none; }
+.nav-links { display: flex; gap: 1.5rem; }
+.nav-links a { font-size: 11px; letter-spacing: .1em; color: var(--text-secondary); text-decoration: none; transition: color .2s; }
+.nav-links a:hover { color: var(--text-primary); }
+.nav-links a.active { color: var(--gold); }
+
+/* ── LAYOUT ── */
+.page { max-width: 860px; margin: 0 auto; padding: 3rem 1.5rem 6rem; }
+
+/* ── HERO ── */
+.hero {
+  text-align: center; padding: 3.5rem 1rem 3rem;
+  border-bottom: 0.5px solid var(--border); margin-bottom: 3rem;
+}
+.hero-title {
+  font-family: var(--font-display); font-size: 36px;
+  letter-spacing: .22em; color: var(--gold);
+  margin-bottom: .5rem;
+}
+.hero-sub {
+  font-size: 12px; letter-spacing: .16em;
+  color: var(--text-secondary); margin-bottom: 1.5rem;
+}
+.hero-mission {
+  max-width: 560px; margin: 0 auto;
+  font-size: 13px; color: var(--text-primary); line-height: 1.8;
+}
+.hero-stats {
+  display: flex; justify-content: center; gap: 2.5rem;
+  margin-top: 2rem; flex-wrap: wrap;
+}
+.hero-stat { text-align: center; }
+.hero-stat-val { font-family: var(--font-display); font-size: 26px; color: var(--gold); display: block; }
+.hero-stat-lbl { font-size: 10px; letter-spacing: .12em; color: var(--text-secondary); margin-top: 2px; }
+
+/* ── SECTION ── */
+.section { margin-bottom: 3rem; }
+.section-title {
+  font-family: var(--font-display); font-size: 13px;
+  letter-spacing: .18em; color: var(--gold);
+  margin-bottom: 1.25rem; padding-bottom: .5rem;
+  border-bottom: 0.5px solid var(--border);
+}
+
+/* ── APP CARDS ── */
+.app-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+@media(max-width:600px) { .app-grid { grid-template-columns: 1fr; } }
+.app-card {
+  background: var(--bg-panel); border: 0.5px solid var(--border);
+  border-radius: 10px; padding: 1.1rem 1.25rem;
+  transition: border-color .2s;
+}
+.app-card:hover { border-color: var(--border-hi); }
+.app-card-header { display: flex; align-items: center; gap: 10px; margin-bottom: .6rem; }
+.app-icon { font-size: 18px; }
+.app-name { font-family: var(--font-display); font-size: 12px; letter-spacing: .1em; color: var(--gold); }
+.app-status { font-size: 9px; padding: 2px 7px; border-radius: 3px; margin-left: auto; }
+.status-built { background: rgba(26,154,153,.12); color: var(--teal-hi); border: 0.5px solid var(--teal); }
+.status-shell { background: rgba(212,160,23,.08); color: var(--gold-dim); border: 0.5px solid var(--gold-dim); }
+.status-planned { background: rgba(136,153,170,.06); color: var(--text-secondary); border: 0.5px solid var(--text-dim); }
+.app-desc { font-size: 12px; color: var(--text-secondary); line-height: 1.6; }
+.app-link { display: inline-block; margin-top: .6rem; font-size: 11px; color: var(--teal-hi); text-decoration: none; letter-spacing: .06em; }
+.app-link:hover { color: var(--gold); }
+
+/* ── RESEARCHER TABLE ── */
+.researcher-table { width: 100%; border-collapse: collapse; }
+.researcher-table th {
+  font-size: 10px; letter-spacing: .12em; color: var(--text-secondary);
+  text-align: left; padding: 6px 10px;
+  border-bottom: 0.5px solid var(--border);
+  background: var(--bg-card);
+}
+.researcher-table td {
+  font-size: 12px; color: var(--text-primary);
+  padding: 9px 10px; vertical-align: top;
+  border-bottom: 0.5px solid var(--border);
+}
+.researcher-table tr:hover td { background: var(--bg-hover); }
+.researcher-name-cell { color: var(--gold); font-weight: 500; white-space: nowrap; }
+.researcher-works { color: var(--text-secondary); font-size: 11px; line-height: 1.5; }
+.researcher-works a { color: var(--teal-hi); text-decoration: none; }
+.researcher-works a:hover { color: var(--gold); }
+.tier-badge {
+  font-size: 9px; padding: 1px 6px; border-radius: 3px;
+  white-space: nowrap; display: inline-block;
+}
+.tier-1 { background: rgba(212,160,23,.10); color: var(--gold); border: 0.5px solid var(--gold-dim); }
+.tier-2 { background: rgba(12,106,105,.10); color: var(--teal-hi); border: 0.5px solid var(--teal); }
+.tier-alt { background: rgba(107,33,168,.10); color: var(--violet-hi); border: 0.5px solid var(--violet); }
+.citation-note {
+  background: var(--bg-card); border: 0.5px solid var(--border);
+  border-left: 2px solid var(--gold-dim);
+  border-radius: 6px; padding: .75rem 1rem;
+  font-size: 12px; color: var(--text-secondary);
+  line-height: 1.7; margin-bottom: 1.5rem;
+}
+.citation-note strong { color: var(--gold); }
+
+/* ── ROADMAP ── */
+.roadmap { display: flex; flex-direction: column; gap: 0; }
+.roadmap-item {
+  display: grid; grid-template-columns: 28px 120px 1fr;
+  gap: 0 12px; align-items: start;
+  padding: 10px 0; border-bottom: 0.5px solid var(--border);
+}
+.roadmap-item:last-child { border-bottom: none; }
+.roadmap-dot {
+  width: 10px; height: 10px; border-radius: 50%;
+  margin-top: 3px; flex-shrink: 0;
+  justify-self: center;
+}
+.dot-done   { background: var(--teal); box-shadow: 0 0 0 3px rgba(12,106,105,.2); }
+.dot-next   { background: var(--gold); box-shadow: 0 0 0 3px rgba(212,160,23,.2); }
+.dot-future { background: var(--text-dim); }
+.roadmap-phase { font-size: 11px; color: var(--text-secondary); letter-spacing: .06em; padding-top: 1px; }
+.roadmap-desc { font-size: 12px; color: var(--text-primary); }
+.roadmap-desc small { color: var(--text-secondary); font-size: 11px; }
+
+/* ── POLICY BLOCKS ── */
+.policy-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+@media(max-width:600px) { .policy-grid { grid-template-columns: 1fr; } }
+.policy-card {
+  background: var(--bg-panel); border: 0.5px solid var(--border);
+  border-radius: 10px; padding: 1rem 1.1rem;
+}
+.policy-card h3 {
+  font-family: var(--font-display); font-size: 11px;
+  letter-spacing: .12em; color: var(--gold);
+  margin-bottom: .65rem;
+}
+.policy-card p, .policy-card li {
+  font-size: 12px; color: var(--text-secondary); line-height: 1.65;
+}
+.policy-card ul { padding-left: 1rem; }
+.policy-card li { margin-bottom: 4px; }
+
+/* ── CONTRIBUTE ── */
+.contribute-card {
+  background: linear-gradient(135deg, rgba(107,33,168,.08), rgba(12,106,105,.06));
+  border: 0.5px solid rgba(107,33,168,.25);
+  border-radius: 12px; padding: 1.5rem 1.75rem; text-align: center;
+}
+.contribute-card h2 {
+  font-family: var(--font-display); font-size: 16px;
+  letter-spacing: .14em; color: var(--gold); margin-bottom: .75rem;
+}
+.contribute-card p { font-size: 12px; color: var(--text-secondary); max-width: 480px; margin: 0 auto 1.25rem; line-height: 1.7; }
+.btn-row { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+.btn {
+  font-family: var(--font-display); font-size: 11px; letter-spacing: .1em;
+  padding: 8px 20px; border-radius: 6px; cursor: pointer;
+  text-decoration: none; transition: all .2s;
+}
+.btn-gold { background: var(--gold-glow); border: 0.5px solid var(--gold-dim); color: var(--gold); }
+.btn-gold:hover { background: rgba(212,160,23,.14); }
+.btn-teal { background: var(--teal-glow); border: 0.5px solid var(--teal); color: var(--teal-hi); }
+.btn-teal:hover { background: rgba(12,106,105,.18); }
+
+/* ── FOOTER ── */
+.footer {
+  margin-top: 4rem; padding-top: 1.5rem;
+  border-top: 0.5px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 1rem;
+  font-size: 11px; color: var(--text-dim);
+}
+.footer a { color: var(--text-secondary); text-decoration: none; }
+.footer a:hover { color: var(--text-primary); }
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--bg-void); }
+::-webkit-scrollbar-thumb { background: var(--text-dim); border-radius: 2px; }
+</style>
+</head>
+
+<body>
+
+<nav class="nav">
+  <a href="index.html" class="nav-brand">TEMPUS LINEA</a>
+  <div class="nav-links">
+    <a href="index.html">Timeline</a>
+    <a href="globe.html">Atlas</a>
+    <a href="community.html">Community</a>
+    <a href="portal.html">Portal</a>
+    <a href="about.html" class="active">About</a>
+  </div>
+</nav>
+
+<main class="page">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-title">TEMPUS LINEA</div>
+    <div class="hero-sub">THE DEFINITIVE INTERACTIVE ARCHIVE OF HUMAN CIVILIZATIONS</div>
+    <p class="hero-mission">
+      Tempus Linea is an open knowledge project — an interactive archive spanning all human civilizations, from the confirmed to the fiercely debated. We treat a question about Rome with the same rigour as a question about Atlantis. Community plausibility scoring, not editorial gatekeeping, determines how theories are ranked.
+    </p>
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <span class="hero-stat-val">270</span>
+        <span class="hero-stat-lbl">CIVILIZATIONS</span>
+      </div>
+      <div class="hero-stat">
+        <span class="hero-stat-val">4</span>
+        <span class="hero-stat-lbl">INTERCONNECTED APPS</span>
+      </div>
+      <div class="hero-stat">
+        <span class="hero-stat-val">25,920</span>
+        <span class="hero-stat-lbl">YEAR CELESTIAL CYCLE</span>
+      </div>
+      <div class="hero-stat">
+        <span class="hero-stat-val">27+</span>
+        <span class="hero-stat-lbl">CITED RESEARCHERS</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- THE APPS -->
+  <div class="section">
+    <div class="section-title">THE FOUR APPS</div>
+    <div class="app-grid">
+
+      <div class="app-card">
+        <div class="app-card-header">
+          <span class="app-icon">&#9632;</span>
+          <span class="app-name">TIMELINE ENGINE</span>
+          <span class="app-status status-built">BUILT</span>
+        </div>
+        <div class="app-desc">Zoomable, pannable canvas timeline from the Big Bang to present. Zoom by Equinox, Millennium, Age, Century, Decade. Ghost bars show alternative date theories. Celestial overlay with zodiac ages and Younger Dryas boundary.</div>
+        <a href="index.html" class="app-link">Open Timeline →</a>
+      </div>
+
+      <div class="app-card">
+        <div class="app-card-header">
+          <span class="app-icon">&#9679;</span>
+          <span class="app-name">LIVING ATLAS</span>
+          <span class="app-status status-built">BUILT</span>
+        </div>
+        <div class="app-desc">3D rotating Earth with time-aware geography. Two Earth states: Holocene and Glacial, with animated Younger Dryas morph. Heat map pins for theorized civilizations. Epoch scrubber and researcher seed pins.</div>
+        <a href="globe.html" class="app-link">Open Atlas →</a>
+      </div>
+
+      <div class="app-card">
+        <div class="app-card-header">
+          <span class="app-icon">&#9670;</span>
+          <span class="app-name">COMMUNITY PLATFORM</span>
+          <span class="app-status status-shell">SHELL</span>
+        </div>
+        <div class="app-desc">Debate threads with community plausibility ranking. CLIO AI assistant on every page. 7-panel research portal with contribution Insights widget. Contextual share prompts on votes, pins, posts, and milestones. Follow buttons on theories, threads, and globe pins with in-app notifications. Full user accounts, verification, and persistent votes launching in Phase 3b.</div>
+        <a href="community.html" class="app-link">Open Community →</a>
+      </div>
+
+      <div class="app-card">
+        <div class="app-card-header">
+          <span class="app-icon">&#10022;</span>
+          <span class="app-name">CELESTIAL LAYER</span>
+          <span class="app-status status-built">BUILT</span>
+        </div>
+        <div class="app-desc">Precession cycle overlay with Western zodiac ages. Solstice and equinox archaeoastronomical site markers. Non-Western traditions: Vedic Yugas, Maya Long Count, Babylonian MUL.APIN, Chinese Jiǎzǐ, Dogon, Aboriginal Australian sky knowledge.</div>
+        <a href="index.html" class="app-link">View on Timeline →</a>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- CITED SOURCES & RESEARCHERS -->
+  <div class="section">
+    <div class="section-title">CITED SOURCES &amp; RESEARCHERS</div>
+    <div class="citation-note">
+      <strong>Citation policy:</strong> The researchers listed below are <strong>cited sources</strong> — their published works, papers, and documented findings are referenced throughout the Tempus Linea archive to credit the origin of theories and claims. They are not platform participants unless they hold a verified Tempus Linea account. We welcome them to join, contribute from their own accounts, and engage directly with the community. <span style="color:var(--teal-hi);cursor:pointer" onclick="alert('Researcher verification launching in Phase 3b.')">Apply for a verified account →</span>
+    </div>
+
+    <div style="overflow-x:auto">
+    <table class="researcher-table">
+      <thead>
+        <tr>
+          <th>RESEARCHER</th>
+          <th>KEY WORKS</th>
+          <th>FOCUS IN TEMPUS LINEA</th>
+          <th>TIER</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="researcher-name-cell">Graham Hancock</td>
+          <td class="researcher-works">Fingerprints of the Gods (1995) · Magicians of the Gods (2015) · America Before (2019) · Ancient Apocalypse (Netflix, 2022)</td>
+          <td>Pre-YD advanced civilisation thesis. Sphinx/Leo alignment. Stellar Fingerprint framework. Referenced in 20+ entries.</td>
+          <td><span class="tier-badge tier-1">TIER 1</span></td>
+        </tr>
+        <tr>
+          <td class="researcher-name-cell">Randall Carlson</td>
+          <td class="researcher-works">Kosmographia podcast · Sacred Geometry International · Collaborations with Hancock</td>
+          <td>Younger Dryas Impact Hypothesis. Carolina Bays. Missoula megafloods. Sacred geometry encoding. 7 seed pins.</td>
+          <td><span class="tier-badge tier-1">TIER 1</span></td>
+        </tr>
+        <tr>
+          <td class="researcher-name-cell">Robert Schoch</td>
+          <td class="researcher-works">Voices of the Rocks (1999) · Forgotten Civilization (2012)</td>
+          <td>Sphinx water erosion → pre-10,500 BCE. Boston University geologist. Göbekli Tepe earlier phases.</td>
+          <td><span class="tier-badge tier-1">TIER 1</span></td>
+        </tr>
+        <tr>
+          <td class="researcher-name-cell">Matthew LaCroix</td>
+          <td class="researcher-works">The Stage of Time (2018) · The Illusion of Us (2020) · <a href="https://matthewlacroix.com" target="_blank">matthewlacroix.com</a></td>
+          <td>Sumerian/Egyptian star connections. King List astronomical encoding. 3 underground Mesopotamian site seed pins.</td>
+          <td><span class="tier-badge tier-2">TIER 2</span></td>
+        </tr>
+        <tr>
+          <td class="researcher-name-cell">Brien Foerster</td>
+          <td class="researcher-works">Advanced Ancient Civilizations · Hidden Inca Tours · YouTube channel</td>
+          <td>Precision stonework at Puma Punku and Andean sites. Elongated skulls. Core drilling analysis.</td>
+          <td><span class="tier-badge tier-2">TIER 2</span></td>
+        </tr>
+        <tr>
+          <td class="researcher-name-cell">Andrew Collins</td>
+          <td class="researcher-works">Göbekli Tepe: Genesis of the Gods (2014) · The Cygnus Key (2018)</td>
+          <td>Denisovan builders hypothesis. Cygnus astronomy. Earlier Göbekli phases. Vulture Stone encoding.</td>
+          <td><span class="tier-badge tier-2">TIER 2</span></td>
+        </tr>
+        <tr>
+          <td class="researcher-name-cell">Masaaki Kimura</td>
+          <td class="researcher-works">Man-Made Structures on the Sea Floor off Yonaguni Island (1996) · University of the Ryukyus</td>
+          <td>Yonaguni Monument surveys — 100+ dives. Submerged pre-10,000 BCE structure argument.</td>
+          <td><span class="tier-badge tier-2">TIER 2</span></td>
+        </tr>
+        <tr>
+          <td class="researcher-name-cell">Michael Tellinger</td>
+          <td class="researcher-works">Slave Species of the Gods (2005) · Ubuntu Contributionism (2013) · Adam's Calendar (2008)</td>
+          <td>Mpumalanga stone circles as ancient mining operations. Adam's Calendar astronomical dating. Anunnaki gold mining thesis.</td>
+          <td><span class="tier-badge tier-alt">ALT</span></td>
+        </tr>
+        <tr>
+          <td class="researcher-name-cell">Zecharia Sitchin</td>
+          <td class="researcher-works">The 12th Planet (1976) · The Earth Chronicles series (1976–2007)</td>
+          <td>Anunnaki / Nibiru hypothesis. Sumerian text interpretation. Central to ids 120, 136.</td>
+          <td><span class="tier-badge tier-alt">ALT</span></td>
+        </tr>
+        <tr>
+          <td class="researcher-name-cell">Erich von Däniken</td>
+          <td class="researcher-works">Chariots of the Gods (1968) · Return to the Stars (1970)</td>
+          <td>Ancient alien intervention hypothesis. Global anomalous site survey. Central to id 120.</td>
+          <td><span class="tier-badge tier-alt">ALT</span></td>
+        </tr>
+        <tr>
+          <td class="researcher-name-cell">Charles Hapgood</td>
+          <td class="researcher-works">Earth's Shifting Crust (1958) · Maps of the Ancient Sea Kings (1966)</td>
+          <td>Crustal displacement theory — Einstein's written endorsement. Antarctic Atlantis hypothesis. Central to id 117.</td>
+          <td><span class="tier-badge tier-alt">ALT</span></td>
+        </tr>
+        <tr>
+          <td class="researcher-name-cell">Jimmy Corsetti</td>
+          <td class="researcher-works">Bright Insight (YouTube) · Richat Structure research</td>
+          <td>Richat Structure (Mauritania) as Atlantis candidate. Geometric dimension analysis vs Plato's account.</td>
+          <td><span class="tier-badge tier-alt">ALT</span></td>
+        </tr>
+        <tr>
+          <td class="researcher-name-cell">Arthur Posnansky</td>
+          <td class="researcher-works">Tiahuanacu: The Cradle of American Man (1945)</td>
+          <td>Astronomical dating of Tiwanaku to 15,000 BCE via obliquity of ecliptic. Central to ids 54, 119.</td>
+          <td><span class="tier-badge tier-alt">ALT</span></td>
+        </tr>
+        <tr>
+          <td class="researcher-name-cell">Richard Firestone</td>
+          <td class="researcher-works">Evidence for an Extraterrestrial Impact, PNAS (2007)</td>
+          <td>Younger Dryas Impact Hypothesis co-author. Platinum spike, nanodiamonds, spherules at YDB. Central to id 118.</td>
+          <td><span class="tier-badge tier-1">TIER 1</span></td>
+        </tr>
+        <tr>
+          <td class="researcher-name-cell">Robert Bauval</td>
+          <td class="researcher-works">The Orion Mystery (1994) · Keeper of Genesis (1996, with Hancock)</td>
+          <td>Orion Correlation Theory — Giza pyramids mirror Orion's Belt at 10,500 BCE. Central to id 23.</td>
+          <td><span class="tier-badge tier-2">TIER 2</span></td>
+        </tr>
+        <tr>
+          <td class="researcher-name-cell">David Frawley</td>
+          <td class="researcher-works">Gods, Sages and Kings (1991) · In Search of the Cradle of Civilization (1995)</td>
+          <td>Vedic astronomical dating — Rigveda pre-6000 BCE argument. Submerged Dwarka. Central to ids 139, 148.</td>
+          <td><span class="tier-badge tier-2">TIER 2</span></td>
+        </tr>
+        <tr>
+          <td class="researcher-name-cell">Robert Temple</td>
+          <td class="researcher-works">The Sirius Mystery (1976, rev. 1998)</td>
+          <td>Dogon astronomical knowledge of Sirius B. Nommo / Oannes connection. Central to id 131.</td>
+          <td><span class="tier-badge tier-alt">ALT</span></td>
+        </tr>
+        <tr>
+          <td class="researcher-name-cell">Thor Heyerdahl</td>
+          <td class="researcher-works">Kon-Tiki (1948) · Aku-Aku (1958)</td>
+          <td>Trans-Pacific contact evidence. Experimental archaeology voyages. Referenced in ids 57, 134.</td>
+          <td><span class="tier-badge tier-2">TIER 2</span></td>
+        </tr>
+        <tr>
+          <td class="researcher-name-cell">Giorgio de Santillana &amp; Hertha von Dechend</td>
+          <td class="researcher-works">Hamlet's Mill (1969)</td>
+          <td>Precession encoded as global mythology. World-age framework. Influenced Hancock's pre-YD thesis.</td>
+          <td><span class="tier-badge tier-2">TIER 2</span></td>
+        </tr>
+        <tr>
+          <td class="researcher-name-cell">David Hatcher Childress</td>
+          <td class="researcher-works">Vimana Aircraft of Ancient India (1991) · Lost Cities series</td>
+          <td>Ancient India / Lemuria / global alternative archaeology survey. Ancient aviation theories.</td>
+          <td><span class="tier-badge tier-alt">ALT</span></td>
+        </tr>
+        <tr>
+          <td class="researcher-name-cell">James Churchward</td>
+          <td class="researcher-works">The Lost Continent of Mu (1926)</td>
+          <td>Pacific Mu / Lemuria civilisation. Naacal tablets hypothesis. Central to id 1.</td>
+          <td><span class="tier-badge tier-alt">ALT</span></td>
+        </tr>
+        <tr>
+          <td class="researcher-name-cell">Edgar Cayce</td>
+          <td class="researcher-works">Readings (1930s–1940s) · Association for Research and Enlightenment archives</td>
+          <td>Atlantis prophecy and Bimini Road prediction. Cited for the Atlantis heat map and id 234 (Bimini Road / Atlantis Bahamas).</td>
+          <td><span class="tier-badge tier-alt">ALT</span></td>
+        </tr>
+        <tr>
+          <td class="researcher-name-cell">Richard Freund</td>
+          <td class="researcher-works">Atlantis survey project (field reports)</td>
+          <td>Doñana Marshes / Tartessos as an Atlantis candidate. Central to id 225 (Tartessos) and the Atlantis heat map.</td>
+          <td><span class="tier-badge tier-2">TIER 2</span></td>
+        </tr>
+        <tr>
+          <td class="researcher-name-cell">Ivan Van Sertima</td>
+          <td class="researcher-works">They Came Before Columbus (1976)</td>
+          <td>Olmec / African trans-Atlantic contact hypothesis. Central to id 235 (Olmec Trans-Atlantic Hypothesis).</td>
+          <td><span class="tier-badge tier-alt">ALT</span></td>
+        </tr>
+        <tr>
+          <td class="researcher-name-cell">Dennis Stanford &amp; Bruce Bradley</td>
+          <td class="researcher-works">Across Atlantic Ice (2012)</td>
+          <td>Solutrean Hypothesis — Ice Age Atlantic crossing route into the Americas. Central to id 236 (Solutrean Hypothesis).</td>
+          <td><span class="tier-badge tier-alt">ALT</span></td>
+        </tr>
+        <tr>
+          <td class="researcher-name-cell">Vincent Gaffney</td>
+          <td class="researcher-works">Europe's Lost World: The Rediscovery of Doggerland (2009)</td>
+          <td>Doggerland mapping and submergence chronology. Central to id 228 (Doggerland).</td>
+          <td><span class="tier-badge tier-1">TIER 1</span></td>
+        </tr>
+        <tr>
+          <td class="researcher-name-cell">Henri Lhote</td>
+          <td class="researcher-works">Field survey of Tassili n'Ajjer (1957)</td>
+          <td>Tassili n'Ajjer rock art — 'Round Head' style chronology. Central to id 214 (Tassili n'Ajjer Rock Art).</td>
+          <td><span class="tier-badge tier-2">TIER 2</span></td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+
+    <div style="margin-top:12px;font-size:11px;color:var(--text-secondary);line-height:1.6">
+      <strong style="color:var(--gold)">Tier 1</strong> — Peer-reviewed or widely cited scholarly sources.&nbsp;&nbsp;
+      <strong style="color:var(--teal-hi)">Tier 2</strong> — Well-documented alternative research with named methodology.&nbsp;&nbsp;
+      <strong style="color:var(--violet-hi)">Alt</strong> — Speculative or fringe — presented without endorsement, ranked by community.
+    </div>
+  </div>
+
+  <!-- ROADMAP -->
+  <div class="section">
+    <div class="section-title">PROJECT ROADMAP</div>
+    <div class="roadmap">
+      <div class="roadmap-item"><div class="roadmap-dot dot-done"></div><div class="roadmap-phase">Phase 1</div><div class="roadmap-desc">Timeline Engine <small>— zoomable canvas, filters, ghost bars, vote system</small></div></div>
+      <div class="roadmap-item"><div class="roadmap-dot dot-done"></div><div class="roadmap-phase">Phase 2a</div><div class="roadmap-desc">Basic Globe <small>— Three.js rotating Earth, civilization pins, epoch scrubber</small></div></div>
+      <div class="roadmap-item"><div class="roadmap-dot dot-done"></div><div class="roadmap-phase">Phase 2b</div><div class="roadmap-desc">Two-State Globe <small>— Holocene / Glacial Earth states, animated Younger Dryas morph</small></div></div>
+      <div class="roadmap-item"><div class="roadmap-dot dot-done"></div><div class="roadmap-phase">Phase 2c</div><div class="roadmap-desc">Heat Map Pins <small>— user pin system, heat maps for Type C civilizations</small></div></div>
+      <div class="roadmap-item"><div class="roadmap-dot dot-done"></div><div class="roadmap-phase">Phase 3</div><div class="roadmap-desc">Community Platform Shell <small>— debate threads, CLIO assistant, 7-panel research portal</small></div></div>
+      <div class="roadmap-item"><div class="roadmap-dot dot-done"></div><div class="roadmap-phase">Phase 4</div><div class="roadmap-desc">Celestial Layer <small>— precession overlay, zodiac ages, solstice markers, non-Western traditions</small></div></div>
+      <div class="roadmap-item"><div class="roadmap-dot dot-done"></div><div class="roadmap-phase">Phase 5a–5r</div><div class="roadmap-desc">Content Depth <small>— civilizations 1–270, dateTheories[], locationTheories[], CLIO expansion, 33 community debate threads</small></div></div>
+      <div class="roadmap-item"><div class="roadmap-dot dot-done"></div><div class="roadmap-phase">Phase 6</div><div class="roadmap-desc">Dynamic Borders <small>— 18 time-scrubbed border entities, nation formation/collapse on the Living Atlas</small></div></div>
+      <div class="roadmap-item"><div class="roadmap-dot dot-done"></div><div class="roadmap-phase">Phase 8</div><div class="roadmap-desc">Share System <small>— contextual share on votes, pins, posts, saves, and milestones, wired site-wide into the Community Platform</small></div></div>
+      <div class="roadmap-item"><div class="roadmap-dot dot-next"></div><div class="roadmap-phase">Phase 9</div><div class="roadmap-desc" style="color:var(--gold)">Follow &amp; Insights <small style="color:var(--gold-dim)">— follow buttons on threads, theories, and globe pins; in-app notifications; contribution Insights widget in the research portal</small></div></div>
+      <div class="roadmap-item"><div class="roadmap-dot dot-future"></div><div class="roadmap-phase">Phase 5u+</div><div class="roadmap-desc">Content Expansion <small>— civilizations 271+ continuing the definitive archive</small></div></div>
+      <div class="roadmap-item"><div class="roadmap-dot dot-future"></div><div class="roadmap-phase">Phase 3b</div><div class="roadmap-desc">User Accounts &amp; Backend <small>— design complete (Node/Express/SQLite); verified researcher accounts, persistent votes, upload system, and moderation still to be built</small></div></div>
+      <div class="roadmap-item"><div class="roadmap-dot dot-future"></div><div class="roadmap-phase">Phase 7</div><div class="roadmap-desc">Public Deployment <small>— server, CDN, domain, public beta launch</small></div></div>
+    </div>
+  </div>
+
+  <!-- EDITORIAL POLICY -->
+  <div class="section">
+    <div class="section-title">EDITORIAL &amp; EVIDENCE POLICY</div>
+    <div class="policy-grid">
+      <div class="policy-card">
+        <h3>THE ATLANTIS TEST</h3>
+        <p>A theory earns a Tempus Linea entry if it has:</p>
+        <ul>
+          <li>A named proponent</li>
+          <li>A consistent geographical or temporal claim</li>
+          <li>Engagement with existing literature</li>
+          <li>Internal logical consistency</li>
+        </ul>
+      </div>
+      <div class="policy-card">
+        <h3>NO GATEKEEPING</h3>
+        <p>Mainstream archaeology and alternative theories receive identical structural treatment. Community plausibility scores — not editors — determine how theories are ranked. A theory cited by 10,000 users may outrank one cited by one paper.</p>
+      </div>
+      <div class="policy-card">
+        <h3>PRE-10,800 BCE RULE</h3>
+        <p>All civilizations with a start date before 10,800 BCE are classified <span style="color:var(--teal-hi)">debated</span> or <span style="color:var(--violet-hi)">theorized</span> by default. This is the Younger Dryas boundary — no confirmed continuous civilisation predates it.</p>
+      </div>
+      <div class="policy-card">
+        <h3>CITATION ETHICS</h3>
+        <p>Researchers are cited sources, not platform participants, unless they hold a verified account. Claims are always attributed to the specific book, paper, or documented source — never attributed without reference.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONTRIBUTE -->
+  <div class="contribute-card">
+    <h2>JOIN THE ARCHIVE</h2>
+    <p>Tempus Linea is built by people who believe the full story of human civilisation hasn't been told yet. Contribute a civilisation entry, start a debate thread, cite a source, or apply for a verified researcher account.</p>
+    <div class="btn-row">
+      <a href="community.html" class="btn btn-gold">JOIN THE DEBATE</a>
+      <a href="portal.html" class="btn btn-teal">RESEARCH PORTAL</a>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <span>Tempus Linea — CHRONOS engine · Bible v11 · June 2026</span>
+    <span>
+      <a href="index.html">Timeline</a> &nbsp;·&nbsp;
+      <a href="globe.html">Atlas</a> &nbsp;·&nbsp;
+      <a href="community.html">Community</a> &nbsp;·&nbsp;
+      <a href="portal.html">Portal</a>
+    </span>
+  </div>
+
+</main>
+
+<!-- Script load order — DO NOT REORDER (Bible v11, Community/About order) -->
+<script src="data.js"></script>
+<script src="data-extended.js"></script>
+<script src="share.js"></script>
+<script src="share-ui-styles.js"></script>
+<script src="share-ui.js"></script>
+<script src="clio-prompt.js"></script>
+<script src="clio-ui.js"></script>
+<script src="clio.js"></script>
+
+</body>
+</html>
