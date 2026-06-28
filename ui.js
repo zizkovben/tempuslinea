@@ -1,0 +1,311 @@
+/* ============================================================
+   CHRONOS · ui.js
+   UI layer: toolbar, preset buttons, info panel, vote interactions.
+   Phase 5: Date Challenge Theories section added to info panel.
+   Phase 8b: civ-theory votes now trigger ShareEngine.triggerShare().
+   Phase 9: handleVote now calls NotificationsEngine.onCivVote().
+            Follow button added to info panel footer.
+   Depends on: data.js, timeline.js
+   ============================================================ */
+
+window.ChronosUI = (() => {
+
+  // ── STATE (cached from last showInfo call, used by handleVote) ──
+  let _lastCiv   = null;
+  let _lastVotes = null;
+
+  // ── BUILD TOOLBAR ─────────────────────────────────────────
+  function buildPresets() {
+    const el = document.getElementById('preset-btns');
+    if (!el) return;
+    PRESETS.forEach((p, i) => {
+      const b = document.createElement('button');
+      b.className = 'btn' + (i === 2 ? ' active' : '');
+      b.textContent = p.l;
+      b.addEventListener('click', () => {
+        document.querySelectorAll('#preset-btns .btn')
+          .forEach((bt, j) => bt.classList.toggle('active', j === i));
+        TimelineEngine.setPreset(i);
+      });
+      el.appendChild(b);
+    });
+  }
+
+  // ── DATE CHALLENGE THEORIES PANEL ─────────────────────────
+  // Renders the dateTheories[] for a civ inside the info panel.
+  // Each theory shows its date range, researcher, source, and community vote bar.
+  function _buildDateChallenges(civ) {
+    if (!civ.dateTheories || !civ.dateTheories.length) return '';
+
+    const rows = civ.dateTheories.map((dt, i) => {
+      const isMain   = dt.label.toLowerCase().includes('mainstream');
+      const color    = isMain ? '#1a9a99' : '#8b41c8';
+      const upTotal  = (dt.up || 0) + (dt.dn || 0);
+      const pct      = upTotal > 0 ? Math.round(((dt.up || 0) / upTotal) * 100) : 50;
+      const fmtY     = y => {
+        if (y === 0) return '1 CE';
+        return y < 0
+          ? Math.abs(Math.round(y)).toLocaleString() + ' BCE'
+          : Math.round(y).toLocaleString() + ' CE';
+      };
+
+      return `
+        <div style="padding:8px 10px;border-radius:4px;margin-bottom:6px;
+                    background:rgba(10,13,28,.6);border:1px solid ${color}28;">
+          <div style="display:flex;justify-content:space-between;align-items:baseline;
+                      margin-bottom:3px;gap:8px;flex-wrap:wrap;">
+            <div style="font-size:9px;color:${color};letter-spacing:1.5px;flex-shrink:0;">
+              ${isMain ? '◆ MAINSTREAM' : '◈ ALTERNATIVE'}
+            </div>
+            <div style="font-size:9px;color:#4a6a8a;white-space:nowrap;">
+              ${fmtY(dt.s)} → ${fmtY(dt.e)}
+            </div>
+          </div>
+          <div style="font-size:10px;color:#aab8c8;line-height:1.5;margin-bottom:4px;">
+            ${dt.label}
+          </div>
+          ${dt.researcher ? `<div style="font-size:9px;color:${color};opacity:.8;margin-bottom:3px;">
+            ⬡ ${dt.researcher}
+          </div>` : ''}
+          <div style="font-size:8px;color:#334455;font-style:italic;margin-bottom:6px;line-height:1.5;">
+            ${dt.source}
+          </div>
+          <div style="display:flex;gap:8px;align-items:center;">
+            <span style="font-size:9px;color:#3a7a5a;">▲ ${(dt.up||0).toLocaleString()}</span>
+            <span style="font-size:9px;color:#7a3a3a;">▼ ${(dt.dn||0).toLocaleString()}</span>
+            <div style="flex:1;height:2px;background:rgba(15,50,80,.45);border-radius:1px;overflow:hidden;">
+              <div style="width:${pct}%;height:100%;background:${color};transition:width .4s;"></div>
+            </div>
+            <span style="font-size:8px;color:#445566;">${pct}%</span>
+          </div>
+        </div>`;
+    });
+
+    return `
+      <div style="margin-top:12px;padding-top:10px;border-top:1px solid rgba(107,33,168,.2);">
+        <div style="font-size:9px;letter-spacing:2px;color:#6b21a8;margin-bottom:8px;">
+          ◈ DATE CHALLENGE THEORIES (${civ.dateTheories.length})
+        </div>
+        ${rows.join('')}
+        <div style="font-size:8px;color:#223344;letter-spacing:1px;text-align:right;margin-top:2px;">
+          HOVER GHOST BARS ON TIMELINE TO EXPLORE · VOTE IN PHASE 3b
+        </div>
+      </div>`;
+  }
+
+  // ── INFO PANEL ────────────────────────────────────────────
+  function showInfo(civ, votes) {
+    const panel = document.getElementById('info-panel');
+    const inner = document.getElementById('info-inner');
+    if (!panel || !inner) return;
+
+    // Cache for handleVote() — registerVote() mutates `votes` in place,
+    // so re-reading _lastVotes after the vote reflects the new state.
+    _lastCiv   = civ;
+    _lastVotes = votes;
+
+    const v  = votes[civ.id] || {};
+    const tc = { confirmed: '#c09010', theorized: '#9a60c0', debated: '#3aabb0' }[civ.t];
+    const dur = Math.abs(civ.e - civ.s);
+    const upCount = civ.up + (v.up ? 1 : 0);
+    const dnCount = civ.dn + (v.dn ? 1 : 0);
+    const total   = upCount + dnCount;
+    const pct     = total > 0 ? Math.round((upCount / total) * 100) : 50;
+
+    // Stub entry banner
+    const stubBanner = civ.stub ? `
+      <div style="margin:10px 0 4px;padding:10px 14px;border:1px solid rgba(100,80,20,.35);
+                  border-radius:4px;background:rgba(30,20,5,.5);">
+        <div style="font-size:9px;color:#c09010;letter-spacing:2px;margin-bottom:4px;">
+          ✦ STUB ENTRY — CONTRIBUTIONS WELCOME
+        </div>
+        <div style="font-size:11px;color:#8a9aaa;line-height:1.7;">
+          This entry is a stub. <strong style="color:#c09010">${civ.n}</strong>
+          deserves a fuller record. Community contributions, verified citations and expert
+          analysis are welcome.
+          <span style="color:#3aabb0;cursor:pointer;"
+            onclick="window.location.href='community.html'">
+            → Contribute to this entry
+          </span>
+        </div>
+      </div>` : '';
+
+    // Date challenge section (only for civs that have dateTheories[])
+    const dateChallenges = _buildDateChallenges(civ);
+
+    // CLIO integration — calls setActiveCiv on panel show
+    if (window.CLIO) CLIO.setActiveCiv(civ);
+
+    inner.innerHTML = `
+      <div style="flex:1;min-width:180px;">
+        <div class="civ-type-tag" style="color:${tc}">
+          ◈ ${civ.t.toUpperCase()} · ${civ.r}
+        </div>
+        <div class="civ-name" style="color:${tc}">${civ.n}</div>
+        <div class="civ-dates">
+          ${TimelineEngine.fmtYear(civ.s)} → ${TimelineEngine.fmtYear(civ.e)}
+          <span style="color:var(--text-dim);margin-left:8px;">(${dur.toLocaleString()} years)</span>
+        </div>
+        ${civ.lang && civ.lang !== 'unknown' ? `
+        <div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:10px;">
+          <div style="font-size:9px;letter-spacing:1px;">
+            <span style="color:var(--text-dim);">LANGUAGE · </span>
+            <span style="color:#4a8ab8;">${civ.lang.replace(/-/g,' ').toUpperCase()}</span>
+          </div>
+          ${civ.gov && civ.gov !== 'unknown' ? `<div style="font-size:9px;letter-spacing:1px;">
+            <span style="color:var(--text-dim);">GOVERNANCE · </span>
+            <span style="color:#4a8ab8;">${civ.gov.toUpperCase()}</span>
+          </div>` : ''}
+          ${civ.rel && civ.rel !== 'unknown' ? `<div style="font-size:9px;letter-spacing:1px;">
+            <span style="color:var(--text-dim);">BELIEF · </span>
+            <span style="color:#4a8ab8;">${civ.rel.toUpperCase()}</span>
+          </div>` : ''}
+        </div>` : ''}
+        <p class="civ-desc">${civ.d}</p>
+        ${stubBanner}
+        ${dateChallenges}
+      </div>
+      <div class="vote-section">
+        <button class="btn-close" onclick="ChronosUI.hideInfo()">✕ CLOSE</button>
+        <div>
+          <div class="vote-label">COMMUNITY RATING</div>
+          <div class="vote-buttons">
+            <button id="btn-up" class="btn-vote ${v.up ? 'up-active' : ''}"
+              onclick="ChronosUI.handleVote(${civ.id},'up')">
+              ▲ ${upCount.toLocaleString()}
+            </button>
+            <button id="btn-dn" class="btn-vote ${v.dn ? 'dn-active' : ''}"
+              onclick="ChronosUI.handleVote(${civ.id},'dn')">
+              ▼ ${dnCount.toLocaleString()}
+            </button>
+          </div>
+        </div>
+        <div style="width:100%;margin-top:4px;">
+          <div style="height:3px;background:rgba(15,50,80,.4);border-radius:2px;overflow:hidden;">
+            <div style="width:${pct}%;height:100%;background:${tc};transition:width .3s;"></div>
+          </div>
+          <div style="font-size:9px;color:var(--text-dim);margin-top:3px;text-align:right;
+                      letter-spacing:1px;">
+            ${pct}% PLAUSIBILITY SCORE
+          </div>
+        </div>
+        ${civ.dateTheories && civ.dateTheories.length ? `
+        <div style="font-size:9px;color:#6b21a8;letter-spacing:1px;text-align:right;margin-top:6px;">
+          ◈ ${civ.dateTheories.length} DATE CHALLENGE${civ.dateTheories.length > 1 ? 'S' : ''}
+        </div>` : ''}
+        <div style="font-size:9px;color:var(--text-dim);letter-spacing:1px;text-align:right;margin-top:4px;">
+          COMMENTS & SOURCES → PHASE 3b
+        </div>
+        <div style="margin-top:10px;padding-top:8px;border-top:1px solid rgba(107,33,168,.12);
+                    display:flex;justify-content:flex-end;">
+          <button id="btn-follow-civ"
+            style="background:transparent;border:1px solid rgba(107,33,168,.28);
+                   color:var(--text-dim);font-family:var(--font-mono);font-size:8px;
+                   letter-spacing:1.5px;padding:3px 10px;border-radius:2px;cursor:pointer;
+                   transition:all .15s;"
+            onclick="ChronosUI.toggleFollowCiv(${civ.id},'${civ.n.replace(/'/g,"\\'")}')">
+            ${(typeof NotificationsEngine !== 'undefined' && NotificationsEngine.isFollowing('civ', civ.id))
+              ? '✓ FOLLOWING' : '+ FOLLOW'}
+          </button>
+        </div>
+      </div>`;
+
+    panel.classList.add('visible');
+  }
+
+  function hideInfo() {
+    const panel = document.getElementById('info-panel');
+    if (panel) panel.classList.remove('visible');
+    if (window.CLIO) CLIO.setActiveCiv(null);
+  }
+
+  // ── VOTE HANDLER (Phase 8b / Phase 9) ─────────────────────
+  // Registers the vote with TimelineEngine as before, then fires the
+  // Phase 8 share prompt and Phase 9 notifications follow event.
+  function handleVote(civId, direction) {
+    TimelineEngine.registerVote(civId, direction);
+
+    // Phase 9: auto-follow the civ and push a notification event
+    if (window.NotificationsEngine && _lastCiv && _lastCiv.id === civId) {
+      NotificationsEngine.onCivVote(civId, _lastCiv.n, direction);
+      // Refresh the follow button label in the open panel
+      const btn = document.getElementById('btn-follow-civ');
+      if (btn) {
+        btn.textContent = '✓ FOLLOWING';
+        btn.style.borderColor = 'var(--violet)';
+        btn.style.color = 'var(--violet-hi)';
+      }
+    }
+
+    if (!window.ShareEngine) return;
+    if (!_lastCiv || _lastCiv.id !== civId) return;
+
+    const civ = _lastCiv;
+    const v   = (_lastVotes && _lastVotes[civId]) || {};
+    const upCount = civ.up + (v.up ? 1 : 0);
+    const dnCount = civ.dn + (v.dn ? 1 : 0);
+
+    ShareEngine.triggerShare({
+      type:      'vote',
+      civId:     civ.id,
+      civName:   civ.n,
+      voteCount: upCount,
+      dnCount:   dnCount,
+    });
+  }
+
+  // ── FOLLOW TOGGLE (Phase 9) ────────────────────────────────
+  function toggleFollowCiv(civId, civName) {
+    if (typeof NotificationsEngine === 'undefined') return;
+    const btn = document.getElementById('btn-follow-civ');
+    if (NotificationsEngine.isFollowing('civ', civId)) {
+      NotificationsEngine.unfollow('civ', civId);
+      if (btn) {
+        btn.textContent = '+ FOLLOW';
+        btn.style.borderColor = '';
+        btn.style.color = '';
+        btn.style.background = '';
+      }
+    } else {
+      NotificationsEngine.follow('civ', civId, civName);
+      if (btn) {
+        btn.textContent = '✓ FOLLOWING';
+        btn.style.borderColor = 'var(--violet)';
+        btn.style.color = 'var(--violet-hi)';
+        btn.style.background = 'rgba(107,33,168,.08)';
+      }
+    }
+  }
+
+  // ── SEARCH ────────────────────────────────────────────────
+  function buildSearch() {
+    const el = document.getElementById('search-box');
+    if (!el) return;
+    el.addEventListener('input', () => {
+      const q = el.value.toLowerCase().trim();
+      const hint = document.getElementById('search-hint');
+      if (!hint) return;
+      if (!q) { hint.textContent = ''; return; }
+      const matches = CIVS.filter(c =>
+        c.n.toLowerCase().includes(q) ||
+        c.r.toLowerCase().includes(q) ||
+        (c.d && c.d.toLowerCase().includes(q))
+      );
+      hint.textContent = `${matches.length} result${matches.length !== 1 ? 's' : ''}`;
+      if (window.FilterEngine) FilterEngine.setSearch(q);
+    });
+  }
+
+  // ── INIT ──────────────────────────────────────────────────
+  function init() {
+    buildPresets();
+    buildSearch();
+    TimelineEngine.init('timeline-canvas', 'timeline-wrap');
+    if (window.CelestialEngine) CelestialEngine.init('timeline-canvas', 'timeline-wrap');
+  }
+
+  return { init, showInfo, hideInfo, handleVote, toggleFollowCiv };
+
+})();
+
+document.addEventListener('DOMContentLoaded', ChronosUI.init);
