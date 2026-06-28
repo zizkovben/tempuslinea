@@ -6658,3 +6658,28 @@ const PRESETS = [
   { l: 'CENTURY',      s: 1900,         e: 2100, pxPerYear: 6.0          },
   { l: 'DECADE',       s: 1950,         e: 2030, pxPerYear: 30.0         },
 ];
+
+// ── EPOCH BAND DEFINITIONS ────────────────────────────────────────────────
+// Used by timeline.js to draw background epoch bands.
+// Each entry: { l: label, s: start year, e: end year, c: colour (hex) }
+
+const EPOCHS = [
+  { n: 'Big Bang',              s: -13800000000, e: -4600000000, c: '#0a0510' },
+  { n: 'Solar System',          s: -4600000000,  e: -3800000000, c: '#0a0a14' },
+  { n: 'Early Life',            s: -3800000000,  e: -541000000,  c: '#06100a' },
+  { n: 'Cambrian–Permian',      s: -541000000,   e: -252000000,  c: '#0a1006' },
+  { n: 'Mesozoic (Dinosaurs)',  s: -252000000,   e: -66000000,   c: '#101406' },
+  { n: 'Cenozoic',              s: -66000000,    e: -2600000,    c: '#0a0e06' },
+  { n: 'Pleistocene Ice Ages',  s: -2600000,     e: -11700,      c: '#06101a' },
+  { n: 'Pre-Younger Dryas',     s: -50000,       e: -12900,      c: '#0c1828' },
+  { n: 'Younger Dryas',         s: -12900,       e: -11600,      c: '#0a1830' },
+  { n: 'Early Holocene',        s: -11600,       e: -8000,       c: '#061420' },
+  { n: 'Neolithic',             s: -8000,        e: -3300,       c: '#080e18' },
+  { n: 'Bronze Age',            s: -3300,        e: -1200,       c: '#0e0c06' },
+  { n: 'Iron Age',              s: -1200,        e: -500,        c: '#100c06' },
+  { n: 'Classical Antiquity',   s: -500,         e: 500,         c: '#0c0e18' },
+  { n: 'Late Antiquity',        s: 500,          e: 700,         c: '#100c0e' },
+  { n: 'Medieval',              s: 700,          e: 1400,        c: '#0c100e' },
+  { n: 'Early Modern',          s: 1400,         e: 1800,        c: '#0e0c10' },
+  { n: 'Modern Era',            s: 1800,         e: 2100,        c: '#080810' },
+];
