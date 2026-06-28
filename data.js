@@ -6642,3 +6642,19 @@ const CIVS = [
   }
 
 ];
+
+// ── ZOOM PRESET DEFINITIONS ───────────────────────────────────────────────
+// Used by ui.js to build the preset toolbar buttons.
+// Each entry: { l: display label, s: start year, e: end year, pxPerYear: zoom }
+// TimelineEngine.setPreset(i) reads these by index.
+
+const PRESETS = [
+  { l: 'DEEP TIME',    s: -13800000000, e: 2100, pxPerYear: 0.000000003  },
+  { l: 'PRE-HISTORY',  s: -200000,      e: 2100, pxPerYear: 0.0002       },
+  { l: 'ANCIENT',      s: -12000,       e: 2100, pxPerYear: 0.04         },
+  { l: 'CLASSICAL',    s: -3000,        e: 1500, pxPerYear: 0.12         },
+  { l: 'MEDIEVAL',     s: -500,         e: 1800, pxPerYear: 0.35         },
+  { l: 'MODERN',       s: 1400,         e: 2100, pxPerYear: 1.2          },
+  { l: 'CENTURY',      s: 1900,         e: 2100, pxPerYear: 6.0          },
+  { l: 'DECADE',       s: 1950,         e: 2030, pxPerYear: 30.0         },
+];
