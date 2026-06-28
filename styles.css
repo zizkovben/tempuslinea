@@ -1,0 +1,284 @@
+/* ============================================================
+   CHRONOS · styles.css
+   Design tokens and shared component styles.
+   Import this in every page: <link rel="stylesheet" href="styles.css">
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+/* ── RESET & BASE ─────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg-void:      #06080f;
+  --bg-panel:     #0a0d18;
+  --bg-card:      #0d1120;
+  --bg-hover:     #111828;
+
+  --border-dim:   rgba(12, 35, 80, 0.6);
+  --border-mid:   rgba(20, 55, 130, 0.4);
+  --border-hi:    rgba(30, 80, 180, 0.5);
+
+  --gold:         #d4a017;
+  --gold-dim:     #9a6e08;
+  --gold-hi:      #c09010;
+  --gold-text:    rgba(230,195,80,.9);
+
+  --violet:       #6b21a8;
+  --violet-hi:    #8b41c8;
+  --violet-text:  rgba(185,130,235,.9);
+
+  --teal:         #0c6a69;
+  --teal-hi:      #1a9a99;
+  --teal-text:    rgba(80,200,200,.9);
+
+  --text-primary:   #8899aa;
+  --text-secondary: #445566;
+  --text-dim:       #1a3040;
+
+  --font-display: 'Cinzel', Georgia, serif;
+  --font-mono:    'IBM Plex Mono', 'Courier New', monospace;
+
+  --radius-sm:    3px;
+  --radius-md:    6px;
+  --radius-lg:    10px;
+}
+
+html, body {
+  background: var(--bg-void);
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+/* ── LAYOUT ───────────────────────────────────────────────── */
+.app-shell {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* ── TYPOGRAPHY ───────────────────────────────────────────── */
+.logo-title {
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--gold);
+  letter-spacing: 5px;
+  line-height: 1;
+}
+
+.logo-sub {
+  font-size: 8px;
+  color: var(--text-dim);
+  letter-spacing: 2.5px;
+  margin-top: 3px;
+}
+
+.section-label {
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+}
+
+/* ── BUTTONS ──────────────────────────────────────────────── */
+.btn {
+  background: transparent;
+  border: 1px solid var(--border-dim);
+  color: var(--text-dim);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 1px;
+  padding: 5px 12px;
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  transition: all 0.18s ease;
+  white-space: nowrap;
+}
+.btn:hover  { background: #091525; border-color: #1e5080; color: #5fa8d8; }
+.btn.active { background: #091525; border-color: #1e5080; color: #5fa8d8; }
+
+.btn-vote {
+  background: transparent;
+  border: 1px solid var(--border-dim);
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  padding: 6px 14px;
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  transition: all 0.18s ease;
+}
+.btn-vote.up-active { border-color: #22c55e; color: #22c55e; background: rgba(34,197,94,.08); }
+.btn-vote.dn-active { border-color: #ef4444; color: #ef4444; background: rgba(239,68,68,.08); }
+.btn-vote:hover     { border-color: var(--border-hi); color: var(--text-primary); }
+
+.btn-close {
+  background: transparent;
+  border: 1px solid var(--border-dim);
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  padding: 4px 10px;
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  transition: all 0.18s ease;
+}
+.btn-close:hover { border-color: var(--border-hi); color: var(--text-primary); }
+
+/* ── HEADER ───────────────────────────────────────────────── */
+.app-header {
+  padding: 14px 20px 10px;
+  border-bottom: 1px solid var(--border-dim);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  background: var(--bg-panel);
+}
+
+/* ── NAV BAR ──────────────────────────────────────────────── */
+.app-nav {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 20px;
+  border-bottom: 1px solid var(--border-dim);
+  background: var(--bg-panel);
+  flex-wrap: wrap;
+}
+.app-nav a {
+  color: var(--text-dim);
+  text-decoration: none;
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  padding: 5px 10px;
+  border-radius: var(--radius-sm);
+  transition: all 0.15s;
+}
+.app-nav a:hover  { color: var(--text-primary); background: var(--bg-hover); }
+.app-nav a.active { color: var(--gold); border-bottom: 1px solid var(--gold-dim); }
+.nav-sep { color: var(--border-dim); font-size: 10px; padding: 0 2px; }
+
+/* ── TOOLBAR ROW (filters, presets) ──────────────────────── */
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 20px;
+  border-bottom: 1px solid rgba(8,22,55,.5);
+  background: var(--bg-panel);
+  flex-wrap: wrap;
+}
+
+.toolbar-sep {
+  width: 1px;
+  height: 18px;
+  background: var(--border-dim);
+  flex-shrink: 0;
+}
+
+/* ── LEGEND ITEMS ─────────────────────────────────────────── */
+.legend {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 10px;
+  letter-spacing: 1px;
+}
+.legend-dot {
+  width: 18px;
+  height: 7px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+/* ── INFO PANEL (detail card) ────────────────────────────── */
+.info-panel {
+  border-top: 1px solid rgba(30,70,150,.25);
+  padding: 16px 20px;
+  background: rgba(3,5,12,.97);
+  display: none;
+}
+.info-panel.visible { display: block; }
+
+.info-inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.civ-type-tag {
+  font-size: 9px;
+  letter-spacing: 2px;
+  margin-bottom: 5px;
+}
+.civ-name {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  margin-bottom: 5px;
+}
+.civ-dates {
+  font-size: 11px;
+  color: var(--text-dim);
+  letter-spacing: .5px;
+  margin-bottom: 10px;
+}
+.civ-desc {
+  font-size: 12px;
+  color: #5a7090;
+  line-height: 1.8;
+  max-width: 600px;
+}
+
+.vote-section {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+  flex-shrink: 0;
+}
+.vote-label {
+  font-size: 9px;
+  color: var(--text-dim);
+  letter-spacing: 1px;
+  text-align: right;
+  margin-bottom: 4px;
+}
+.vote-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+/* ── STATUS BAR ───────────────────────────────────────────── */
+.status-bar {
+  font-size: 9px;
+  color: var(--text-dim);
+  letter-spacing: 1px;
+  margin-left: auto;
+  white-space: nowrap;
+}
+
+/* ── RESPONSIVE ───────────────────────────────────────────── */
+@media (max-width: 600px) {
+  .logo-title { font-size: 18px; letter-spacing: 3px; }
+  .toolbar    { padding: 6px 10px; }
+  .info-panel { padding: 12px 14px; }
+  .vote-section { align-items: flex-start; }
+}
