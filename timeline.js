@@ -142,18 +142,14 @@ const TimelineEngine = (() => {
     const visible = getVisible();
 
     // ── DENSITY CAP — prevent main-thread freeze at deep zoom-out ──
-    // At very small pxPerYear values, limit bars rendered per frame.
-    // Priority: confirmed first, then debated, then theorized.
-    const pxPerYear = (CW / (vE - vS));
-    let renderList = laned;
-    if (pxPerYear < 0.001 && laned.length > 300) {
-      // Deep time: show only confirmed + high-vote entries
-      renderList = laned.filter(c => c.t === 'confirmed' || (c.up||0) > 500);
-    } else if (pxPerYear < 0.01 && laned.length > 500) {
-      // Pre-history zoom: cap at 500 most notable
-      renderList = laned.slice(0, 500);
+    const pxPerYear = (CW / Math.max(vE - vS, 1));
+    let allLaned = assignLanes(visible);
+    if (pxPerYear < 0.001 && allLaned.length > 300) {
+      allLaned = allLaned.filter(c => c.t === 'confirmed' || (c.up||0) > 500);
+    } else if (pxPerYear < 0.01 && allLaned.length > 500) {
+      allLaned = allLaned.slice(0, 500);
     }
-    const laned   = renderList;
+    const laned = allLaned;
 
     // — Epoch bands —
     EPOCHS.forEach(ep => {
