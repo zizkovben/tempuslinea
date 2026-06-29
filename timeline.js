@@ -140,7 +140,20 @@ const TimelineEngine = (() => {
     ghostRects = [];
 
     const visible = getVisible();
-    const laned   = assignLanes(visible);
+
+    // ── DENSITY CAP — prevent main-thread freeze at deep zoom-out ──
+    // At very small pxPerYear values, limit bars rendered per frame.
+    // Priority: confirmed first, then debated, then theorized.
+    const pxPerYear = (CW / (vE - vS));
+    let renderList = laned;
+    if (pxPerYear < 0.001 && laned.length > 300) {
+      // Deep time: show only confirmed + high-vote entries
+      renderList = laned.filter(c => c.t === 'confirmed' || (c.up||0) > 500);
+    } else if (pxPerYear < 0.01 && laned.length > 500) {
+      // Pre-history zoom: cap at 500 most notable
+      renderList = laned.slice(0, 500);
+    }
+    const laned   = renderList;
 
     // — Epoch bands —
     EPOCHS.forEach(ep => {
@@ -244,6 +257,8 @@ const TimelineEngine = (() => {
     if (window.GhostTooltip) GhostTooltip.setRects(ghostRects);
 
     // ── MAIN CIVILIZATION BARS — on top of ghost bars ───────
+    // Viewport culling: skip bars entirely outside visible area
+    const CULL_MARGIN = 200; // px buffer beyond edges
     laned.forEach(c => {
       const x1 = toX(c.s), x2 = toX(c.e);
       const bx  = Math.max(0, x1), bx2 = Math.min(CW, x2);
