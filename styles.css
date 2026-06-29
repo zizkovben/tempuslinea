@@ -4,7 +4,7 @@
    Import this in every page: <link rel="stylesheet" href="styles.css">
    ============================================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=IBM+Plex+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Jost:wght@300;400;500;600&display=swap');
 
 /* ── RESET & BASE ─────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -45,7 +45,8 @@
 
   /* Typography */
   --font-display: 'Cinzel', Georgia, serif;
-  --font-mono:    'IBM Plex Mono', 'Courier New', monospace;
+  --font-ui:      'Jost', 'Segoe UI', sans-serif;
+  --font-mono:    'Jost', 'Segoe UI', sans-serif;
 
   /* Radii */
   --radius-sm:    3px;
@@ -90,7 +91,7 @@
 html, body {
   background: var(--bg-void);
   color: var(--text-primary);
-  font-family: var(--font-mono);
+  font-family: var(--font-ui);
   font-size: 13px;
   line-height: 1.6;
   min-height: 100vh;
@@ -102,7 +103,7 @@ html, body {
   background: transparent;
   border: 1px solid var(--border-mid);
   color: var(--text-secondary);
-  font-family: var(--font-mono);
+  font-family: var(--font-ui);
   font-size: 10px;
   letter-spacing: 1px;
   padding: 4px 10px;
@@ -154,7 +155,7 @@ html, body {
   background: transparent;
   border: 1px solid var(--border-dim);
   color: var(--text-dim);
-  font-family: var(--font-mono);
+  font-family: var(--font-ui);
   font-size: 10px;
   letter-spacing: 1px;
   padding: 5px 12px;
@@ -170,7 +171,7 @@ html, body {
   background: transparent;
   border: 1px solid var(--border-dim);
   color: var(--text-secondary);
-  font-family: var(--font-mono);
+  font-family: var(--font-ui);
   font-size: 11px;
   padding: 6px 14px;
   cursor: pointer;
@@ -185,7 +186,7 @@ html, body {
   background: transparent;
   border: 1px solid var(--border-dim);
   color: var(--text-secondary);
-  font-family: var(--font-mono);
+  font-family: var(--font-ui);
   font-size: 10px;
   padding: 4px 10px;
   cursor: pointer;

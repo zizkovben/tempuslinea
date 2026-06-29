@@ -35,7 +35,7 @@ const TimelineEngine = (() => {
   const GHOST_ALPHA   = 0.25;
   const GHOST_VIOLET  = '#3a5fa8';   // lapis lazuli (theorized dates)
   const GHOST_TEAL    = '#1a8a80';   // aegean teal (mainstream/debated dates)
-  const GHOST_LBL_SZ  = 9;
+  const GHOST_LBL_SZ  = 10;
 
   // ── TYPE STYLES — Mediterranean Antiquity palette ─────────
   // bar: fill colour · hi: selected fill · lbl: text colour
@@ -151,7 +151,7 @@ const TimelineEngine = (() => {
       ctx.fillRect(lx, 0, rx - lx, CH);
       if (rx - lx > 55) {
         ctx.fillStyle = 'rgba(140,155,190,.22)';
-        ctx.font = '9px "IBM Plex Mono",monospace';
+        ctx.font = '500 10px "Jost",sans-serif';
         ctx.textAlign = 'left';
         ctx.fillText(ep.n, lx + 7, EPH - 4);
       }
@@ -178,7 +178,7 @@ const TimelineEngine = (() => {
       const x = toX(y);
       if (x < 8 || x > CW - 8) continue;
       ctx.fillStyle = '#142840';
-      ctx.font = '9px "IBM Plex Mono",monospace';
+      ctx.font = '500 11px "Jost",sans-serif';
       ctx.textAlign = 'center';
       ctx.fillText(fmtYear(y), x, EPH + TCK - 6);
     }
@@ -189,7 +189,7 @@ const TimelineEngine = (() => {
       ctx.strokeStyle = 'rgba(180,60,60,.5)'; ctx.lineWidth = 2;
       ctx.beginPath(); ctx.moveTo(nx, 0); ctx.lineTo(nx, CH); ctx.stroke();
       ctx.fillStyle = 'rgba(180,60,60,.5)';
-      ctx.font = '8px "IBM Plex Mono",monospace'; ctx.textAlign = 'center';
+      ctx.font = '400 10px "Jost",sans-serif'; ctx.textAlign = 'center';
       ctx.fillText('NOW', nx, EPH + 13);
     }
 
@@ -230,7 +230,7 @@ const TimelineEngine = (() => {
           ctx.save();
           ctx.beginPath(); ctx.rect(bx + 3, gy, bw - 6, gh); ctx.clip();
           ctx.globalAlpha = 0.5; ctx.fillStyle = gc;
-          ctx.font = `${GHOST_LBL_SZ}px "IBM Plex Mono",monospace`;
+          ctx.font = `${GHOST_LBL_SZ}px "Jost",sans-serif`;
           ctx.textAlign = 'left';
           ctx.fillText(shortName, bx + 5, gy + gh / 2 + 3);
           ctx.globalAlpha = 1; ctx.restore();
@@ -273,7 +273,7 @@ const TimelineEngine = (() => {
       if (bw > 32) {
         ctx.save();
         ctx.beginPath(); ctx.rect(bx + 3, by, bw - 6, bh); ctx.clip();
-        ctx.font = (sel ? '500 ' : '') + '12px "IBM Plex Mono",monospace';
+        ctx.font = (sel ? '600 ' : '500 ') + '12px "Jost",sans-serif';
         ctx.textAlign = 'left';
         // Dark backing for readability
         ctx.fillStyle = 'rgba(0,0,0,0.45)';
