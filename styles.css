@@ -9,39 +9,82 @@
 /* ── RESET & BASE ─────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+/* ── MEDITERRANEAN ANTIQUITY — Night Mode (default) ──────── */
 :root {
+  /* Backgrounds */
   --bg-void:      #06080f;
-  --bg-panel:     #0a0d18;
-  --bg-card:      #0d1120;
+  --bg-panel:     #0a0c18;
+  --bg-card:      #0d1020;
   --bg-hover:     #111828;
 
-  --border-dim:   rgba(12, 35, 80, 0.6);
-  --border-mid:   rgba(20, 55, 130, 0.4);
-  --border-hi:    rgba(30, 80, 180, 0.5);
+  /* Borders */
+  --border-dim:   rgba(40, 60, 120, 0.5);
+  --border-mid:   rgba(60, 90, 160, 0.4);
+  --border-hi:    rgba(80, 130, 200, 0.5);
 
-  --gold:         #d4a017;
-  --gold-dim:     #9a6e08;
-  --gold-hi:      #c09010;
-  --gold-text:    rgba(230,195,80,.9);
+  /* Gold — Egyptian/Greek bronze & gold leaf */
+  --gold:         #E8A020;
+  --gold-dim:     #9A6808;
+  --gold-hi:      #F5C842;
+  --gold-text:    rgba(245, 200, 66, 0.95);
 
-  --violet:       #6b21a8;
-  --violet-hi:    #8b41c8;
-  --violet-text:  rgba(185,130,235,.9);
+  /* Lapis — deep ultramarine of Egyptian tomb pigment */
+  --violet:       #1E3A7A;
+  --violet-hi:    #4A7FD4;
+  --violet-text:  rgba(144, 184, 240, 0.95);
 
-  --teal:         #0c6a69;
-  --teal-hi:      #1a9a99;
-  --teal-text:    rgba(80,200,200,.9);
+  /* Aegean — Mediterranean turquoise */
+  --teal:         #0A5A55;
+  --teal-hi:      #2AADA0;
+  --teal-text:    rgba(96, 208, 200, 0.95);
 
-  --text-primary:   #8899aa;
-  --text-secondary: #445566;
-  --text-dim:       #1a3040;
+  /* Text */
+  --text-primary:   #c8d8e8;
+  --text-secondary: #6a8aaa;
+  --text-dim:       #2a4060;
 
+  /* Typography */
   --font-display: 'Cinzel', Georgia, serif;
   --font-mono:    'IBM Plex Mono', 'Courier New', monospace;
 
+  /* Radii */
   --radius-sm:    3px;
   --radius-md:    6px;
   --radius-lg:    10px;
+
+  /* Colour scheme flag */
+  --mode: 'night';
+}
+
+/* ── MEDITERRANEAN ANTIQUITY — Day Mode ───────────────────── */
+[data-theme="day"] {
+  --bg-void:      #F2EDE0;
+  --bg-panel:     #EBE4D2;
+  --bg-card:      #E4DCC8;
+  --bg-hover:     #D8CFBA;
+
+  --border-dim:   rgba(120, 90, 40, 0.25);
+  --border-mid:   rgba(140, 100, 40, 0.35);
+  --border-hi:    rgba(160, 120, 50, 0.5);
+
+  --gold:         #9A6000;
+  --gold-dim:     #6A4000;
+  --gold-hi:      #C07800;
+  --gold-text:    rgba(100, 60, 0, 0.95);
+
+  --violet:       #2A4E9A;
+  --violet-hi:    #1A3A80;
+  --violet-text:  rgba(20, 50, 120, 0.95);
+
+  --teal:         #0A6A65;
+  --teal-hi:      #088078;
+  --teal-text:    rgba(5, 80, 75, 0.95);
+
+  --text-primary:   #2a1e0a;
+  --text-secondary: #5a4a2a;
+  --text-dim:       #8a7a5a;
+
+  --mode: 'day';
 }
 
 html, body {
@@ -51,6 +94,26 @@ html, body {
   font-size: 13px;
   line-height: 1.6;
   min-height: 100vh;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+/* ── DAY/NIGHT TOGGLE ─────────────────────────────────────── */
+.theme-toggle {
+  background: transparent;
+  border: 1px solid var(--border-mid);
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 1px;
+  padding: 4px 10px;
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+.theme-toggle:hover {
+  border-color: var(--gold);
+  color: var(--gold);
 }
 
 /* ── LAYOUT ───────────────────────────────────────────────── */
@@ -242,7 +305,7 @@ html, body {
 }
 .civ-desc {
   font-size: 12px;
-  color: #5a7090;
+  color: var(--text-secondary);
   line-height: 1.8;
   max-width: 600px;
 }

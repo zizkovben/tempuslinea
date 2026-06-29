@@ -28,14 +28,35 @@ const TimelineEngine = (() => {
   const EPH = 18;               // epoch label band height
   const TCK = 30;               // tick label band height
   const HDR = EPH + TCK;        // total header height
-  const LH  = 32;               // lane height
+  const LH  = 36;               // lane height
   const LG  = 5;                // lane gap
 
   // Ghost visual spec (Bible §27)
   const GHOST_ALPHA   = 0.25;
-  const GHOST_VIOLET  = '#6b21a8';   // --violet (theorized dates)
-  const GHOST_TEAL    = '#0c6a69';   // --teal   (mainstream/debated dates)
-  const GHOST_LBL_SZ  = 7;
+  const GHOST_VIOLET  = '#3a5fa8';   // lapis lazuli (theorized dates)
+  const GHOST_TEAL    = '#1a8a80';   // aegean teal (mainstream/debated dates)
+  const GHOST_LBL_SZ  = 9;
+
+  // ── TYPE STYLES — Mediterranean Antiquity palette ─────────
+  // bar: fill colour · hi: selected fill · lbl: text colour
+  const TYPE_STYLES = {
+    confirmed: {
+      bar: '#8B5E0A',          // hammered bronze / Egyptian gold
+      hi:  '#E8A020',          // bright gold when selected
+      lbl: '#F5C842',          // warm golden text
+    },
+    theorized: {
+      bar: '#1E3A7A',          // deep lapis lazuli
+      hi:  '#4A7FD4',          // bright lapis when selected
+      lbl: '#90B8F0',          // pale Aegean sky text
+    },
+    debated: {
+      bar: '#0A5A55',          // deep Aegean teal
+      hi:  '#2AADA0',          // bright turquoise when selected
+      lbl: '#60D0C8',          // pale turquoise text
+    },
+  };
+
 
   // ── COORD HELPERS ────────────────────────────────────────
   function toX(year)  { return (year - vS) / (vE - vS) * CW; }
@@ -130,7 +151,7 @@ const TimelineEngine = (() => {
       ctx.fillRect(lx, 0, rx - lx, CH);
       if (rx - lx > 55) {
         ctx.fillStyle = 'rgba(140,155,190,.22)';
-        ctx.font = '8px "IBM Plex Mono",monospace';
+        ctx.font = '9px "IBM Plex Mono",monospace';
         ctx.textAlign = 'left';
         ctx.fillText(ep.n, lx + 7, EPH - 4);
       }
@@ -233,7 +254,7 @@ const TimelineEngine = (() => {
       const st  = TYPE_STYLES[c.t];
       const sel = selCiv && selCiv.id === c.id;
 
-      ctx.globalAlpha = sel ? 1 : 0.72;
+      ctx.globalAlpha = sel ? 1 : 0.85;
       ctx.fillStyle   = sel ? st.hi : st.bar;
       rrect(bx, by, bw, bh, 4); ctx.fill();
 
@@ -252,9 +273,12 @@ const TimelineEngine = (() => {
       if (bw > 32) {
         ctx.save();
         ctx.beginPath(); ctx.rect(bx + 3, by, bw - 6, bh); ctx.clip();
-        ctx.fillStyle = sel ? 'rgba(255,255,255,.92)' : st.lbl;
-        ctx.font = (sel ? '500 ' : '') + '10px "IBM Plex Mono",monospace';
+        ctx.font = (sel ? '500 ' : '') + '12px "IBM Plex Mono",monospace';
         ctx.textAlign = 'left';
+        // Dark backing for readability
+        ctx.fillStyle = 'rgba(0,0,0,0.45)';
+        ctx.fillText(c.n, bx + 9, by + bh / 2 + 5);
+        ctx.fillStyle = sel ? 'rgba(255,255,255,.96)' : st.lbl;
         ctx.fillText(c.n, bx + 8, by + bh / 2 + 4);
         ctx.restore();
       }

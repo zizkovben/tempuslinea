@@ -6683,3 +6683,38 @@ const EPOCHS = [
   { n: 'Early Modern',          s: 1400,         e: 1800,        c: '#0e0c10' },
   { n: 'Modern Era',            s: 1800,         e: 2100,        c: '#080810' },
 ];
+
+// ── THEME TOGGLE ──────────────────────────────────────────────────────────
+// Day / Night mode. Persists to localStorage.
+// Call ThemeEngine.init() on every page.
+
+const ThemeEngine = (() => {
+  const KEY = 'chronos_theme';
+
+  function apply(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem(KEY, theme);
+    // Update all toggle buttons
+    document.querySelectorAll('.theme-toggle').forEach(btn => {
+      btn.textContent = theme === 'day' ? '☽ NIGHT' : '☀ DAY';
+      btn.title = theme === 'day' ? 'Switch to night mode' : 'Switch to day mode';
+    });
+  }
+
+  function toggle() {
+    const current = document.documentElement.getAttribute('data-theme');
+    apply(current === 'day' ? 'night' : 'day');
+  }
+
+  function init() {
+    const saved = localStorage.getItem(KEY) || 'night';
+    apply(saved);
+    document.querySelectorAll('.theme-toggle').forEach(btn => {
+      btn.addEventListener('click', toggle);
+    });
+  }
+
+  return { init, toggle, apply };
+})();
+
+document.addEventListener('DOMContentLoaded', ThemeEngine.init);

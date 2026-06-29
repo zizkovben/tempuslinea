@@ -3,11 +3,24 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tempus Linea — The Civilization Timeline</title>
-  <meta name="description" content="Tempus Linea — the definitive interactive archive of all human civilizations, past, present and ancient.">
+  <title>Tempus Linea — The Civilization Timeline | 1,000 Civilizations</title>
+  <meta name="description" content="Tempus Linea — the definitive interactive archive of 1,000 human civilizations. Explore confirmed history and alternative theories from the Big Bang to the present. Debate Atlantis, Ancient Egypt, Göbekli Tepe and more.">
+  <meta name="keywords" content="civilization timeline, ancient history, Atlantis, Graham Hancock, Göbekli Tepe, ancient Egypt, interactive history, alternative history, archaeology">
+  <meta name="author" content="Tempus Linea">
   <meta property="og:title" content="Tempus Linea — The Civilization Timeline">
+  <meta property="og:description" content="The definitive interactive archive of 1,000 human civilizations — from confirmed archaeology to the most fiercely debated alternative theories.">
   <meta property="og:url" content="https://tempuslinea.com">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Tempus Linea — The Civilization Timeline">
+  <meta name="twitter:description" content="1,000 civilizations. Zoom from the Big Bang to the present. Debate Atlantis, ancient Egypt, Göbekli Tepe and more.">
+  <link rel="canonical" href="https://tempuslinea.com/index.html">
   <link rel="stylesheet" href="styles.css">
+  <style>
+    /* ── EPOCH COLOURS in CSS for smooth day/night transition ── */
+    #timeline-canvas { transition: filter 0.3s ease; }
+    [data-theme="day"] #timeline-canvas { filter: brightness(1.05) contrast(0.95); }
+  </style>
 </head>
 <body>
 
@@ -20,14 +33,15 @@
       <div class="logo-sub">THE CIVILIZATION TIMELINE · INTERACTIVE ARCHIVE</div>
     </div>
 
-    <!-- Search -->
-    <div style="display:flex;align-items:center;gap:8px;">
+    <!-- Search + theme toggle -->
+    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
       <input id="search-box" type="text" placeholder="Search civilizations..."
         style="background:rgba(10,18,40,.8);border:1px solid rgba(12,35,80,.6);
-               color:#667799;font-family:var(--font-mono);font-size:10px;
+               color:var(--text-primary);font-family:var(--font-mono);font-size:10px;
                letter-spacing:1px;padding:5px 12px;border-radius:3px;width:200px;
-               outline:none;">
+               outline:none;transition:border-color .2s;">
       <span id="search-hint" style="font-size:9px;color:var(--text-dim);letter-spacing:1px;"></span>
+      <button class="theme-toggle" title="Switch to day mode">☀ DAY</button>
     </div>
   </header>
 
@@ -54,15 +68,15 @@
     <!-- Legend -->
     <div class="legend">
       <div class="legend-item">
-        <div class="legend-dot" style="background:var(--gold-dim)"></div>
+        <div class="legend-dot" style="background:#8B5E0A;border:1px solid #E8A020;"></div>
         <span style="color:var(--gold-text);">CONFIRMED</span>
       </div>
       <div class="legend-item">
-        <div class="legend-dot" style="background:var(--violet)"></div>
+        <div class="legend-dot" style="background:#1E3A7A;border:1px solid #4A7FD4;"></div>
         <span style="color:var(--violet-text);">THEORIZED</span>
       </div>
       <div class="legend-item">
-        <div class="legend-dot" style="background:var(--teal)"></div>
+        <div class="legend-dot" style="background:#0A5A55;border:1px solid #2AADA0;"></div>
         <span style="color:var(--teal-text);">DEBATED</span>
       </div>
     </div>
@@ -100,7 +114,7 @@
       TEMPUS LINEA · TIMELINE ENGINE
     </span>
     <span style="font-size:9px;color:var(--text-dim);letter-spacing:1px;">
-      300 CIVILIZATIONS · CONTRIBUTE IN COMMUNITY
+      1,000 CIVILIZATIONS · CONTRIBUTE IN COMMUNITY
     </span>
     <span style="font-size:9px;color:var(--text-dim);letter-spacing:1px;">
       tempuslinea.com
