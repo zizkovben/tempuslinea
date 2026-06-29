@@ -59,31 +59,34 @@
 
 /* ── MEDITERRANEAN ANTIQUITY — Day Mode ───────────────────── */
 [data-theme="day"] {
-  --bg-void:      #F2EDE0;
-  --bg-panel:     #EBE4D2;
-  --bg-card:      #E4DCC8;
-  --bg-hover:     #D8CFBA;
+  --bg-void:      #F0E8D5;
+  --bg-panel:     #E8DFC8;
+  --bg-card:      #DED4B8;
+  --bg-hover:     #D2C8AA;
 
-  --border-dim:   rgba(120, 90, 40, 0.25);
-  --border-mid:   rgba(140, 100, 40, 0.35);
-  --border-hi:    rgba(160, 120, 50, 0.5);
+  --border-dim:   rgba(100, 75, 30, 0.2);
+  --border-mid:   rgba(120, 90, 35, 0.35);
+  --border-hi:    rgba(150, 110, 40, 0.55);
 
-  --gold:         #9A6000;
-  --gold-dim:     #6A4000;
-  --gold-hi:      #C07800;
-  --gold-text:    rgba(100, 60, 0, 0.95);
+  --gold:         #8A5200;
+  --gold-dim:     #5A3400;
+  --gold-hi:      #B06800;
+  --gold-text:    rgba(90, 50, 0, 0.95);
 
-  --violet:       #2A4E9A;
-  --violet-hi:    #1A3A80;
-  --violet-text:  rgba(20, 50, 120, 0.95);
+  --violet:       #1A3A8A;
+  --violet-hi:    #0A2A70;
+  --violet-text:  rgba(15, 40, 110, 0.95);
 
-  --teal:         #0A6A65;
-  --teal-hi:      #088078;
-  --teal-text:    rgba(5, 80, 75, 0.95);
+  --teal:         #085A55;
+  --teal-hi:      #066860;
+  --teal-text:    rgba(4, 70, 65, 0.95);
 
-  --text-primary:   #2a1e0a;
-  --text-secondary: #5a4a2a;
-  --text-dim:       #8a7a5a;
+  --text-primary:   #1a1208;
+  --text-secondary: #3a2e14;
+  --text-dim:       #7a6a4a;
+
+  --font-ui:      'Jost', 'Segoe UI', sans-serif;
+  --font-mono:    'Jost', 'Segoe UI', sans-serif;
 
   --mode: 'day';
 }
@@ -144,9 +147,10 @@ html, body {
 }
 
 .section-label {
-  font-size: 9px;
+  font-size: 10px;
+  font-weight: 500;
   letter-spacing: 2px;
-  color: var(--text-dim);
+  color: var(--text-secondary);
   text-transform: uppercase;
 }
 
@@ -218,16 +222,17 @@ html, body {
   flex-wrap: wrap;
 }
 .app-nav a {
-  color: var(--text-dim);
+  color: var(--text-secondary);
   text-decoration: none;
-  font-size: 10px;
+  font-size: 11px;
+  font-weight: 500;
   letter-spacing: 1.5px;
   padding: 5px 10px;
   border-radius: var(--radius-sm);
   transition: all 0.15s;
 }
 .app-nav a:hover  { color: var(--text-primary); background: var(--bg-hover); }
-.app-nav a.active { color: var(--gold); border-bottom: 1px solid var(--gold-dim); }
+.app-nav a.active { color: var(--gold); border-bottom: 1px solid var(--gold); }
 .nav-sep { color: var(--border-dim); font-size: 10px; padding: 0 2px; }
 
 /* ── TOOLBAR ROW (filters, presets) ──────────────────────── */
@@ -259,7 +264,8 @@ html, body {
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 10px;
+  font-size: 11px;
+  font-weight: 500;
   letter-spacing: 1px;
 }
 .legend-dot {
@@ -305,8 +311,8 @@ html, body {
   margin-bottom: 10px;
 }
 .civ-desc {
-  font-size: 12px;
-  color: var(--text-secondary);
+  font-size: 13px;
+  color: var(--text-primary);
   line-height: 1.8;
   max-width: 600px;
 }
@@ -332,8 +338,9 @@ html, body {
 
 /* ── STATUS BAR ───────────────────────────────────────────── */
 .status-bar {
-  font-size: 9px;
-  color: var(--text-dim);
+  font-size: 10px;
+  font-weight: 400;
+  color: var(--text-secondary);
   letter-spacing: 1px;
   margin-left: auto;
   white-space: nowrap;
