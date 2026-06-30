@@ -323,6 +323,21 @@ const TimelineEngine = (() => {
     const p = PRESETS[idx]; vS = p.s; vE = p.e; activePresetIdx = idx; resize();
   }
 
+  // ── FOCUS CIV — pan/zoom viewport to centre a specific civ ──
+  function focusCiv(civId) {
+    const c = CIVS.find(x => x.id === civId);
+    if (!c) return;
+    const span = Math.max(Math.abs(c.e - c.s) * 4, 200);
+    const mid  = (c.s + c.e) / 2;
+    vS = mid - span / 2;
+    vE = mid + span / 2;
+    activePresetIdx = -1;
+    resize();
+  }
+
+  // ── GET VOTES — expose current vote state for cross-page reads ──
+  function getVotes() { return votes; }
+
   // ── EVENT WIRING ──────────────────────────────────────────
   function wireEvents() {
     cvs.addEventListener('click', e => {
@@ -424,6 +439,6 @@ const TimelineEngine = (() => {
     render();
   }
 
-  return { init, resize, setFilteredCivs, setPreset, registerVote, fmtYear, render };
+  return { init, resize, setFilteredCivs, setPreset, registerVote, fmtYear, render, focusCiv, getVotes };
 
 })();

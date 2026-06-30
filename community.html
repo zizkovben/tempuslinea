@@ -1076,6 +1076,16 @@ function fmtYear(y) {
 
 // Init
 buildSidebar();
+
+// Deep link — auto-open ?civ=ID from URL (e.g. arriving from the timeline's
+// "View Debate Thread" link)
+(function openFromURL() {
+  const params = new URLSearchParams(window.location.search);
+  const civId = parseInt(params.get('civ'), 10);
+  if (civId) {
+    setTimeout(() => selectCiv(civId), 100);
+  }
+})();
 </script>
 
 </body>

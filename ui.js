@@ -211,12 +211,32 @@ window.ChronosUI = (() => {
       </div>`;
 
     panel.classList.add('visible');
+    const backdrop = document.getElementById('info-panel-backdrop');
+    if (backdrop) backdrop.classList.add('visible');
   }
 
   function hideInfo() {
     const panel = document.getElementById('info-panel');
     if (panel) panel.classList.remove('visible');
+    const backdrop = document.getElementById('info-panel-backdrop');
+    if (backdrop) backdrop.classList.remove('visible');
     if (window.CLIO) CLIO.setActiveCiv(null);
+  }
+
+  // ── DEEP LINK — open a civ panel from ?civ=ID in the URL ───
+  function openFromURL() {
+    const params = new URLSearchParams(window.location.search);
+    const civId = parseInt(params.get('civ'), 10);
+    if (!civId || !window.CIVS) return;
+    const civ = CIVS.find(c => c.id === civId);
+    if (!civ) return;
+    // Pan timeline to the civ and open its panel
+    if (window.TimelineEngine && TimelineEngine.focusCiv) {
+      TimelineEngine.focusCiv(civId);
+    }
+    const votes = (window.TimelineEngine && TimelineEngine.getVotes)
+      ? TimelineEngine.getVotes() : {};
+    showInfo(civ, votes);
   }
 
   // ── VOTE HANDLER (Phase 8b / Phase 9) ─────────────────────
@@ -296,15 +316,22 @@ window.ChronosUI = (() => {
     });
   }
 
+  // ── ESCAPE KEY CLOSES PANEL ──────────────────────────────
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') hideInfo();
+  });
+
   // ── INIT ──────────────────────────────────────────────────
   function init() {
     buildPresets();
     buildSearch();
     TimelineEngine.init('timeline-canvas', 'timeline-wrap');
     if (window.CelestialEngine) CelestialEngine.init('timeline-canvas', 'timeline-wrap');
+    // Allow layout to settle before honouring a ?civ=ID deep link
+    setTimeout(openFromURL, 150);
   }
 
-  return { init, showInfo, hideInfo, handleVote, toggleFollowCiv };
+  return { init, showInfo, hideInfo, handleVote, toggleFollowCiv, openFromURL };
 
 })();
 

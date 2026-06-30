@@ -8,6 +8,7 @@
    ============================================================ */
 
 const GlobeEngine = (() => {
+  let _deepLinkHandled = false;
 
   // ── THREE.JS REFS ─────────────────────────────────────────
   let scene, camera, renderer, atmoMesh, starField;
@@ -228,6 +229,12 @@ const GlobeEngine = (() => {
 
       activeMarkers.push({ mesh, ring, civId: civ.id });
     });
+
+    // Honour ?civ=ID deep link once markers exist for this epoch
+    if (!_deepLinkHandled) {
+      _deepLinkHandled = true;
+      setTimeout(_checkURLDeepLink, 300);
+    }
   }
 
   // ── ANIMATE ───────────────────────────────────────────────
@@ -397,6 +404,13 @@ const GlobeEngine = (() => {
     _animateTo(rotY, targetY, 1200);
   }
 
+  // ── DEEP LINK — open ?civ=ID from URL once engine is ready ──
+  function _checkURLDeepLink() {
+    const params = new URLSearchParams(window.location.search);
+    const civId = parseInt(params.get('civ'), 10);
+    if (civId) highlightCiv(civId);
+  }
+
   // ── PUBLIC: highlight a single civ ───────────────────────
   function highlightCiv(civId) {
     selectedId = civId;
@@ -449,6 +463,7 @@ const GlobeEngine = (() => {
   }
 
   return {
+    checkURLDeepLink: _checkURLDeepLink,
     init,
     loadEpoch,
     highlightCiv,
