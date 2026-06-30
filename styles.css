@@ -387,3 +387,92 @@ html, body {
   .toolbar    { padding: 6px 10px; }
   .info-panel { width: 100vw; }
 }
+
+/* ── ROW LIMIT SELECT ─────────────────────────────────────── */
+.row-limit-select {
+  background: var(--bg-card);
+  border: 1px solid var(--border-mid);
+  color: var(--text-secondary);
+  font-family: var(--font-ui);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 1px;
+  padding: 5px 8px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  outline: none;
+  transition: all 0.18s ease;
+}
+.row-limit-select:hover, .row-limit-select:focus {
+  border-color: var(--gold-dim);
+  color: var(--gold);
+}
+
+/* ── OVERFLOW DRAWER ──────────────────────────────────────── */
+.overflow-drawer {
+  border-top: 1px solid var(--border-dim);
+  background: var(--bg-panel);
+  flex-shrink: 0;
+}
+.overflow-toggle {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-family: var(--font-ui);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 1.5px;
+  padding: 10px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.overflow-toggle:hover { color: var(--gold); background: var(--bg-hover); }
+.overflow-toggle #overflow-count { color: var(--gold); font-weight: 600; }
+.overflow-chevron { transition: transform 0.2s ease; font-size: 9px; }
+.overflow-drawer.open .overflow-chevron { transform: rotate(180deg); }
+
+.overflow-list {
+  display: none;
+  max-height: 280px;
+  overflow-y: auto;
+  padding: 4px 20px 14px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-mid) transparent;
+}
+.overflow-drawer.open .overflow-list { display: block; }
+
+.overflow-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 10px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background 0.12s ease;
+  font-size: 11px;
+}
+.overflow-row:hover { background: var(--bg-hover); }
+.overflow-row-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+.overflow-row-name {
+  color: var(--text-primary);
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.overflow-row-dates {
+  color: var(--text-dim);
+  font-size: 9px;
+  letter-spacing: .5px;
+  flex-shrink: 0;
+}

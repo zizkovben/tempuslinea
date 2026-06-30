@@ -20,6 +20,8 @@ const TimelineEngine = (() => {
   let votes  = {};
   let activePresetIdx = 2;
   let filteredCivs = null;
+  let rowLimit = 20;       // 0 = show all; default caps to 20 visible lanes
+  let overflow = [];       // civs bumped out of view by the row limit
 
   // ── CANVAS REFS ──────────────────────────────────────────
   let wrap, cvs, ctx;
@@ -145,15 +147,40 @@ const TimelineEngine = (() => {
 
     const visible = getVisible();
 
-    // ── DENSITY CAP — prevent main-thread freeze at deep zoom-out ──
+    // ── PERFORMANCE FLOOR — hard safety cap, independent of user row limit ──
+    // Prevents main-thread freeze at extreme zoom-out regardless of settings.
     const pxPerYear = (CW / Math.max(vE - vS, 1));
-    let allLaned = assignLanes(visible);
-    if (pxPerYear < 0.001 && allLaned.length > 300) {
-      allLaned = allLaned.filter(c => c.t === 'confirmed' || (c.up||0) > 500);
-    } else if (pxPerYear < 0.01 && allLaned.length > 500) {
-      allLaned = allLaned.slice(0, 500);
+    let perfCapped = visible;
+    if (pxPerYear < 0.001 && visible.length > 600) {
+      perfCapped = visible.filter(c => c.t === 'confirmed' || (c.up||0) > 500);
+    } else if (pxPerYear < 0.01 && visible.length > 900) {
+      perfCapped = visible.slice(0, 900);
     }
-    const laned = allLaned;
+
+    // ── ROW LIMIT — user-chosen cap on simultaneously visible lanes ──
+    // Sort by relevance (confirmed first, then by upvotes) before laning,
+    // so the most significant civs always claim the visible rows.
+    // rowLimit === 0 means "show all".
+    let working = perfCapped;
+    if (rowLimit > 0 && perfCapped.length > rowLimit) {
+      const typeRank = { confirmed: 0, debated: 1, theorized: 2 };
+      const ranked = [...perfCapped].sort((a, b) => {
+        const tr = (typeRank[a.t] ?? 3) - (typeRank[b.t] ?? 3);
+        if (tr !== 0) return tr;
+        return (b.up || 0) - (a.up || 0);
+      });
+      working   = ranked.slice(0, rowLimit);
+      overflow  = ranked.slice(rowLimit);
+    } else {
+      overflow = [];
+    }
+
+    const laned = assignLanes(working);
+
+    // Notify UI layer of overflow count so the drawer can update
+    if (window.ChronosUI && ChronosUI.updateOverflowDrawer) {
+      ChronosUI.updateOverflowDrawer(overflow);
+    }
 
     // — Epoch bands —
     EPOCHS.forEach((ep, i) => {
@@ -323,6 +350,13 @@ const TimelineEngine = (() => {
     const p = PRESETS[idx]; vS = p.s; vE = p.e; activePresetIdx = idx; resize();
   }
 
+  // ── ROW LIMIT ─────────────────────────────────────────────
+  function setRowLimit(n) {
+    rowLimit = n;
+    resize();
+  }
+  function getOverflow() { return overflow; }
+
   // ── FOCUS CIV — pan/zoom viewport to centre a specific civ ──
   function focusCiv(civId) {
     const c = CIVS.find(x => x.id === civId);
@@ -439,6 +473,6 @@ const TimelineEngine = (() => {
     render();
   }
 
-  return { init, resize, setFilteredCivs, setPreset, registerVote, fmtYear, render, focusCiv, getVotes };
+  return { init, resize, setFilteredCivs, setPreset, registerVote, fmtYear, render, focusCiv, getVotes, setRowLimit, getOverflow };
 
 })();

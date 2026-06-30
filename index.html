@@ -82,6 +82,16 @@
 
     <div class="toolbar-sep"></div>
     <button id="filter-toggle" class="btn">⚙ FILTERS<span id="filter-badge"></span></button>
+
+    <div class="toolbar-sep"></div>
+    <span class="section-label">ROWS :</span>
+    <select id="row-limit-select" class="row-limit-select">
+      <option value="10">10</option>
+      <option value="20" selected>20</option>
+      <option value="40">40</option>
+      <option value="0">ALL</option>
+    </select>
+
     <div class="status-bar">SCROLL TO ZOOM · DRAG TO PAN · TAP TO EXPLORE</div>
   </div>
 
@@ -96,8 +106,17 @@
   </div>
 
   <!-- ══ TIMELINE CANVAS ═══════════════════════════════════ -->
-  <div id="timeline-wrap" style="position:relative;overflow:hidden;touch-action:none;flex:1;">
+  <div id="timeline-wrap" style="position:relative;overflow:hidden;touch-action:none;">
     <canvas id="timeline-canvas" style="display:block;cursor:grab;"></canvas>
+  </div>
+
+  <!-- ══ OVERFLOW DRAWER — civs beyond the row limit ═══════ -->
+  <div id="overflow-drawer" class="overflow-drawer" style="display:none;">
+    <button id="overflow-toggle" class="overflow-toggle">
+      <span id="overflow-count">0</span> MORE CIVILIZATIONS IN THIS VIEW
+      <span class="overflow-chevron">▾</span>
+    </button>
+    <div id="overflow-list" class="overflow-list"></div>
   </div>
 
   <!-- ══ CIVILIZATION DETAIL PANEL ═════════════════════════ -->

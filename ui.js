@@ -321,17 +321,78 @@ window.ChronosUI = (() => {
     if (e.key === 'Escape') hideInfo();
   });
 
+  // ── ROW LIMIT CONTROL ────────────────────────────────────
+  function buildRowLimit() {
+    const sel = document.getElementById('row-limit-select');
+    if (!sel) return;
+    sel.addEventListener('change', () => {
+      TimelineEngine.setRowLimit(parseInt(sel.value, 10));
+    });
+  }
+
+  // ── OVERFLOW DRAWER ───────────────────────────────────────
+  // Called by timeline.js after every render with the list of civs
+  // bumped out of view by the row limit.
+  const TYPE_COLOR = { confirmed: '#E8A020', theorized: '#4A7FD4', debated: '#2AADA0' };
+
+  function updateOverflowDrawer(overflow) {
+    const drawer = document.getElementById('overflow-drawer');
+    const list   = document.getElementById('overflow-list');
+    const count  = document.getElementById('overflow-count');
+    if (!drawer || !list || !count) return;
+
+    if (!overflow || overflow.length === 0) {
+      drawer.style.display = 'none';
+      return;
+    }
+
+    drawer.style.display = 'block';
+    count.textContent = overflow.length;
+
+    // Only rebuild rows if the count changed, to avoid thrashing the DOM
+    // on every render call while panning/zooming.
+    if (list.dataset.count === String(overflow.length) && list.children.length) return;
+    list.dataset.count = String(overflow.length);
+
+    list.innerHTML = overflow.map(c => `
+      <div class="overflow-row" onclick="ChronosUI.openOverflowCiv(${c.id})">
+        <span class="overflow-row-dot" style="background:${TYPE_COLOR[c.t]}"></span>
+        <span class="overflow-row-name">${c.n}</span>
+        <span class="overflow-row-dates">${TimelineEngine.fmtYear(c.s)} → ${TimelineEngine.fmtYear(c.e)}</span>
+      </div>
+    `).join('');
+  }
+
+  function openOverflowCiv(civId) {
+    const civ = CIVS.find(c => c.id === civId);
+    if (!civ) return;
+    const votes = TimelineEngine.getVotes();
+    showInfo(civ, votes);
+    TimelineEngine.focusCiv(civId);
+  }
+
+  function toggleOverflowDrawer() {
+    const drawer = document.getElementById('overflow-drawer');
+    if (drawer) drawer.classList.toggle('open');
+  }
+
   // ── INIT ──────────────────────────────────────────────────
   function init() {
     buildPresets();
     buildSearch();
+    buildRowLimit();
     TimelineEngine.init('timeline-canvas', 'timeline-wrap');
     if (window.CelestialEngine) CelestialEngine.init('timeline-canvas', 'timeline-wrap');
+    const overflowToggle = document.getElementById('overflow-toggle');
+    if (overflowToggle) overflowToggle.addEventListener('click', toggleOverflowDrawer);
     // Allow layout to settle before honouring a ?civ=ID deep link
     setTimeout(openFromURL, 150);
   }
 
-  return { init, showInfo, hideInfo, handleVote, toggleFollowCiv, openFromURL };
+  return {
+    init, showInfo, hideInfo, handleVote, toggleFollowCiv, openFromURL,
+    updateOverflowDrawer, openOverflowCiv, toggleOverflowDrawer,
+  };
 
 })();
 
