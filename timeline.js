@@ -127,6 +127,18 @@ const TimelineEngine = (() => {
     ctx.closePath();
   }
 
+
+  // ── THEME HELPER — lighten epoch band colours for day mode ──
+  function lightenEpochColor(hex) {
+    const r = parseInt(hex.slice(1,3), 16);
+    const g = parseInt(hex.slice(3,5), 16);
+    const b = parseInt(hex.slice(5,7), 16);
+    // Blend toward warm parchment tone
+    const mix = (c, target) => Math.round(c + (target - c) * 0.92);
+    const nr = mix(r, 240), ng = mix(g, 232), nb = mix(b, 213);
+    return `rgb(${nr},${ng},${nb})`;
+  }
+
   // ── HIT TESTS ────────────────────────────────────────────
   function hitTest(mx, my) {
     return civRects.find(({ x, y, w, h }) =>
@@ -136,6 +148,10 @@ const TimelineEngine = (() => {
   // ── MAIN RENDER ───────────────────────────────────────────
   function render() {
     ctx.clearRect(0, 0, CW, CH);
+    // Theme-aware canvas background — follows day/night mode
+    const isDay = document.documentElement.getAttribute('data-theme') === 'day';
+    ctx.fillStyle = isDay ? '#F0E8D5' : '#06080f';
+    ctx.fillRect(0, 0, CW, CH);
     civRects   = [];
     ghostRects = [];
 
@@ -156,7 +172,7 @@ const TimelineEngine = (() => {
       const x1 = toX(ep.s), x2 = toX(ep.e);
       if (x2 < 0 || x1 > CW) return;
       const lx = Math.max(0, x1), rx = Math.min(CW, x2);
-      ctx.fillStyle = ep.c;
+      ctx.fillStyle = isDay ? lightenEpochColor(ep.c) : ep.c;
       ctx.fillRect(lx, 0, rx - lx, CH);
       if (rx - lx > 55) {
         ctx.fillStyle = 'rgba(140,155,190,.22)';
@@ -181,12 +197,12 @@ const TimelineEngine = (() => {
     }
 
     // — Axis & tick labels —
-    ctx.strokeStyle = 'rgba(15,50,100,.5)'; ctx.lineWidth = 1;
+    ctx.strokeStyle = isDay ? 'rgba(90,65,25,.4)' : 'rgba(15,50,100,.5)'; ctx.lineWidth = 1;
     ctx.beginPath(); ctx.moveTo(0, HDR); ctx.lineTo(CW, HDR); ctx.stroke();
     for (let y = t0; y <= vE; y += iv) {
       const x = toX(y);
       if (x < 8 || x > CW - 8) continue;
-      ctx.fillStyle = '#142840';
+      ctx.fillStyle = isDay ? 'rgba(60,45,15,.55)' : 'rgba(150,180,210,.45)';
       ctx.font = '500 11px "Jost",sans-serif';
       ctx.textAlign = 'center';
       ctx.fillText(fmtYear(y), x, EPH + TCK - 6);
@@ -284,13 +300,17 @@ const TimelineEngine = (() => {
       if (bw > 32) {
         ctx.save();
         ctx.beginPath(); ctx.rect(bx + 3, by, bw - 6, bh); ctx.clip();
-        ctx.font = (sel ? '600 ' : '500 ') + '12px "Jost",sans-serif';
+        ctx.font = (sel ? '700 ' : '600 ') + '12px "Jost",sans-serif';
         ctx.textAlign = 'left';
-        // Dark backing for readability
-        ctx.fillStyle = 'rgba(0,0,0,0.45)';
-        ctx.fillText(c.n, bx + 9, by + bh / 2 + 5);
-        ctx.fillStyle = sel ? 'rgba(255,255,255,.96)' : st.lbl;
+        // Strong dark backing/outline for readability against any bar colour
+        ctx.fillStyle = 'rgba(0,0,0,0.75)';
+        ctx.fillText(c.n, bx + 10, by + bh / 2 + 5);
         ctx.fillText(c.n, bx + 8, by + bh / 2 + 4);
+        ctx.fillText(c.n, bx + 9, by + bh / 2 + 3);
+        ctx.fillText(c.n, bx + 9, by + bh / 2 + 6);
+        // Bright text on top — always near-white for max contrast
+        ctx.fillStyle = sel ? '#ffffff' : 'rgba(255,255,255,.95)';
+        ctx.fillText(c.n, bx + 9, by + bh / 2 + 4);
         ctx.restore();
       }
 
@@ -422,6 +442,6 @@ const TimelineEngine = (() => {
     render();
   }
 
-  return { init, resize, setFilteredCivs, setPreset, registerVote, fmtYear };
+  return { init, resize, setFilteredCivs, setPreset, registerVote, fmtYear, render };
 
 })();

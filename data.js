@@ -835,6 +835,13 @@ const ThemeEngine = (() => {
       btn.textContent = theme === 'day' ? '☽ NIGHT' : '☀ DAY';
       btn.title = theme === 'day' ? 'Switch to night mode' : 'Switch to day mode';
     });
+    // Redraw canvas-based views so backgrounds/colours update immediately
+    if (window.TimelineEngine && typeof TimelineEngine.render === 'function') {
+      TimelineEngine.render();
+    }
+    if (window.GlobeEngine && typeof GlobeEngine.refreshTheme === 'function') {
+      GlobeEngine.refreshTheme();
+    }
   }
 
   function toggle() {
