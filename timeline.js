@@ -138,8 +138,7 @@ const TimelineEngine = (() => {
   function render() {
     ctx.clearRect(0, 0, CW, CH);
     // Theme-aware canvas background — follows day/night mode
-    const isDay = document.documentElement.getAttribute('data-theme') === 'day';
-    ctx.fillStyle = isDay ? '#FAF6EC' : '#08090c';
+    ctx.fillStyle = '#08090c';
     ctx.fillRect(0, 0, CW, CH);
     civRects   = [];
     ghostRects = [];
@@ -162,12 +161,10 @@ const TimelineEngine = (() => {
       if (x2 < 0 || x1 > CW) return;
       const lx = Math.max(0, x1), rx = Math.min(CW, x2);
       // Neutral alternating bands — subtle, never competes with bar colours
-      ctx.fillStyle = isDay
-        ? (i % 2 === 0 ? 'rgba(0,0,0,0.025)' : 'rgba(0,0,0,0.055)')
-        : (i % 2 === 0 ? 'rgba(255,255,255,0.02)' : 'rgba(255,255,255,0.045)');
+      ctx.fillStyle = (i % 2 === 0 ? 'rgba(255,255,255,0.02)' : 'rgba(255,255,255,0.045)');
       ctx.fillRect(lx, 0, rx - lx, CH);
       if (rx - lx > 55) {
-        ctx.fillStyle = isDay ? 'rgba(20,19,14,.35)' : 'rgba(242,242,240,.3)';
+        ctx.fillStyle = 'rgba(242,242,240,.3)';
         ctx.font = '500 10px "Jost",sans-serif';
         ctx.textAlign = 'left';
         ctx.fillText(ep.n, lx + 7, EPH - 4);
@@ -183,18 +180,18 @@ const TimelineEngine = (() => {
     const t0 = Math.ceil(vS / iv) * iv;
     for (let y = t0; y <= vE; y += iv) {
       const x = toX(y);
-      ctx.strokeStyle = isDay ? 'rgba(0,0,0,.08)' : 'rgba(255,255,255,.07)';
+      ctx.strokeStyle = 'rgba(255,255,255,.07)';
       ctx.lineWidth = 1;
       ctx.beginPath(); ctx.moveTo(x, HDR); ctx.lineTo(x, CH); ctx.stroke();
     }
 
     // — Axis & tick labels —
-    ctx.strokeStyle = isDay ? 'rgba(0,0,0,.25)' : 'rgba(255,255,255,.2)'; ctx.lineWidth = 1;
+    ctx.strokeStyle = 'rgba(255,255,255,.2)'; ctx.lineWidth = 1;
     ctx.beginPath(); ctx.moveTo(0, HDR); ctx.lineTo(CW, HDR); ctx.stroke();
     for (let y = t0; y <= vE; y += iv) {
       const x = toX(y);
       if (x < 8 || x > CW - 8) continue;
-      ctx.fillStyle = isDay ? 'rgba(20,19,14,.5)' : 'rgba(242,242,240,.4)';
+      ctx.fillStyle = 'rgba(242,242,240,.4)';
       ctx.font = '500 11px "Jost",sans-serif';
       ctx.textAlign = 'center';
       ctx.fillText(fmtYear(y), x, EPH + TCK - 6);
@@ -294,13 +291,6 @@ const TimelineEngine = (() => {
         ctx.beginPath(); ctx.rect(bx + 3, by, bw - 6, bh); ctx.clip();
         ctx.font = (sel ? '700 ' : '600 ') + '12px "Jost",sans-serif';
         ctx.textAlign = 'left';
-        // Strong dark backing/outline for readability against any bar colour
-        ctx.fillStyle = 'rgba(0,0,0,0.75)';
-        ctx.fillText(c.n, bx + 10, by + bh / 2 + 5);
-        ctx.fillText(c.n, bx + 8, by + bh / 2 + 4);
-        ctx.fillText(c.n, bx + 9, by + bh / 2 + 3);
-        ctx.fillText(c.n, bx + 9, by + bh / 2 + 6);
-        // Bright text on top — always near-white for max contrast
         ctx.fillStyle = sel ? '#ffffff' : 'rgba(255,255,255,.95)';
         ctx.fillText(c.n, bx + 9, by + bh / 2 + 4);
         ctx.restore();

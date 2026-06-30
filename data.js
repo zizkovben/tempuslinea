@@ -822,41 +822,15 @@ const EPOCHS = [
 ];
 
 // ── THEME ENGINE ──────────────────────────────────────────────────────────
-// Day / Night mode toggle. Persists to localStorage.
-// Buttons with class .theme-toggle are wired automatically on DOMContentLoaded.
+// Day/night mode disabled for now — night mode only. Stub kept so any
+// .theme-toggle buttons in HTML don't throw errors; they simply do nothing.
 
 const ThemeEngine = (() => {
-  const KEY = 'chronos_theme';
-
-  function apply(theme) {
-    document.documentElement.setAttribute('data-theme', theme);
-    localStorage.setItem(KEY, theme);
-    document.querySelectorAll('.theme-toggle').forEach(btn => {
-      btn.textContent = theme === 'day' ? '☽ NIGHT' : '☀ DAY';
-      btn.title = theme === 'day' ? 'Switch to night mode' : 'Switch to day mode';
-    });
-    // Redraw canvas-based views so backgrounds/colours update immediately
-    if (window.TimelineEngine && typeof TimelineEngine.render === 'function') {
-      TimelineEngine.render();
-    }
-    if (window.GlobeEngine && typeof GlobeEngine.refreshTheme === 'function') {
-      GlobeEngine.refreshTheme();
-    }
-  }
-
-  function toggle() {
-    const current = document.documentElement.getAttribute('data-theme') || 'night';
-    apply(current === 'day' ? 'night' : 'day');
-  }
-
   function init() {
-    const saved = localStorage.getItem(KEY) || 'night';
-    apply(saved);
-    document.querySelectorAll('.theme-toggle').forEach(btn => {
-      btn.addEventListener('click', toggle);
-    });
+    document.documentElement.setAttribute('data-theme', 'night');
   }
-
+  function apply() {}
+  function toggle() {}
   return { init, toggle, apply };
 })();
 

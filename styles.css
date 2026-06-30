@@ -61,43 +61,6 @@
   --mode: 'night';
 }
 
-/* ── MEDITERRANEAN ANTIQUITY — Day Mode ───────────────────────────────── */
-[data-theme="day"] {
-  /* Backgrounds — warm cream/white */
-  --bg-void:      #FAF6EC;
-  --bg-panel:     #F4EFE0;
-  --bg-card:      #EDE6D2;
-  --bg-hover:     #E2D9C2;
-
-  /* Borders — neutral, no colour tint */
-  --border-dim:   rgba(0, 0, 0, 0.08);
-  --border-mid:   rgba(0, 0, 0, 0.14);
-  --border-hi:    rgba(0, 0, 0, 0.24);
-
-  /* Same three accents, darkened slightly for contrast on light bg */
-  --gold:         #8A5200;
-  --gold-dim:     #5A3400;
-  --gold-hi:      #B06800;
-  --gold-text:    #6A3E00;
-
-  --violet:       #1A3A8A;
-  --violet-hi:    #2A52B0;
-  --violet-text:  #1A3A8A;
-
-  --teal:         #085A55;
-  --teal-hi:      #0A7268;
-  --teal-text:    #085A55;
-
-  /* Text — pure black/grey, no colour tint */
-  --text-primary:   #14130E;
-  --text-secondary: #514C40;
-  --text-dim:       #8C8676;
-
-  --font-ui:      'Jost', 'Segoe UI', sans-serif;
-  --font-mono:    'Jost', 'Segoe UI', sans-serif;
-
-  --mode: 'day';
-}
 
 html, body {
   background: var(--bg-void);
