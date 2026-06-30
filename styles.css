@@ -9,39 +9,44 @@
 /* ── RESET & BASE ─────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-/* ── MEDITERRANEAN ANTIQUITY — Night Mode (default) ──────── */
+/* ── MEDITERRANEAN ANTIQUITY — Night Mode (default) ──────────────────────
+   PHILOSOPHY: Only three accent colours exist on this site — Bronze/Gold,
+   Lapis, and Aegean Teal — reserved exclusively for civilisation-type
+   identity (confirmed / theorized / debated) and the logo. Everything else
+   — backgrounds, chrome, borders, body text — is pure black/near-black or
+   white/cream, so UI never competes visually with the data itself.        */
 :root {
-  /* Backgrounds */
-  --bg-void:      #06080f;
-  --bg-panel:     #0a0c18;
-  --bg-card:      #0d1020;
-  --bg-hover:     #111828;
+  /* Backgrounds — near-black */
+  --bg-void:      #08090c;
+  --bg-panel:     #0c0d11;
+  --bg-card:      #111217;
+  --bg-hover:     #1a1b21;
 
-  /* Borders */
-  --border-dim:   rgba(40, 60, 120, 0.5);
-  --border-mid:   rgba(60, 90, 160, 0.4);
-  --border-hi:    rgba(80, 130, 200, 0.5);
+  /* Borders — neutral grey, no colour tint */
+  --border-dim:   rgba(255, 255, 255, 0.08);
+  --border-mid:   rgba(255, 255, 255, 0.14);
+  --border-hi:    rgba(255, 255, 255, 0.22);
 
-  /* Gold — Egyptian/Greek bronze & gold leaf */
+  /* Bronze/Gold — confirmed civilisations */
   --gold:         #E8A020;
   --gold-dim:     #9A6808;
   --gold-hi:      #F5C842;
-  --gold-text:    rgba(245, 200, 66, 0.95);
+  --gold-text:    #F5C842;
 
-  /* Lapis — deep ultramarine of Egyptian tomb pigment */
-  --violet:       #1E3A7A;
-  --violet-hi:    #4A7FD4;
-  --violet-text:  rgba(144, 184, 240, 0.95);
+  /* Lapis — theorized civilisations */
+  --violet:       #4A7FD4;
+  --violet-hi:    #7BA5EC;
+  --violet-text:  #90B8F0;
 
-  /* Aegean — Mediterranean turquoise */
-  --teal:         #0A5A55;
-  --teal-hi:      #2AADA0;
-  --teal-text:    rgba(96, 208, 200, 0.95);
+  /* Aegean Teal — debated civilisations */
+  --teal:         #2AADA0;
+  --teal-hi:      #4ED4C5;
+  --teal-text:    #60D0C8;
 
-  /* Text */
-  --text-primary:   #c8d8e8;
-  --text-secondary: #6a8aaa;
-  --text-dim:       #2a4060;
+  /* Text — pure white/grey, no colour tint */
+  --text-primary:   #F2F2F0;
+  --text-secondary: #A8A8A4;
+  --text-dim:       #5A5A56;
 
   /* Typography */
   --font-display: 'Cinzel', Georgia, serif;
@@ -53,37 +58,40 @@
   --radius-md:    6px;
   --radius-lg:    10px;
 
-  /* Colour scheme flag */
   --mode: 'night';
 }
 
-/* ── MEDITERRANEAN ANTIQUITY — Day Mode ───────────────────── */
+/* ── MEDITERRANEAN ANTIQUITY — Day Mode ───────────────────────────────── */
 [data-theme="day"] {
-  --bg-void:      #F0E8D5;
-  --bg-panel:     #E8DFC8;
-  --bg-card:      #DED4B8;
-  --bg-hover:     #D2C8AA;
+  /* Backgrounds — warm cream/white */
+  --bg-void:      #FAF6EC;
+  --bg-panel:     #F4EFE0;
+  --bg-card:      #EDE6D2;
+  --bg-hover:     #E2D9C2;
 
-  --border-dim:   rgba(100, 75, 30, 0.2);
-  --border-mid:   rgba(120, 90, 35, 0.35);
-  --border-hi:    rgba(150, 110, 40, 0.55);
+  /* Borders — neutral, no colour tint */
+  --border-dim:   rgba(0, 0, 0, 0.08);
+  --border-mid:   rgba(0, 0, 0, 0.14);
+  --border-hi:    rgba(0, 0, 0, 0.24);
 
+  /* Same three accents, darkened slightly for contrast on light bg */
   --gold:         #8A5200;
   --gold-dim:     #5A3400;
   --gold-hi:      #B06800;
-  --gold-text:    rgba(90, 50, 0, 0.95);
+  --gold-text:    #6A3E00;
 
   --violet:       #1A3A8A;
-  --violet-hi:    #0A2A70;
-  --violet-text:  rgba(15, 40, 110, 0.95);
+  --violet-hi:    #2A52B0;
+  --violet-text:  #1A3A8A;
 
   --teal:         #085A55;
-  --teal-hi:      #066860;
-  --teal-text:    rgba(4, 70, 65, 0.95);
+  --teal-hi:      #0A7268;
+  --teal-text:    #085A55;
 
-  --text-primary:   #1a1208;
-  --text-secondary: #3a2e14;
-  --text-dim:       #7a6a4a;
+  /* Text — pure black/grey, no colour tint */
+  --text-primary:   #14130E;
+  --text-secondary: #514C40;
+  --text-dim:       #8C8676;
 
   --font-ui:      'Jost', 'Segoe UI', sans-serif;
   --font-mono:    'Jost', 'Segoe UI', sans-serif;
@@ -168,8 +176,8 @@ html, body {
   transition: all 0.18s ease;
   white-space: nowrap;
 }
-.btn:hover  { background: #091525; border-color: #1e5080; color: #5fa8d8; }
-.btn.active { background: #091525; border-color: #1e5080; color: #5fa8d8; }
+.btn:hover  { border-color: var(--gold-dim); color: var(--gold); background: var(--bg-hover); }
+.btn.active { border-color: var(--gold); color: var(--gold); background: var(--bg-hover); }
 
 .btn-vote {
   background: transparent;

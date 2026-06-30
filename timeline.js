@@ -128,17 +128,6 @@ const TimelineEngine = (() => {
   }
 
 
-  // ── THEME HELPER — lighten epoch band colours for day mode ──
-  function lightenEpochColor(hex) {
-    const r = parseInt(hex.slice(1,3), 16);
-    const g = parseInt(hex.slice(3,5), 16);
-    const b = parseInt(hex.slice(5,7), 16);
-    // Blend toward warm parchment tone
-    const mix = (c, target) => Math.round(c + (target - c) * 0.92);
-    const nr = mix(r, 240), ng = mix(g, 232), nb = mix(b, 213);
-    return `rgb(${nr},${ng},${nb})`;
-  }
-
   // ── HIT TESTS ────────────────────────────────────────────
   function hitTest(mx, my) {
     return civRects.find(({ x, y, w, h }) =>
@@ -150,7 +139,7 @@ const TimelineEngine = (() => {
     ctx.clearRect(0, 0, CW, CH);
     // Theme-aware canvas background — follows day/night mode
     const isDay = document.documentElement.getAttribute('data-theme') === 'day';
-    ctx.fillStyle = isDay ? '#F0E8D5' : '#06080f';
+    ctx.fillStyle = isDay ? '#FAF6EC' : '#08090c';
     ctx.fillRect(0, 0, CW, CH);
     civRects   = [];
     ghostRects = [];
@@ -168,14 +157,17 @@ const TimelineEngine = (() => {
     const laned = allLaned;
 
     // — Epoch bands —
-    EPOCHS.forEach(ep => {
+    EPOCHS.forEach((ep, i) => {
       const x1 = toX(ep.s), x2 = toX(ep.e);
       if (x2 < 0 || x1 > CW) return;
       const lx = Math.max(0, x1), rx = Math.min(CW, x2);
-      ctx.fillStyle = isDay ? lightenEpochColor(ep.c) : ep.c;
+      // Neutral alternating bands — subtle, never competes with bar colours
+      ctx.fillStyle = isDay
+        ? (i % 2 === 0 ? 'rgba(0,0,0,0.025)' : 'rgba(0,0,0,0.055)')
+        : (i % 2 === 0 ? 'rgba(255,255,255,0.02)' : 'rgba(255,255,255,0.045)');
       ctx.fillRect(lx, 0, rx - lx, CH);
       if (rx - lx > 55) {
-        ctx.fillStyle = 'rgba(140,155,190,.22)';
+        ctx.fillStyle = isDay ? 'rgba(20,19,14,.35)' : 'rgba(242,242,240,.3)';
         ctx.font = '500 10px "Jost",sans-serif';
         ctx.textAlign = 'left';
         ctx.fillText(ep.n, lx + 7, EPH - 4);
@@ -191,18 +183,18 @@ const TimelineEngine = (() => {
     const t0 = Math.ceil(vS / iv) * iv;
     for (let y = t0; y <= vE; y += iv) {
       const x = toX(y);
-      ctx.strokeStyle = 'rgba(15,50,120,.18)';
+      ctx.strokeStyle = isDay ? 'rgba(0,0,0,.08)' : 'rgba(255,255,255,.07)';
       ctx.lineWidth = 1;
       ctx.beginPath(); ctx.moveTo(x, HDR); ctx.lineTo(x, CH); ctx.stroke();
     }
 
     // — Axis & tick labels —
-    ctx.strokeStyle = isDay ? 'rgba(90,65,25,.4)' : 'rgba(15,50,100,.5)'; ctx.lineWidth = 1;
+    ctx.strokeStyle = isDay ? 'rgba(0,0,0,.25)' : 'rgba(255,255,255,.2)'; ctx.lineWidth = 1;
     ctx.beginPath(); ctx.moveTo(0, HDR); ctx.lineTo(CW, HDR); ctx.stroke();
     for (let y = t0; y <= vE; y += iv) {
       const x = toX(y);
       if (x < 8 || x > CW - 8) continue;
-      ctx.fillStyle = isDay ? 'rgba(60,45,15,.55)' : 'rgba(150,180,210,.45)';
+      ctx.fillStyle = isDay ? 'rgba(20,19,14,.5)' : 'rgba(242,242,240,.4)';
       ctx.font = '500 11px "Jost",sans-serif';
       ctx.textAlign = 'center';
       ctx.fillText(fmtYear(y), x, EPH + TCK - 6);
