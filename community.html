@@ -20,20 +20,21 @@
       overflow: hidden;
     }
 
-    /* ── LEFT SIDEBAR — Civ list ─────────────────────────── */
+    /* ── LEFT SIDEBAR — Civ list (fixed, collapsible groups) ─ */
     #comm-sidebar {
       width: 260px;
       flex-shrink: 0;
       border-right: 1px solid var(--border-dim);
-      overflow-y: auto;
       background: var(--bg-panel);
-      scrollbar-width: thin;
-      scrollbar-color: rgba(20,55,130,.3) transparent;
+      /* Fixed: the sidebar itself doesn't scroll with the page —
+         only its internal group list does. */
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
     }
 
     .sidebar-search {
-      position: sticky;
-      top: 0;
+      flex-shrink: 0;
       padding: 10px 12px;
       background: var(--bg-panel);
       border-bottom: 1px solid var(--border-dim);
@@ -54,10 +55,52 @@
     }
     .sidebar-search input:focus { border-color: var(--teal); }
 
-    .sidebar-section-label {
-      padding: 8px 12px 4px;
+    /* Scrollable group list beneath the fixed search box */
+    #comm-groups {
+      flex: 1;
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(20,55,130,.3) transparent;
+    }
+
+    .sidebar-group { border-bottom: 1px solid rgba(12,35,80,.3); }
+
+    .sidebar-group-header {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 9px 12px;
+      cursor: pointer;
+      user-select: none;
+      transition: background 0.12s;
+    }
+    .sidebar-group-header:hover { background: var(--bg-hover); }
+    .sidebar-group-header .chevron {
       font-size: 8px;
+      color: var(--text-dim);
+      transition: transform 0.15s ease;
+      flex-shrink: 0;
+    }
+    .sidebar-group.collapsed .chevron { transform: rotate(-90deg); }
+    .sidebar-group-header .group-title {
+      font-size: 9px;
       letter-spacing: 2px;
+      color: var(--text-secondary);
+      flex: 1;
+    }
+    .sidebar-group-header .group-count {
+      font-size: 8px;
+      color: var(--text-dim);
+      letter-spacing: .5px;
+    }
+
+    .sidebar-group-body { }
+    .sidebar-group.collapsed .sidebar-group-body { display: none; }
+
+    .sidebar-section-label {
+      padding: 6px 12px 4px 26px;
+      font-size: 8px;
+      letter-spacing: 1.5px;
       color: var(--text-dim);
       border-bottom: 1px solid rgba(12,35,80,.3);
     }
@@ -107,13 +150,15 @@
       scrollbar-color: rgba(20,55,130,.3) transparent;
     }
 
-    /* Welcome state */
+    /* Welcome state — replaced on load by the Featured Debate card
+       (see renderFeaturedDebate()); this centred layout remains as
+       the fallback if no seed threads are available. */
     #comm-welcome {
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      height: 60vh;
+      min-height: 60vh;
       text-align: center;
       gap: 16px;
     }
@@ -128,6 +173,51 @@
       color: rgba(140,100,200,.6);
       letter-spacing: 4px;
     }
+
+    /* Featured Debate card — shown on load instead of a blank state */
+    .featured-debate-card {
+      max-width: 560px;
+      margin: 6vh auto;
+      background: var(--bg-card);
+      border: 1px solid var(--border-mid);
+      border-radius: 6px;
+      padding: 22px 26px;
+      text-align: left;
+    }
+    .featured-label {
+      font-size: 9px;
+      letter-spacing: 3px;
+      color: var(--violet-text);
+      margin-bottom: 10px;
+    }
+    .featured-civ {
+      font-size: 11px;
+      letter-spacing: 1.5px;
+      margin-bottom: 10px;
+    }
+    .featured-thread-title {
+      font-family: var(--font-display);
+      font-size: 19px;
+      font-weight: 700;
+      color: var(--text-primary);
+      line-height: 1.4;
+      margin-bottom: 10px;
+    }
+    .featured-thread-preview {
+      font-size: 11px;
+      color: var(--text-secondary);
+      line-height: 1.8;
+      margin-bottom: 14px;
+    }
+    .featured-thread-footer {
+      display: flex;
+      gap: 16px;
+      font-size: 9px;
+      color: var(--text-dim);
+      letter-spacing: 1px;
+      padding-top: 12px;
+      border-top: 1px solid rgba(12,35,80,.4);
+    }
     .welcome-sub {
       font-size: 11px;
       color: var(--text-dim);
@@ -136,39 +226,29 @@
       line-height: 1.8;
     }
 
-    /* Civ thread header */
+    /* Civ thread header — slim context strip for the tab area.
+       Full civ identity (type/name/dates/description) now lives in
+       the shared ChronosUI side panel, opened alongside this. */
     #comm-civ-header {
       display: none;
-      margin-bottom: 20px;
-      padding-bottom: 16px;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+      padding-bottom: 14px;
       border-bottom: 1px solid rgba(12,35,80,.5);
     }
     .comm-civ-type {
       font-size: 9px;
       letter-spacing: 2px;
-      margin-bottom: 4px;
+      margin-right: 8px;
     }
-    .comm-civ-title {
+    .comm-civ-title-inline {
       font-family: var(--font-display);
-      font-size: 22px;
+      font-size: 18px;
       font-weight: 700;
-      letter-spacing: 2px;
-      margin-bottom: 6px;
-    }
-    .comm-civ-meta {
-      font-size: 10px;
-      color: var(--text-dim);
-      letter-spacing: .5px;
-      display: flex;
-      gap: 16px;
-      flex-wrap: wrap;
-      margin-bottom: 10px;
-    }
-    .comm-civ-desc {
-      font-size: 11px;
-      color: #4a6080;
-      line-height: 1.8;
-      max-width: 680px;
+      letter-spacing: 1px;
     }
 
     /* Tab bar */
@@ -332,12 +412,49 @@
     }
     .phase3-notice strong { color: var(--violet-text); }
 
+    /* ── SHARED CHRONOS SIDE PANEL (fixed, right edge) ──────────
+       Same panel used on index.html and globe.html — populated by
+       ui.js's ChronosUI.showInfo(). Fallback rules; harmless if
+       styles.css already defines these IDs, since this block loads
+       after the styles.css <link> in normal cascade order. */
+    #info-panel {
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: 400px;
+      max-width: calc(100vw - 32px);
+      height: 100vh;
+      overflow-y: auto;
+      background: var(--bg-panel, #0c0d11);
+      border-left: 1px solid var(--border-mid, rgba(255,255,255,.14));
+      padding: 24px 20px;
+      z-index: 200;
+      transform: translateX(100%);
+      transition: transform 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      scrollbar-width: thin;
+    }
+    #info-panel.visible { transform: translateX(0); }
+    #info-panel-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(2,3,8,.5);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+      z-index: 199;
+    }
+    #info-panel-backdrop.visible { opacity: 1; pointer-events: auto; }
+
     /* ── RESPONSIVE ──────────────────────────────────────── */
     @media (max-width: 700px) {
       .community-body    { flex-direction: column; }
       #comm-sidebar      { width: 100%; height: 160px; border-right: none;
                            border-bottom: 1px solid var(--border-dim); }
       #comm-main         { padding: 14px; }
+      #info-panel        { width: 100vw; max-width: 100vw; }
     }
   </style>
 </head>
@@ -380,8 +497,8 @@
       <div class="sidebar-search">
         <input id="comm-search" type="text" placeholder="Filter civilizations…">
       </div>
-      <div id="comm-civ-list">
-        <!-- Populated by JS -->
+      <div id="comm-groups">
+        <!-- Populated by JS: collapsible Status/Era/Continent/Region groups -->
       </div>
     </div>
 
@@ -511,9 +628,16 @@
 
 </div><!-- /community-shell -->
 
+<!-- ══ SHARED CHRONOS SIDE PANEL — same as Timeline & Living Atlas ══ -->
+<div id="info-panel-backdrop"></div>
+<div id="info-panel">
+  <div id="info-inner"></div>
+</div>
+
 <!-- ══ SCRIPTS ════════════════════════════════════════ -->
 <script src="data.js"></script>
 <script src="data-extended.js"></script>
+<script src="ui.js"></script>
 <script src="share.js"></script>
 <script src="share-ui-styles.js"></script>
 <script src="share-ui.js"></script>
@@ -817,48 +941,187 @@ const SEED_THREADS = {
       author:"Archaeo_src", cat:"identity", up:1987, dn:276, replies:47,
       tag:"CONFIRMED REMARKABLE", tagColor:"var(--gold-text)" },
   ],
+
+  // ── BATCH 6 — Threads 61–72 (Phase 5at civs, ids 1001–1030) ──────────────
+
+  1013: [ // Tiwanaku
+    { id:61, title:"Posnansky's 15,000 BCE redating of Tiwanaku — astronomically rigorous, or working backward from a conclusion?",
+      body:"Arthur Posnansky spent decades surveying Tiwanaku and argued the Kalasasaya's orientation only matches the sun's solstice position at a much earlier obliquity of the ecliptic, placing construction around 15,000 BCE — over 10,000 years before mainstream radiocarbon dates of roughly 500–1000 CE. His method (measuring obliquity shift against alignment) is methodologically sound in principle. The dispute is over baseline assumptions: how precisely the original stones have shifted since construction, and whether the alignment was ever meant to be that exact. Mainstream archaeologists point to consistent, corroborated radiocarbon and stratigraphic dating across the site that Posnansky's model doesn't address.",
+      author:"Andean_arch_ref", cat:"dating", up:1420, dn:980, replies:52,
+      tag:"HIGHLY DEBATED", tagColor:"var(--teal)" },
+    { id:62, title:"The Kalasasaya's H-blocks and metal clamps — evidence of lost precision techniques?",
+      body:"Tiwanaku's stonework includes H-shaped blocks cut with a precision that allowed them to interlock, and I-shaped channels that once held molten metal clamps binding adjacent stones — a technique found at only a handful of ancient sites worldwide. Some alternative researchers cite this as evidence of an unexplained, more advanced engineering tradition. Mainstream archaeometallurgy has reconstructed plausible Andean bronze-casting methods capable of producing these clamps using period-appropriate technology, though the labor organization required remains genuinely impressive by any measure.",
+      author:"Metallurgy_src", cat:"technology", up:890, dn:210, replies:23,
+      tag:"DEBATED", tagColor:"var(--teal)" },
+  ],
+
+  1018: [ // Sea Peoples Confederation
+    { id:63, title:"Were the Sea Peoples a cause of the Bronze Age Collapse, or a symptom of it?",
+      body:"Egyptian inscriptions from Ramesses III's reign at Medinet Habu describe a coordinated assault by seaborne raiders that coincided with the near-simultaneous collapse of the Hittite Empire, Mycenaean Greece, and multiple Levantine city-states around 1200 BCE. The 'Sea Peoples as primary cause' narrative dominated 20th-century scholarship, but more recent work emphasizes converging pressures — prolonged drought, earthquake clusters, and interdependent trade-network failure — with the Sea Peoples as displaced populations fleeing collapse elsewhere, not its root cause. Both framings have serious proponents; the debate turns on how much agency to assign to migration versus systemic fragility.",
+      author:"BronzeCollapse_ref", cat:"general", up:1650, dn:340, replies:44,
+      tag:"ACTIVELY DEBATED", tagColor:"var(--teal)" },
+    { id:64, title:"The Peleset–Philistine link — how solid is the etymological and archaeological chain?",
+      body:"Among the groups named in Egyptian Sea Peoples inscriptions, the Peleset are widely linked to the later Philistines who settled the southern Levantine coast. The case rests on phonetic similarity, Egyptian depictions of feathered headdresses resembling later Philistine material culture, and Aegean-style pottery found at Philistine sites like Ashkelon and Ekron. It's one of the stronger identifications in Sea Peoples scholarship, though the exact migration route and whether 'Peleset' referred to one unified group or a looser coalition remains open.",
+      author:"Levant_arch_src", cat:"general", up:720, dn:180, replies:19,
+      tag:"MAINSTREAM CANDIDATE", tagColor:"var(--gold-text)" },
+  ],
+
+  1024: [ // Xia Dynasty
+    { id:65, title:"Erlitou = Xia? What would actually count as proof either way",
+      body:"The Erlitou culture (c.1900–1500 BCE) shows the palatial architecture, bronze ritual vessels, and administrative complexity expected of a Xia-era state described in later texts like Sima Qian's Records — but no writing from Erlitou itself has been recovered that names it as 'Xia' or identifies its rulers against the traditional king-list. Proponents argue the material correlation is strong enough on its own; skeptics note that correlation without textual self-identification is exactly the kind of gap that turned Troy from myth to history only once inscriptions confirmed it. Until comparable textual evidence surfaces at a Chinese Bronze Age site, the identification remains an inference, not a proof.",
+      author:"Sinology_ref", cat:"dating", up:1340, dn:610, replies:38,
+      tag:"UNRESOLVED", tagColor:"var(--teal)" },
+    { id:66, title:"State-sponsored chronology projects vs international peer review — a conflict of interest?",
+      body:"China's Xia-Shang-Zhou Chronology Project (started 1996) produced official dates for the Xia dynasty that most international Sinologists regard as more confident than the underlying evidence supports, a tension that isn't unique to Chinese archaeology — national origin narratives worldwide face similar pressure to firm up contested early history. That said, the Project's underlying radiocarbon and archaeoastronomical data has been independently useful even where its conclusions are disputed. Worth separating the data from the narrative built on top of it.",
+      author:"Acad_Source", cat:"general", up:610, dn:290, replies:21,
+      tag:"DEBATED", tagColor:"var(--teal)" },
+  ],
+
+  1028: [ // Bosnian Pyramid Hypothesis
+    { id:67, title:"The 'concrete plates' on Visočica Hill — ancient construction material, or natural conglomerate?",
+      body:"Semir Osmanagić's team has pointed to flat, layered stone 'plates' on the hill's surface as evidence of ancient concrete construction. Geologists who have examined the site — including a formal 2006 field assessment — identify these as clastic sedimentary rock (breccia and sandstone), a naturally occurring formation typical of the region's geology, not a poured or cast material. No independent geological survey has supported the man-made-concrete claim; this is one of the more directly testable disputes in alternative archaeology, and the testing has consistently favored the natural explanation.",
+      author:"Geol_Source", cat:"technology", up:380, dn:1240, replies:41,
+      tag:"MAINSTREAM CONSENSUS", tagColor:"var(--gold-text)" },
+    { id:68, title:"Why did the European Association of Archaeologists formally condemn this excavation?",
+      body:"In 2006, the EAA issued a public statement calling the Visoko excavation a 'grotesque pseudoarchaeological project' that risked damaging genuine medieval and prehistoric archaeological layers actually present on the hill. This is a stronger and more unusual institutional response than most fringe claims receive — most get ignored rather than formally condemned. Supporters frame this as establishment gatekeeping; the EAA's stated concern was specifically the physical excavation methods threatening real, dateable archaeological material underneath the pyramid claim.",
+      author:"EU_Archaeo_ref", cat:"general", up:290, dn:520, replies:33,
+      tag:"CONTROVERSIAL", tagColor:"var(--violet-text)" },
+  ],
+
+  1012: [ // Kingdom of Ophir
+    { id:69, title:"Almug wood and gold — what do the traded goods actually tell us about Ophir's location?",
+      body:"1 Kings describes Ophir's ships returning with gold, almug wood, silver, ivory, apes, and peacocks. Almug wood is generally identified with sandalwood or a related aromatic hardwood not native to the Levant or most of Arabia, which points botanically toward India or East Africa rather than the closer Arabian candidates usually favored for the gold trade alone. The apes and peacocks similarly suggest South Asian or East African sourcing. No single candidate satisfies every traded good simultaneously, which is itself informative — Ophir may represent a trade network's endpoint rather than one single port.",
+      author:"BiblicalArch_ref", cat:"location", up:540, dn:210, replies:27,
+      tag:"UNRESOLVED", tagColor:"var(--teal)" },
+    { id:70, title:"The Great Zimbabwe misattribution — how a real place got wrongly tied to a biblical name",
+      body:"19th-century European explorers and colonial administrators, reluctant to credit indigenous Shona builders with Great Zimbabwe's stonework, promoted the theory that it was biblical Ophir or the Queen of Sheba's palace. This was decisively refuted by 20th-century archaeology, which confirmed a purely Shona origin dated to 1100–1450 CE — centuries after Ophir's biblical context. The episode is now a standard teaching example of how colonial bias shaped (and distorted) African archaeology, and it's worth separating firmly from the genuine, still-open question of where the historical Ophir actually was.",
+      author:"AfricanHist_ref", cat:"location", up:920, dn:110, replies:24,
+      tag:"RESOLVED (MISATTRIBUTION)", tagColor:"var(--gold-text)" },
+  ],
+
+  1030: [ // Pre-Glacial Antarctic Civilization
+    { id:71, title:"Crustal displacement theory — does the physics actually hold up?",
+      body:"Charles Hapgood's 1958 hypothesis proposed that Earth's outer crust can periodically shift as a whole shell over the semi-liquid layer beneath it, rapidly relocating land to different latitudes — Hapgood specifically proposed part of Antarctica had been in a temperate zone within human memory. The core problem is mechanical: no proposed forcing mechanism (including Hapgood's own ice-cap-imbalance model) has been shown to generate anywhere near the force required to move the lithosphere that quickly, and geologists note the crust and mantle are far more strongly coupled than his model assumed. Plate tectonics, developed and confirmed after Hapgood's work, explains continental movement on a completely different timescale and mechanism.",
+      author:"Geophys_ref", cat:"dating", up:410, dn:1580, replies:58,
+      tag:"MAINSTREAM CONSENSUS", tagColor:"var(--gold-text)" },
+    { id:72, title:"The Piri Reis map — genuine cartographic anomaly, or pattern-matching on a damaged 1513 chart?",
+      body:"Charles Hapgood and later Graham Hancock cited the 1513 Piri Reis map's southern coastline as depicting ice-free Antarctic coast. Cartographic historians who specialize in Age-of-Exploration portolan charts identify the disputed section as a somewhat distorted rendering of the South American coast curving eastward, a known feature of composite charts built by stitching together separate source maps with different projections — not a depiction of Antarctica at all, ice-free or otherwise. The map is real and historically significant regardless; the Antarctic interpretation rests on reading intention into a specific curve of coastline in a chart known to combine multiple, imperfectly reconciled sources.",
+      author:"Cartography_src", cat:"technology", up:520, dn:890, replies:36,
+      tag:"DEBATED", tagColor:"var(--teal)" },
+  ],
 };
+
+// Next thread ID for future batches: 73
 
 // ── COMMUNITY PAGE JS ─────────────────────────────────────
 let activeCivId = null;
 let activeTab   = 'threads';
 let threadVotes = {};
+let searchQuery = '';
 
-// Build sidebar civ list
-function buildSidebar(filter) {
-  const list = document.getElementById('comm-civ-list');
-  const q    = (filter || '').toLowerCase();
-  list.innerHTML = '';
+// Which groups are collapsed — Status open by default, rest collapsed
+// (locked decision, see Bible v22 "Community Platform — Redesign Plan").
+const groupCollapsed = { status: false, era: true, continent: true, region: true };
 
-  const types = ['theorized','debated','confirmed'];
-  const labels = { theorized:'THEORIZED', debated:'DEBATED', confirmed:'CONFIRMED' };
-  const colors = { confirmed:'#9a6e08', theorized:'#6b21a8', debated:'#0c6a69' };
+const TYPE_COLORS = { confirmed:'#9a6e08', theorized:'#6b21a8', debated:'#0c6a69' };
+const TYPE_LABELS = { theorized:'THEORIZED', debated:'DEBATED', confirmed:'CONFIRMED' };
 
-  types.forEach(type => {
-    const civs = CIVS
-      .filter(c => c.t === type)
-      .filter(c => !q || c.n.toLowerCase().includes(q) || c.r.toLowerCase().includes(q))
-      .sort((a,b) => a.n.localeCompare(b.n));
-    if (!civs.length) return;
+// Era buckets computed client-side from civ.s (start year) — a sidebar
+// filtering convenience, independent of the globe's EPOCH_SNAPSHOTS.
+const ERA_ORDER = [
+  'ICE AGE — pre-12,000 BCE',
+  'NEOLITHIC — 12,000–3000 BCE',
+  'BRONZE AGE — 3000–1000 BCE',
+  'IRON AGE / CLASSICAL — 1000 BCE–500 CE',
+  'MEDIEVAL — 500–1500 CE',
+  'EARLY MODERN — 1500–1900 CE',
+  'MODERN — 1900 CE–present',
+];
+function getEraLabel(civ) {
+  const s = civ.s;
+  if (s <= -12000) return ERA_ORDER[0];
+  if (s <= -3000)  return ERA_ORDER[1];
+  if (s <= -1000)  return ERA_ORDER[2];
+  if (s <= 500)    return ERA_ORDER[3];
+  if (s <= 1500)   return ERA_ORDER[4];
+  if (s <= 1900)   return ERA_ORDER[5];
+  return ERA_ORDER[6];
+}
+function getContinentLabel(civ) {
+  return civ.cont ? String(civ.cont).toUpperCase() : 'UNSPECIFIED';
+}
+function getRegionLabel(civ) {
+  return civ.r || 'UNSPECIFIED';
+}
 
+// Renders one collapsible group (Status / Era / Continent / Region) and
+// returns its DOM element. `labelFn` buckets civs; `order` fixes the
+// bucket sequence (alphabetical if omitted); `dotColorFn` colours each
+// row's dot (defaults to type colour so colour-coding stays consistent
+// across every grouping dimension).
+function renderGroup(key, title, civs, labelFn, order, dotColorFn) {
+  const buckets = {};
+  civs.forEach(c => (buckets[labelFn(c)] = buckets[labelFn(c)] || []).push(c));
+  let bucketLabels = order ? order.filter(l => buckets[l]) : Object.keys(buckets).sort();
+
+  const group = document.createElement('div');
+  group.className = 'sidebar-group' + (groupCollapsed[key] ? ' collapsed' : '');
+
+  const header = document.createElement('div');
+  header.className = 'sidebar-group-header';
+  header.innerHTML = `
+    <span class="chevron">▾</span>
+    <span class="group-title">${title}</span>
+    <span class="group-count">${civs.length}</span>`;
+  header.addEventListener('click', () => {
+    groupCollapsed[key] = !groupCollapsed[key];
+    group.classList.toggle('collapsed', groupCollapsed[key]);
+  });
+  group.appendChild(header);
+
+  const body = document.createElement('div');
+  body.className = 'sidebar-group-body';
+
+  bucketLabels.forEach(label => {
+    const bucketCivs = buckets[label].sort((a, b) => a.n.localeCompare(b.n));
     const sec = document.createElement('div');
     sec.className = 'sidebar-section-label';
-    sec.textContent = labels[type];
-    list.appendChild(sec);
+    sec.textContent = `${key === 'status' ? (TYPE_LABELS[label] || label) : label} · ${bucketCivs.length}`;
+    body.appendChild(sec);
 
-    civs.forEach(c => {
+    bucketCivs.forEach(c => {
       const item = document.createElement('div');
       item.className = 'civ-list-item' + (c.id === activeCivId ? ' active' : '');
       item.dataset.id = c.id;
+      const dotColor = dotColorFn ? dotColorFn(c) : TYPE_COLORS[c.t];
       const threadCount = (SEED_THREADS[c.id] || []).length;
       item.innerHTML = `
-        <div class="civ-list-dot" style="background:${colors[c.t]};"></div>
+        <div class="civ-list-dot" style="background:${dotColor};"></div>
         <span class="civ-list-name">${c.n}</span>
         ${threadCount ? `<span class="civ-thread-count">${threadCount}</span>` : ''}`;
       item.addEventListener('click', () => selectCiv(c.id));
-      list.appendChild(item);
+      body.appendChild(item);
     });
   });
+
+  group.appendChild(body);
+  return group;
+}
+
+// Build sidebar — search filters across all four groups simultaneously
+function buildSidebar(filter) {
+  if (filter !== undefined) searchQuery = filter;
+  const q = searchQuery.toLowerCase();
+  const filtered = CIVS.filter(c =>
+    !q || c.n.toLowerCase().includes(q) || (c.r && c.r.toLowerCase().includes(q))
+  );
+
+  const wrap = document.getElementById('comm-groups');
+  wrap.innerHTML = '';
+  wrap.appendChild(renderGroup('status', 'STATUS', filtered, c => c.t, ['confirmed','theorized','debated']));
+  wrap.appendChild(renderGroup('era', 'ERA', filtered, getEraLabel, ERA_ORDER));
+  wrap.appendChild(renderGroup('continent', 'CONTINENT', filtered, getContinentLabel));
+  wrap.appendChild(renderGroup('region', 'REGION', filtered, getRegionLabel));
 }
 
 function selectCiv(civId) {
@@ -869,36 +1132,32 @@ function selectCiv(civId) {
   // Tell CLIO the context
   if (window.CLIO) CLIO.setActiveCiv(civ);
 
-  // Update sidebar active state
+  // Update sidebar active state (a civ can appear in up to 4 group rows)
   document.querySelectorAll('.civ-list-item').forEach(el => {
-    el.classList.toggle('active', parseInt(el.dataset.id) === civId);
+    el.classList.toggle('active', parseInt(el.dataset.id, 10) === civId);
   });
 
-  // Show civ header
+  // Open the shared right-edge side panel — same panel, same cross-links,
+  // same behaviour as the Timeline and Living Atlas.
+  if (window.ChronosUI) ChronosUI.showInfo(civ, ChronosUI.getVotes());
+
+  // Slim in-page context strip for the tab area — full identity now
+  // lives in the side panel above.
   const tc  = { confirmed:'#c09010', theorized:'#9a60c0', debated:'#3aabb0' }[civ.t];
-  const dur = Math.abs(civ.e - civ.s);
   const hdr = document.getElementById('comm-civ-header');
-  hdr.style.display = 'block';
+  hdr.style.display = 'flex';
   hdr.innerHTML = `
-    <div class="comm-civ-type" style="color:${tc};">◈ ${civ.t.toUpperCase()} · ${civ.r}</div>
-    <div class="comm-civ-title" style="color:${tc};">${civ.n}</div>
-    <div class="comm-civ-meta">
-      <span>${fmtYear(civ.s)} → ${fmtYear(civ.e)}</span>
-      <span style="color:var(--text-dim);">${dur.toLocaleString()} years</span>
-      ${civ.lang && civ.lang !== 'unknown' ? `<span>LANG: ${civ.lang.replace(/-/g,' ').toUpperCase()}</span>` : ''}
-      ${civ.gov  && civ.gov  !== 'unknown' ? `<span>GOV: ${civ.gov.toUpperCase()}</span>` : ''}
+    <div>
+      <span class="comm-civ-type" style="color:${tc};">◈ ${civ.t.toUpperCase()}</span>
+      <span class="comm-civ-title-inline" style="color:${tc};">${civ.n}</span>
     </div>
-    <p class="comm-civ-desc">${civ.d}</p>
-    <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;">
+    <div style="display:flex;gap:8px;flex-wrap:wrap;">
       <button class="btn" style="font-size:9px;"
         onclick="CLIO.open();CLIO.ask('Tell me everything significant about ${civ.n.replace(/'/g,"\\'")}')">
         ✦ Ask CLIO about ${civ.n}
       </button>
-      <a href="index.html" class="btn" style="font-size:9px;text-decoration:none;">
-        VIEW ON TIMELINE →
-      </a>
-      <a href="globe.html" class="btn" style="font-size:9px;text-decoration:none;">
-        VIEW ON GLOBE →
+      <a href="globe.html?civ=${civ.id}" class="btn" style="font-size:9px;text-decoration:none;">
+        VIEW ON LIVING ATLAS →
       </a>
     </div>`;
 
@@ -1074,8 +1333,48 @@ function fmtYear(y) {
   return y < 0 ? Math.abs(y).toLocaleString()+' BCE' : y.toLocaleString()+' CE';
 }
 
+// ── FEATURED DEBATE ────────────────────────────────────────
+// Shown on load instead of a blank welcome state — picks a random
+// high-vote thread each visit so the page feels alive immediately.
+function pickFeaturedThread() {
+  const all = [];
+  Object.keys(SEED_THREADS).forEach(civId => {
+    SEED_THREADS[civId].forEach(t => all.push({ civId: parseInt(civId, 10), thread: t }));
+  });
+  if (!all.length) return null;
+  all.sort((a, b) => b.thread.up - a.thread.up);
+  const topPool = all.slice(0, Math.min(6, all.length));
+  return topPool[Math.floor(Math.random() * topPool.length)];
+}
+
+function renderFeaturedDebate() {
+  const picked = pickFeaturedThread();
+  if (!picked) return;   // no seed threads — static welcome message stays
+  const civ = CIVS.find(c => c.id === picked.civId);
+  if (!civ) return;
+  const t  = picked.thread;
+  const tc = { confirmed:'#c09010', theorized:'#9a60c0', debated:'#3aabb0' }[civ.t];
+
+  document.getElementById('comm-welcome').innerHTML = `
+    <div class="featured-debate-card">
+      <div class="featured-label">✦ FEATURED DEBATE</div>
+      <div class="featured-civ" style="color:${tc};">◈ ${civ.t.toUpperCase()} · ${civ.n}</div>
+      <div class="featured-thread-title">${t.title}</div>
+      <div class="featured-thread-preview">${t.body.substring(0, 220)}…</div>
+      <div class="featured-thread-footer">
+        <span>▲ ${t.up.toLocaleString()} · ▼ ${t.dn.toLocaleString()}</span>
+        <span>${t.replies} replies</span>
+      </div>
+      <button class="btn" style="margin-top:14px;border-color:rgba(58,171,176,.4);color:var(--teal-text);"
+        onclick="selectCiv(${civ.id})">
+        → Explore this debate
+      </button>
+    </div>`;
+}
+
 // Init
 buildSidebar();
+renderFeaturedDebate();
 
 // Deep link — auto-open ?civ=ID from URL (e.g. arriving from the timeline's
 // "View Debate Thread" link)
