@@ -209,30 +209,43 @@
     }
     .epoch-desc-text { color: #3a5575; }
 
-    /* ── CIVILIZATION INFO PANEL (left side) ────────────────── */
-    #globe-info-panel {
-      position: absolute;
-      top: 55px;
-      left: 16px;
-      width: 300px;
-      max-height: calc(100vh - 220px);
+    /* ── SHARED CHRONOS SIDE PANEL (fixed, right edge) ──────────
+       Same panel used on index.html — populated by ui.js's
+       ChronosUI.showInfo(). Kept here as a fallback in case
+       styles.css doesn't yet define these page-shell rules;
+       harmless if it does (IDs match, so styles.css wins on
+       any overlapping property via normal cascade order since
+       this <style> block loads after the styles.css <link>). */
+    #info-panel {
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: 400px;
+      max-width: calc(100vw - 32px);
+      height: 100vh;
       overflow-y: auto;
-      background: rgba(3,6,18,.97);
-      border: 1px solid rgba(20,55,130,.4);
-      border-radius: var(--radius-md);
-      padding: 16px;
-      z-index: 20;
-      transform: translateX(-320px);
+      background: var(--bg-panel, #0c0d11);
+      border-left: 1px solid var(--border-mid, rgba(255,255,255,.14));
+      padding: 24px 20px;
+      z-index: 200;
+      transform: translateX(100%);
       transition: transform 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
       scrollbar-width: thin;
-      scrollbar-color: rgba(20,55,130,.4) transparent;
     }
-    #globe-info-panel.visible { transform: translateX(0); }
-    #globe-info-close {
-      position: absolute;
-      top: 10px;
-      right: 10px;
+    #info-panel.visible { transform: translateX(0); }
+    #info-panel-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(2,3,8,.5);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+      z-index: 199;
     }
+    #info-panel-backdrop.visible { opacity: 1; pointer-events: auto; }
 
     /* ── TOOLTIP ────────────────────────────────────────────── */
     #globe-tooltip {
@@ -407,7 +420,7 @@
 
     /* ── RESPONSIVE ─────────────────────────────────────────── */
     @media (max-width: 600px) {
-      #globe-info-panel      { width: calc(100vw - 32px); }
+      #info-panel             { width: 100vw; max-width: 100vw; }
       .globe-controls        { top: 8px; right: 8px; }
       .scrubber-wrap         { padding: 8px 10px 12px; }
       #earth-state-indicator { font-size: 8px; padding: 4px 12px; }
@@ -481,11 +494,6 @@
       </div>
     </div>
 
-    <div id="globe-info-panel">
-      <button class="btn-close" id="globe-info-close">✕</button>
-      <div id="globe-info-inner"></div>
-    </div>
-
     <div id="pin-panel">
       <div class="pin-panel-header">
         <span>◈ LOCATION THEORIES</span>
@@ -538,6 +546,12 @@
 <!-- ══ TOOLTIP ══════════════════════════════════════════ -->
 <div id="globe-tooltip"></div>
 
+<!-- ══ SHARED CHRONOS SIDE PANEL — same as Timeline ═════ -->
+<div id="info-panel-backdrop"></div>
+<div id="info-panel">
+  <div id="info-inner"></div>
+</div>
+
 <!-- ══ SCRIPTS — load order is critical ════════════════ -->
 <!-- Bible §Script Load Orders — Globe                    -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -553,8 +567,10 @@
 <script src="globe-borders.js"></script>
 <script src="globe-borders-ui.js"></script>
 <script src="globe.js"></script>
+<script src="globe-ui-pins.js"></script>
 <script src="globe-ui.js"></script>
 <script src="globe-borders-init.js"></script>
+<script src="ui.js"></script>
 <script src="celestial-data.js"></script>
 <script src="celestial-data-events.js"></script>
 <script src="celestial-data-traditions.js"></script>
