@@ -5,7 +5,14 @@
    Phase 8b: civ-theory votes now trigger ShareEngine.triggerShare().
    Phase 9: handleVote now calls NotificationsEngine.onCivVote().
             Follow button added to info panel footer.
-   Depends on: data.js, timeline.js
+   Phase — Cross-page share-out: ChronosUI is now page-agnostic so
+            globe.html and community.html can reuse the same fixed
+            right-edge side panel as the timeline. All TimelineEngine
+            calls are optional/guarded — on pages without timeline.js,
+            ChronosUI falls back to its own internal year formatter
+            and a local (page-lifetime) vote store via getVotes().
+   Depends on: data.js. TimelineEngine (timeline.js) is OPTIONAL —
+   used when present, gracefully skipped otherwise.
    ============================================================ */
 
 window.ChronosUI = (() => {
@@ -13,6 +20,36 @@ window.ChronosUI = (() => {
   // ── STATE (cached from last showInfo call, used by handleVote) ──
   let _lastCiv   = null;
   let _lastVotes = null;
+
+  // ── LOCAL VOTE STORE ──────────────────────────────────────
+  // Used on any page where TimelineEngine isn't loaded (globe.html,
+  // community.html). Persists for the page's lifetime only — matches
+  // the existing "votes reset on reload" behaviour (Known Issues).
+  const _localVotes = {};
+
+  function getVotes() {
+    if (window.TimelineEngine && TimelineEngine.getVotes) return TimelineEngine.getVotes();
+    return _localVotes;
+  }
+
+  function _registerLocalVote(civId, direction) {
+    if (!_localVotes[civId]) _localVotes[civId] = {};
+    if (direction === 'up') {
+      _localVotes[civId].up = !_localVotes[civId].up;
+      if (_localVotes[civId].up) _localVotes[civId].dn = false;
+    } else {
+      _localVotes[civId].dn = !_localVotes[civId].dn;
+      if (_localVotes[civId].dn) _localVotes[civId].up = false;
+    }
+  }
+
+  // ── YEAR FORMAT (no longer depends on TimelineEngine) ──────
+  function _fmtYear(y) {
+    if (y === 0) return '1 CE';
+    return y < 0
+      ? Math.abs(Math.round(y)).toLocaleString() + ' BCE'
+      : Math.round(y).toLocaleString() + ' CE';
+  }
 
   // ── BUILD TOOLBAR ─────────────────────────────────────────
   function buildPresets() {
@@ -143,7 +180,7 @@ window.ChronosUI = (() => {
         </div>
         <div class="civ-name" style="color:${tc}">${civ.n}</div>
         <div class="civ-dates">
-          ${TimelineEngine.fmtYear(civ.s)} → ${TimelineEngine.fmtYear(civ.e)}
+          ${_fmtYear(civ.s)} → ${_fmtYear(civ.e)}
           <span style="color:var(--text-dim);margin-left:8px;">(${dur.toLocaleString()} years)</span>
         </div>
         ${civ.lang && civ.lang !== 'unknown' ? `
@@ -213,6 +250,9 @@ window.ChronosUI = (() => {
     panel.classList.add('visible');
     const backdrop = document.getElementById('info-panel-backdrop');
     if (backdrop) backdrop.classList.add('visible');
+    // Mobile hook: pages can key off body.panel-open to collapse other
+    // columns (e.g. community.html's list) while the panel is showing.
+    document.body.classList.add('panel-open');
   }
 
   function hideInfo() {
@@ -220,6 +260,7 @@ window.ChronosUI = (() => {
     if (panel) panel.classList.remove('visible');
     const backdrop = document.getElementById('info-panel-backdrop');
     if (backdrop) backdrop.classList.remove('visible');
+    document.body.classList.remove('panel-open');
     if (window.CLIO) CLIO.setActiveCiv(null);
   }
 
@@ -230,20 +271,28 @@ window.ChronosUI = (() => {
     if (!civId || !window.CIVS) return;
     const civ = CIVS.find(c => c.id === civId);
     if (!civ) return;
-    // Pan timeline to the civ and open its panel
+    // Pan timeline to the civ and open its panel (timeline page only)
     if (window.TimelineEngine && TimelineEngine.focusCiv) {
       TimelineEngine.focusCiv(civId);
     }
-    const votes = (window.TimelineEngine && TimelineEngine.getVotes)
-      ? TimelineEngine.getVotes() : {};
-    showInfo(civ, votes);
+    showInfo(civ, getVotes());
   }
 
   // ── VOTE HANDLER (Phase 8b / Phase 9) ─────────────────────
   // Registers the vote with TimelineEngine as before, then fires the
   // Phase 8 share prompt and Phase 9 notifications follow event.
   function handleVote(civId, direction) {
-    TimelineEngine.registerVote(civId, direction);
+    if (window.TimelineEngine && TimelineEngine.registerVote) {
+      TimelineEngine.registerVote(civId, direction);
+    } else {
+      _registerLocalVote(civId, direction);
+    }
+
+    // Refresh the open panel so vote counts/percentage reflect the new
+    // state immediately — needed on pages without TimelineEngine's own
+    // re-render loop (globe.html, community.html); harmless on the
+    // timeline page too, since it re-renders the same cached civ/votes.
+    if (_lastCiv && _lastCiv.id === civId) showInfo(_lastCiv, _lastVotes);
 
     // Phase 9: auto-follow the civ and push a notification event
     if (window.NotificationsEngine && _lastCiv && _lastCiv.id === civId) {
@@ -358,17 +407,19 @@ window.ChronosUI = (() => {
       <div class="overflow-row" onclick="ChronosUI.openOverflowCiv(${c.id})">
         <span class="overflow-row-dot" style="background:${TYPE_COLOR[c.t]}"></span>
         <span class="overflow-row-name">${c.n}</span>
-        <span class="overflow-row-dates">${TimelineEngine.fmtYear(c.s)} → ${TimelineEngine.fmtYear(c.e)}</span>
+        <span class="overflow-row-dates">${_fmtYear(c.s)} → ${_fmtYear(c.e)}</span>
       </div>
     `).join('');
   }
 
+  // Only ever called from the overflow drawer, which only exists on the
+  // timeline page — TimelineEngine is guaranteed present here, but the
+  // guards are kept for safety/consistency with the rest of the file.
   function openOverflowCiv(civId) {
     const civ = CIVS.find(c => c.id === civId);
     if (!civ) return;
-    const votes = TimelineEngine.getVotes();
-    showInfo(civ, votes);
-    TimelineEngine.focusCiv(civId);
+    showInfo(civ, getVotes());
+    if (window.TimelineEngine && TimelineEngine.focusCiv) TimelineEngine.focusCiv(civId);
   }
 
   function toggleOverflowDrawer() {
@@ -381,17 +432,33 @@ window.ChronosUI = (() => {
     buildPresets();
     buildSearch();
     buildRowLimit();
-    TimelineEngine.init('timeline-canvas', 'timeline-wrap');
-    if (window.CelestialEngine) CelestialEngine.init('timeline-canvas', 'timeline-wrap');
+
+    // Timeline-canvas setup only runs on index.html — globe.html and
+    // community.html load ui.js purely for the shared side panel and
+    // don't have a #timeline-canvas element.
+    if (document.getElementById('timeline-canvas') && window.TimelineEngine) {
+      TimelineEngine.init('timeline-canvas', 'timeline-wrap');
+      if (window.CelestialEngine) CelestialEngine.init('timeline-canvas', 'timeline-wrap');
+    }
+
     const overflowToggle = document.getElementById('overflow-toggle');
     if (overflowToggle) overflowToggle.addEventListener('click', toggleOverflowDrawer);
+
+    // Clicking the backdrop closes the panel — wired once, works on
+    // every page that includes the #info-panel-backdrop element.
+    const backdrop = document.getElementById('info-panel-backdrop');
+    if (backdrop && !backdrop.dataset.wired) {
+      backdrop.dataset.wired = '1';
+      backdrop.addEventListener('click', hideInfo);
+    }
+
     // Allow layout to settle before honouring a ?civ=ID deep link
     setTimeout(openFromURL, 150);
   }
 
   return {
     init, showInfo, hideInfo, handleVote, toggleFollowCiv, openFromURL,
-    updateOverflowDrawer, openOverflowCiv, toggleOverflowDrawer,
+    updateOverflowDrawer, openOverflowCiv, toggleOverflowDrawer, getVotes,
   };
 
 })();

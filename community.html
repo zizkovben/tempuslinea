@@ -58,12 +58,20 @@
     /* Scrollable group list beneath the fixed search box */
     #comm-groups {
       flex: 1;
-      overflow-y: auto;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;   /* fallback only — normally the open group(s) exactly fill this */
       scrollbar-width: thin;
       scrollbar-color: rgba(20,55,130,.3) transparent;
     }
 
-    .sidebar-group { border-bottom: 1px solid rgba(12,35,80,.3); }
+    .sidebar-group { border-bottom: 1px solid rgba(12,35,80,.3); display: flex; flex-direction: column; }
+    /* An expanded group's body grows to fill available vertical space —
+       if it's the only one open, it gets the full remaining height
+       (dynamic, matches viewport); if several are open, flexbox splits
+       the space between them automatically. No JS height math needed. */
+    .sidebar-group:not(.collapsed) { flex: 1 1 0; min-height: 140px; }
 
     .sidebar-group-header {
       display: flex;
@@ -73,6 +81,7 @@
       cursor: pointer;
       user-select: none;
       transition: background 0.12s;
+      flex-shrink: 0;
     }
     .sidebar-group-header:hover { background: var(--bg-hover); }
     .sidebar-group-header .chevron {
@@ -94,8 +103,41 @@
       letter-spacing: .5px;
     }
 
-    .sidebar-group-body { }
+    /* The virtualized viewport itself — fills whatever height the
+       flexbox above gives its parent .sidebar-group-body. */
+    .sidebar-group-body {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      min-height: 0;   /* required for flex children to actually shrink/scroll */
+      overflow: hidden;
+    }
     .sidebar-group.collapsed .sidebar-group-body { display: none; }
+    .vlist-viewport {
+      position: relative;
+      flex: 1;
+      min-height: 0;
+      overflow: hidden;
+      -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 6%, black 94%, transparent 100%);
+      mask-image: linear-gradient(to bottom, transparent 0%, black 6%, black 94%, transparent 100%);
+    }
+    .vlist-inner { position: absolute; left: 0; right: 0; top: 0; }
+    .vlist-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0 12px;
+      height: 100%;
+      cursor: pointer;
+      font-size: 12px;
+      color: var(--text-secondary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .vlist-row:hover { color: var(--text-primary); }
+    .vlist-row.active { color: var(--gold-hi); }
+    .vlist-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
 
     .sidebar-section-label {
       padding: 6px 12px 4px 26px;
@@ -103,42 +145,6 @@
       letter-spacing: 1.5px;
       color: var(--text-dim);
       border-bottom: 1px solid rgba(12,35,80,.3);
-    }
-
-    .civ-list-item {
-      padding: 8px 12px;
-      cursor: pointer;
-      border-bottom: 1px solid rgba(12,35,80,.2);
-      transition: background 0.12s;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .civ-list-item:hover   { background: var(--bg-hover); }
-    .civ-list-item.active  {
-      background: rgba(10,18,40,.9);
-      border-left: 2px solid var(--teal);
-      padding-left: 10px;
-    }
-    .civ-list-dot {
-      width: 7px; height: 7px;
-      border-radius: 50%;
-      flex-shrink: 0;
-    }
-    .civ-list-name {
-      font-size: 10px;
-      letter-spacing: .5px;
-      color: var(--text-secondary);
-      flex: 1;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .civ-list-item.active .civ-list-name { color: var(--text-primary); }
-    .civ-thread-count {
-      font-size: 8px;
-      color: var(--text-dim);
-      letter-spacing: 1px;
     }
 
     /* ── MAIN CONTENT AREA ───────────────────────────────── */
@@ -451,9 +457,15 @@
     /* ── RESPONSIVE ──────────────────────────────────────── */
     @media (max-width: 700px) {
       .community-body    { flex-direction: column; }
-      #comm-sidebar      { width: 100%; height: 160px; border-right: none;
+      /* Two states, not a cramped stack: full-height list by default,
+         and full-screen panel once a civ is selected — driven by the
+         body.panel-open class ui.js toggles on ChronosUI.showInfo()/
+         hideInfo(). Closing the panel (X, backdrop, or Escape) returns
+         to the list automatically since that just removes the class. */
+      #comm-sidebar      { width: 100%; flex: 1; border-right: none;
                            border-bottom: 1px solid var(--border-dim); }
-      #comm-main         { padding: 14px; }
+      #comm-main         { display: none; }
+      body.panel-open #comm-sidebar { display: none; }
       #info-panel        { width: 100vw; max-width: 100vw; }
     }
   </style>
@@ -638,6 +650,7 @@
 <script src="data.js"></script>
 <script src="data-extended.js"></script>
 <script src="ui.js"></script>
+<script src="community-list.js"></script>
 <script src="share.js"></script>
 <script src="share-ui-styles.js"></script>
 <script src="share-ui.js"></script>
@@ -1054,15 +1067,51 @@ function getRegionLabel(civ) {
   return civ.r || 'UNSPECIFIED';
 }
 
-// Renders one collapsible group (Status / Era / Continent / Region) and
-// returns its DOM element. `labelFn` buckets civs; `order` fixes the
-// bucket sequence (alphabetical if omitted); `dotColorFn` colours each
-// row's dot (defaults to type colour so colour-coding stays consistent
-// across every grouping dimension).
-function renderGroup(key, title, civs, labelFn, order, dotColorFn) {
+// Live VirtualList instances, keyed by group ('status'/'era'/'continent'/
+// 'region') — recreated on every buildSidebar() call (search/init), and
+// re-rendered (not recreated) whenever a group's available height changes
+// (collapse/expand) or the active civ changes (highlight refresh).
+let activeVLists = {};
+
+// Flattens a group's civs into bucket-header rows + civ rows for the
+// virtualized list — section labels scroll inline as their own rows
+// (curling away at the edges like everything else) rather than living
+// outside the virtualized flow, so one VirtualList instance per group
+// is enough regardless of how many buckets it contains.
+function buildFlatRows(civs, key, labelFn, order) {
   const buckets = {};
   civs.forEach(c => (buckets[labelFn(c)] = buckets[labelFn(c)] || []).push(c));
-  let bucketLabels = order ? order.filter(l => buckets[l]) : Object.keys(buckets).sort();
+  const bucketLabels = order ? order.filter(l => buckets[l]) : Object.keys(buckets).sort();
+  const rows = [];
+  bucketLabels.forEach(label => {
+    const bucketCivs = buckets[label].sort((a, b) => a.n.localeCompare(b.n));
+    rows.push({ isHeader: true, label: key === 'status' ? (TYPE_LABELS[label] || label) : label, count: bucketCivs.length });
+    bucketCivs.forEach(c => rows.push({ isHeader: false, civ: c }));
+  });
+  return rows;
+}
+
+function renderVListRow(row) {
+  if (row.isHeader) {
+    return `<div class="sidebar-section-label" style="display:flex;align-items:center;height:100%;">${row.label} · ${row.count}</div>`;
+  }
+  const c = row.civ;
+  const activeClass = c.id === activeCivId ? ' active' : '';
+  const threadCount = (SEED_THREADS[c.id] || []).length;
+  return `<div class="vlist-row${activeClass}" data-vlist-idx="__ROWIDX__">
+    <span class="vlist-dot" style="background:${TYPE_COLORS[c.t]};"></span>
+    <span style="overflow:hidden;text-overflow:ellipsis;">${c.n}</span>
+    ${threadCount ? `<span style="margin-left:auto;font-size:9px;color:var(--text-dim);flex-shrink:0;">${threadCount}</span>` : ''}
+  </div>`;
+}
+
+// Renders one collapsible group (Status / Era / Continent / Region) and
+// returns its DOM element. `labelFn` buckets civs; `order` fixes the
+// bucket sequence (alphabetical if omitted). Civs within are rendered by
+// a VirtualList instance — dynamic height (fills whatever the flexbox
+// CSS gives it), curl-away edges, drag/wheel/keyboard navigable.
+function renderGroup(key, title, civs, labelFn, order) {
+  const rows = buildFlatRows(civs, key, labelFn, order);
 
   const group = document.createElement('div');
   group.className = 'sidebar-group' + (groupCollapsed[key] ? ' collapsed' : '');
@@ -1076,35 +1125,32 @@ function renderGroup(key, title, civs, labelFn, order, dotColorFn) {
   header.addEventListener('click', () => {
     groupCollapsed[key] = !groupCollapsed[key];
     group.classList.toggle('collapsed', groupCollapsed[key]);
+    // Every open group's available height just changed (flexbox
+    // redistributed) — each needs to recompute its visible row count.
+    Object.values(activeVLists).forEach(vl => vl && vl.render());
   });
   group.appendChild(header);
 
   const body = document.createElement('div');
   body.className = 'sidebar-group-body';
-
-  bucketLabels.forEach(label => {
-    const bucketCivs = buckets[label].sort((a, b) => a.n.localeCompare(b.n));
-    const sec = document.createElement('div');
-    sec.className = 'sidebar-section-label';
-    sec.textContent = `${key === 'status' ? (TYPE_LABELS[label] || label) : label} · ${bucketCivs.length}`;
-    body.appendChild(sec);
-
-    bucketCivs.forEach(c => {
-      const item = document.createElement('div');
-      item.className = 'civ-list-item' + (c.id === activeCivId ? ' active' : '');
-      item.dataset.id = c.id;
-      const dotColor = dotColorFn ? dotColorFn(c) : TYPE_COLORS[c.t];
-      const threadCount = (SEED_THREADS[c.id] || []).length;
-      item.innerHTML = `
-        <div class="civ-list-dot" style="background:${dotColor};"></div>
-        <span class="civ-list-name">${c.n}</span>
-        ${threadCount ? `<span class="civ-thread-count">${threadCount}</span>` : ''}`;
-      item.addEventListener('click', () => selectCiv(c.id));
-      body.appendChild(item);
-    });
-  });
-
+  const viewport = document.createElement('div');
+  viewport.className = 'vlist-viewport';
+  const inner = document.createElement('div');
+  inner.className = 'vlist-inner';
+  viewport.appendChild(inner);
+  body.appendChild(viewport);
   group.appendChild(body);
+
+  if (activeVLists[key]) activeVLists[key].destroy();
+  activeVLists[key] = VirtualList({
+    viewportEl: viewport,
+    innerEl: inner,
+    rowHeight: 28,
+    renderRow: (row, idx) => renderVListRow(row).replace('__ROWIDX__', idx),
+    onSelect: (row) => { if (!row.isHeader) selectCiv(row.civ.id); },
+  });
+  activeVLists[key].setItems(rows);
+
   return group;
 }
 
@@ -1132,10 +1178,11 @@ function selectCiv(civId) {
   // Tell CLIO the context
   if (window.CLIO) CLIO.setActiveCiv(civ);
 
-  // Update sidebar active state (a civ can appear in up to 4 group rows)
-  document.querySelectorAll('.civ-list-item').forEach(el => {
-    el.classList.toggle('active', parseInt(el.dataset.id, 10) === civId);
-  });
+  // Refresh active-row highlight in every open virtualized list. Unlike
+  // the old flat DOM version, most rows don't exist in the DOM at any
+  // given moment (that's the point), so this re-renders each list's
+  // currently-visible rows rather than querying for existing elements.
+  Object.values(activeVLists).forEach(vl => vl && vl.render());
 
   // Open the shared right-edge side panel — same panel, same cross-links,
   // same behaviour as the Timeline and Living Atlas.
