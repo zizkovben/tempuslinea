@@ -12,9 +12,15 @@
    underlying dataset size, it stays smooth whether the list holds 30
    items or 30,000.
 
+   Scrolling wraps infinitely (modulo-based, not a jump-cut) — the last
+   item flows straight into the first and vice versa, so there is no
+   first or last position at all, only a current one. This extends the
+   original "no fixed rank" goal literally: earlier versions still had
+   a technical start/end even if visually de-emphasized; this doesn't.
+
    Prototyped and approved interactively this session before being
-   converted into this module — see Bible v23's "UI Concept — Rotary
-   Civ Browser" section for the design history and decisions.
+   converted into this module — see Bible v23's "UI Concept —
+   Virtualized Curl-Edge List" section for the design history.
 
    Supports: mouse drag, touch drag, mouse wheel, all with the same
    momentum/deceleration physics; live re-filtering via setItems();
@@ -52,15 +58,19 @@ window.VirtualList = function (config) {
   let dragging = false;
   let lastY = 0, lastTime = 0, raf = null;
 
-  function clamp() {
-    const max = Math.max(0, items.length - 1);
-    if (scrollPos < 0)   { scrollPos = 0;   velocity = 0; }
-    if (scrollPos > max) { scrollPos = max; velocity = 0; }
+  // No boundaries — scrollPos wraps via modulo instead of stopping at
+  // the ends, so the list has no first or last item, only a current
+  // position. Normalized every call to avoid float drift over a long
+  // session; render() also wraps each row's index independently.
+  function wrap() {
+    if (!items.length) { scrollPos = 0; velocity = 0; return; }
+    scrollPos = ((scrollPos % items.length) + items.length) % items.length;
   }
 
   function render() {
     const h = viewport.clientHeight;
     if (!h) return;   // not laid out yet (e.g. a collapsed group)
+    if (!items.length) { inner.innerHTML = ''; return; }
 
     const startIdx = Math.floor(scrollPos);
     const frac = scrollPos - startIdx;
@@ -68,8 +78,8 @@ window.VirtualList = function (config) {
     let html = '';
 
     for (let i = -2; i < rowsNeeded; i++) {
-      const idx = startIdx + i;
-      if (idx < 0 || idx >= items.length) continue;
+      const rawIdx = startIdx + i;
+      const idx = ((rawIdx % items.length) + items.length) % items.length;   // wrap
       const y = (i - frac) * rowHeight;
       if (y < -rowHeight * 2.5 || y > h + rowHeight * 0.5) continue;
 
@@ -122,7 +132,7 @@ window.VirtualList = function (config) {
     const itemDelta = -(dy / rowHeight);
     scrollPos += itemDelta;
     velocity = itemDelta / dt * 16;
-    clamp(); render();
+    wrap(); render();
     e.preventDefault();
   }
 
@@ -137,21 +147,21 @@ window.VirtualList = function (config) {
     if (Math.abs(velocity) < 0.02) { velocity = 0; return; }
     scrollPos += velocity;
     velocity *= 0.92;
-    clamp(); render();
+    wrap(); render();
     raf = requestAnimationFrame(momentum);
   }
 
   function onWheel(e) {
     scrollPos += e.deltaY / rowHeight;
-    clamp(); render();
+    wrap(); render();
     e.preventDefault();
   }
 
   // Keyboard: arrow up/down step one row, matches list semantics for
-  // accessibility even though the visual is a curled 3D column.
+  // accessibility even though the visual now wraps infinitely.
   function onKeyDown(e) {
-    if (e.key === 'ArrowDown') { scrollPos += 1; clamp(); render(); e.preventDefault(); }
-    if (e.key === 'ArrowUp')   { scrollPos -= 1; clamp(); render(); e.preventDefault(); }
+    if (e.key === 'ArrowDown') { scrollPos += 1; wrap(); render(); e.preventDefault(); }
+    if (e.key === 'ArrowUp')   { scrollPos -= 1; wrap(); render(); e.preventDefault(); }
   }
 
   viewport.style.cursor = 'grab';
@@ -174,13 +184,13 @@ window.VirtualList = function (config) {
     items = newItems || [];
     scrollPos = 0;
     velocity = 0;
-    clamp();
+    wrap();
     render();
   }
 
   function scrollToIndex(idx) {
-    scrollPos = Math.max(0, Math.min(idx, items.length - 1));
-    clamp(); render();
+    scrollPos = idx;
+    wrap(); render();
   }
 
   function destroy() {
