@@ -436,9 +436,32 @@ window.ChronosUI = (() => {
     // Timeline-canvas setup only runs on index.html — globe.html and
     // community.html load ui.js purely for the shared side panel and
     // don't have a #timeline-canvas element.
-    if (document.getElementById('timeline-canvas') && window.TimelineEngine) {
-      TimelineEngine.init('timeline-canvas', 'timeline-wrap');
-      if (window.CelestialEngine) CelestialEngine.init('timeline-canvas', 'timeline-wrap');
+    //
+    // Diagnostic logging added this session: this guard was written
+    // without ever having seen index.html, so if the timeline goes
+    // blank, the first thing to check is exactly which branch below
+    // fires — that pinpoints "wrong element ID" vs. "script order/
+    // load failure" vs. "TimelineEngine.init() itself threw" instantly
+    // instead of guessing from a blank canvas alone.
+    const timelineCanvasEl = document.getElementById('timeline-canvas');
+    if (timelineCanvasEl && window.TimelineEngine) {
+      try {
+        TimelineEngine.init('timeline-canvas', 'timeline-wrap');
+        if (window.CelestialEngine) CelestialEngine.init('timeline-canvas', 'timeline-wrap');
+        console.log('[ChronosUI] Timeline initialized OK.');
+      } catch (err) {
+        console.error('[ChronosUI] #timeline-canvas and TimelineEngine were both found, ' +
+          'but TimelineEngine.init() threw an error — the bug is inside timeline.js, ' +
+          'not in this detection guard:', err);
+      }
+    } else if (document.getElementById('timeline-wrap')) {
+      // #timeline-wrap existing but #timeline-canvas or TimelineEngine
+      // missing strongly suggests this IS the timeline page, so this
+      // isn't the expected "globe/community page, nothing to do" case.
+      console.warn('[ChronosUI] This looks like the timeline page ' +
+        '(#timeline-wrap exists) but timeline init was skipped because: ' +
+        (timelineCanvasEl ? '' : '#timeline-canvas element not found (check the real ID in index.html). ') +
+        (window.TimelineEngine ? '' : 'window.TimelineEngine is undefined (timeline.js did not load or errored before this point, or script order put ui.js before timeline.js).'));
     }
 
     const overflowToggle = document.getElementById('overflow-toggle');
