@@ -15,9 +15,6 @@
    ============================================================ */
 
 const CIV_META = {
-  //  id : { rel, gov, pop, tags[] }
-
-  // ── THEORIZED / DEEP PRE-HISTORY ──────────────────────────
   1: { lang:'unknown', rel:'unknown',    gov:'unknown',   pop:'unknown',
         tags:['lost continent','pacific','occult','blavatsky','diffusion'] },
   2: { lang:'unknown', rel:'unknown',    gov:'unknown',   pop:'unknown',
@@ -26,14 +23,10 @@ const CIV_META = {
         tags:['plato','flood','atlantis','atlantic','island','catastrophe'] },
   4: { lang:'unknown', rel:'unknown',    gov:'unknown',   pop:'tiny',
         tags:['yonaguni','underwater','japan','submerged','ruins','geology'] },
-
-  // ── NEOLITHIC ─────────────────────────────────────────────
   5: { lang:'unknown', rel:'animist',    gov:'tribal',    pop:'tiny',
         tags:['temple','megalith','pre-agriculture','turkey','anatolia','mystery'] },
   6: { lang:'unknown', rel:'animist',    gov:'tribal',    pop:'small',
         tags:['neolithic','settlement','catalhoyuk','turkey','urban','figurine'] },
-
-  // ── BRONZE AGE ────────────────────────────────────────────
   7: { lang:'isolate', rel:'polytheist', gov:'city-state',pop:'large',
         tags:['sumer','mesopotamia','cuneiform','gilgamesh','ur','babylon',
               'annunaki','sitchin','iraq','writing','law'] },
@@ -59,8 +52,6 @@ const CIV_META = {
   16: { lang:'semitic', rel:'polytheist', gov:'city-state',pop:'medium',
         tags:['phoenicia','alphabet','carthage','seafarer','levant','trade',
               'purple','tyre','sidon'] },
-
-  // ── IRON AGE / CLASSICAL ──────────────────────────────────
   17: { lang:'indo-european', rel:'polytheist', gov:'city-state',pop:'medium',
         tags:['greece','athens','sparta','democracy','philosophy','olympia',
               'plato','aristotle','socrates'] },
@@ -80,8 +71,6 @@ const CIV_META = {
   23: { lang:'mesoamerican', rel:'polytheist', gov:'city-state',pop:'large',
         tags:['maya','mesoamerica','calendar','glyph','pyramid','astronomy',
               'collapse','mystery','yucatan','guatemala'] },
-
-  // ── POST-CLASSICAL ────────────────────────────────────────
   24: { lang:'indo-european', rel:'monotheist', gov:'empire',    pop:'large',
         tags:['byzantine','eastern rome','christianity','constantinople',
               'justinian','greek','orthodox'] },
@@ -103,9 +92,15 @@ const CIV_META = {
   30: { lang:'turkic-mongolic', rel:'monotheist', gov:'empire',    pop:'massive',
         tags:['ottoman','turkey','istanbul','sultan','suleiman','islam',
               'byzantine','wwi','middle east'] },
-
-
-  // ── EARLY MESOPOTAMIA & ANUNNAKI ─────────────────────────
+  31: { lang:'unknown', rel:'unknown',    gov:'unknown',   pop:'unknown',
+        tags:['contact','polynesia','sweet potato','chicken','transoceanic',
+              'columbus','olmec','africa','genetics'] },
+  32: { lang:'isolate', rel:'theorized',  gov:'unknown',   pop:'unknown',
+        tags:['annunaki','sitchin','sumerian','extraterrestrial','nibiru','gold',
+              'genetic engineering','ancient aliens','mesopotamia'] },
+  33: { lang:'unknown', rel:'theorized',  gov:'unknown',   pop:'unknown',
+        tags:['ancient aliens','von daniken','chariots','ufology','intervention',
+              'technology','pyramid','nazca','tv','hancock'] },
   34: { lang:'isolate', rel:'animist',    gov:'tribal',    pop:'small',
         tags:['ubaid','pottery','mesopotamia','pre-sumerian','iraq','temple',
               'agriculture','arabian gulf','trade'] },
@@ -131,8 +126,6 @@ const CIV_META = {
               'pre-flood','king list','dumuzi','pabilsag','shamash',
               'ziusudra','ubara-tutu','noah','flood','weld-blundell',
               'mesopotamia','iraq','fara','excavation','mound','debated','younger dryas'] },
-
-  // ── LIDAR AMAZONIAN DISCOVERIES ──────────────────────────
   41: { lang:'unknown', rel:'animist',    gov:'city-state', pop:'large',
         tags:['upano','ecuador','amazon','lidar','pre-columbian','mounds',
               'roads','plazas','hancock','ancient apocalypse','science journal',
@@ -141,8 +134,6 @@ const CIV_META = {
         tags:['geoglyphs','acre','brazil','amazon','lidar','earthworks',
               'geometric','pre-columbian','ceremonial','hancock',
               'ancient apocalypse','iriarte','rainforest','deforestation'] },
-
-  // ── SOUTHERN AFRICAN KINGDOMS ────────────────────────────
   43: { lang:'niger-congo', rel:'animist',    gov:'kingdom',    pop:'small',
         tags:['mapungubwe','limpopo','south africa','gold','rhinoceros',
               'stratified','class','kingdom','indian ocean','trade',
@@ -153,8 +144,6 @@ const CIV_META = {
               'rozvi','gold','trade','swahili','indian ocean','china',
               'porcelain','colonial','misattribution','phoenician',
               'queen of sheba','archaeology','limpopo','mapungubwe'] },
-
-  // ── AFRICA — EAST, WEST & SAHARA ─────────────────────────
   45: { lang:'afroasiatic', rel:'animist',    gov:'kingdom',    pop:'large',
         tags:['kush','nubia','meroe','sudan','pyramids','nile','egypt',
               '25th dynasty','gold','trade','meroitic script','africa'] },
@@ -172,8 +161,6 @@ const CIV_META = {
         tags:['green sahara','sahara','humid period','tassili','algeria',
               'cave paintings','neolithic','cattle','lake','climate',
               'nile','migration','holocene','africa','prehistoric'] },
-
-  // ── ASIA — SOUTHEAST ASIA & JAPAN ────────────────────────
   50: { lang:'austro-asiatic', rel:'hindu',      gov:'empire',     pop:'massive',
         tags:['khmer','angkor','angkor wat','cambodia','lidar','hydraulic',
               'temple','equinox','astronomy','evans','southeast asia',
@@ -181,8 +168,6 @@ const CIV_META = {
   51: { lang:'japonic', rel:'animist',    gov:'tribal',     pop:'medium',
         tags:['jomon','japan','pottery','oldest','hunter-gatherer',
               'dugu','figurine','lacquer','ainu','prehistoric','neolithic'] },
-
-  // ── AMERICAS ─────────────────────────────────────────────
   52: { lang:'unknown', rel:'animist',    gov:'city-state', pop:'medium',
         tags:['caral','norte chico','peru','oldest americas','mounds',
               'quipu','cotton','fishing','pacific','shady','no warfare',
@@ -207,8 +192,6 @@ const CIV_META = {
         tags:['rapa nui','easter island','moai','pacific','statues','ahu',
               'collapse','ecocide','rats','disease','isolation','lipo',
               'walk','basalt','polynesia','mystery','european contact'] },
-
-  // ── MIDDLE EAST ───────────────────────────────────────────
   58: { lang:'semitic', rel:'polytheist', gov:'empire',     pop:'large',
         tags:['akkad','sargon','first empire','mesopotamia','iraq',
               'cuneiform','drought','collapse','akkadian','language',
@@ -221,8 +204,6 @@ const CIV_META = {
         tags:['nabataean','petra','jordan','arabia','water','desert',
               'treasury','incense','spice','arabic script','trade',
               'rome','canyon','carved','rock','architecture'] },
-
-  // ── MIDDLE EAST ADDITIONAL ────────────────────────────────
   61: { lang:'semitic', rel:'polytheist', gov:'empire',    pop:'massive',
         tags:['babylon','hammurabi','nebuchadnezzar','hanging gardens',
               'tower babel','etemenanki','ishtar gate','captivity',
@@ -236,8 +217,6 @@ const CIV_META = {
   64: { lang:'indo-european', rel:'polytheist', gov:'empire',    pop:'large',
         tags:['parthia','iran','rome','crassus','carrhae','cataphract',
               'silk road','cavalry','persian','central asia'] },
-
-  // ── AFRICA ADDITIONAL ─────────────────────────────────────
   65: { lang:'niger-congo', rel:'monotheist', gov:'empire',    pop:'massive',
         tags:['songhai','niger','timbuktu','manuscripts','tondibi',
               'firearms','west africa','islam','askia','sunni ali'] },
@@ -250,16 +229,12 @@ const CIV_META = {
   68: { lang:'afroasiatic', rel:'animist',    gov:'kingdom',   pop:'medium',
         tags:['garamantian','libya','sahara','foggara','aqueduct',
               'water','desert','fezzan','trade','roman','fossil water'] },
-
-  // ── EUROPE ────────────────────────────────────────────────
   69: { lang:'isolate', rel:'polytheist', gov:'city-state',pop:'medium',
         tags:['etruscan','tuscany','italy','rome','language','isolate',
               'tombs','tarquinia','gladiator','toga','fasces'] },
   70: { lang:'indo-european', rel:'animist',    gov:'tribal',    pop:'large',
         tags:['celtic','druid','gaul','britain','ireland','knotwork',
               'la tene','hallstatt','welsh','gaelic','caesar','europe'] },
-
-  // ── ASIA ADDITIONAL ───────────────────────────────────────
   71: { lang:'austronesian', rel:'buddhist',   gov:'empire',    pop:'large',
         tags:['srivijaya','sumatra','malaysia','maritime','malacca',
               'buddhist','palembang','yijing','trade','india','china'] },
@@ -288,8 +263,6 @@ const CIV_META = {
         tags:['scythian','saka','steppe','ukraine','russia','kurgan',
               'gold','animal style','nomad','amazon','herodotus',
               'cannabis','horse','archer','kazakh'] },
-
-  // ── STUB ENTRIES ──────────────────────────────────────────
   79: { lang:'unknown', rel:'unknown',    gov:'unknown',   pop:'unknown',
         tags:['punt','egypt','hatshepsut','somalia','eritrea','yemen',
               'myrrh','ebony','gold','undiscovered','debate','location'] },
@@ -316,8 +289,6 @@ const CIV_META = {
         tags:['linear a','minoan','crete','undeciphered','script',
               'aegean','language','isolate','linear b','mystery',
               'epigraphy','bronze age','europe'] },
-
-  // ── LANGUAGE-DEFINING CULTURES ────────────────────────────
   86: { lang:'reconstructed', rel:'polytheist', gov:'tribal', pop:'unknown',
         tags:['proto-indo-european','yamnaya','steppe','kurgan','renfrew',
               'gimbutas','ancient dna','horse','wheel','indo-european',
@@ -332,18 +303,6 @@ const CIV_META = {
         tags:['epi-olmec','isthmian','cascajal','la mojarra','script',
               'undeciphered','mesoamerica','oldest writing','americas',
               'zoquean','kaufman','justeson','olmec','proto-writing'] },
-  // ── DEBATED / CONTROVERSIAL ───────────────────────────────
-  31: { lang:'unknown', rel:'unknown',    gov:'unknown',   pop:'unknown',
-        tags:['contact','polynesia','sweet potato','chicken','transoceanic',
-              'columbus','olmec','africa','genetics'] },
-  32: { lang:'isolate', rel:'theorized',  gov:'unknown',   pop:'unknown',
-        tags:['annunaki','sitchin','sumerian','extraterrestrial','nibiru','gold',
-              'genetic engineering','ancient aliens','mesopotamia'] },
-  33: { lang:'unknown', rel:'theorized',  gov:'unknown',   pop:'unknown',
-        tags:['ancient aliens','von daniken','chariots','ufology','intervention',
-              'technology','pyramid','nazca','tv','hancock'] },
-
-  // ── PHASE 5a — ids 89–120 ─────────────────────────────────
   89:  { lang:'semitic',       rel:'monotheist', gov:'kingdom',    pop:'medium',
         tags:['israel','judah','hebrew','bible','first temple','babylon','dead sea scrolls','torah','levant'] },
   90:  { lang:'semitic',       rel:'polytheist', gov:'city-state', pop:'medium',
@@ -422,8 +381,6 @@ const CIV_META = {
         tags:['safavid','persia','iran','shia','isfahan','shah abbas','carpet','miniature','architecture'] },
   115: { lang:'indo-european', rel:'islamic',    gov:'empire',     pop:'massive',
         tags:['mughal','india','taj mahal','akbar','aurangzeb','babur','agra','red fort','pluralism'] },
-
-  // ── PHASE 5f — ids 116–150 ────────────────────────────────
   116: { lang:'unknown',       rel:'unknown',    gov:'unknown',    pop:'unknown',
         locationType:'C',
         tags:['younger dryas','impact','firestone','hancock','carlson','comet','destruction','pre-flood','global'] },
@@ -557,8 +514,6 @@ const CIV_META = {
   150: { lang:'unknown',       rel:'unknown',    gov:'unknown',    pop:'unknown',
         locationType:'C',
         tags:['thule','polar','aryan','esoteric','theosophical','hyperborea','ice free','alternative','blavatsky'] },
-
-  // ── PHASE 5k — ids 151–180 ────────────────────────────────
   151: { lang:'niger-congo',   rel:'polytheist', gov:'monarchy',   pop:'large',
         locationType:'A',
         tags:['benin','bronze','ivory','nigeria','oba','repatriation','british','west africa','artworks'] },
@@ -673,99 +628,72 @@ const CIV_META = {
   180: { lang:'japonic',       rel:'animist',    gov:'chiefdom',   pop:'medium',
         locationType:'A',
         tags:['jomon','japan','oldest pottery','hunter-gatherer','deep time','ancient dna','sedentism'] },
-
-// PHASE 5m — NEW CIV_META ENTRIES 181–210
-// Append these into the CIV_META object in data-extended.js
-// Paste before the closing }; of the CIV_META object
-
   181: { lang:'nilo-saharan',  rel:'polytheist', gov:'kingdom',    pop:'large',
          locationType:'A',
          tags:['kush','nubia','sudan','meroitic','iron','egypt rival','napata','meroe','african pharaohs'] },
-
   182: { lang:'unknown',       rel:'polytheist', gov:'chiefdom',   pop:'medium',
          locationType:'A',
          tags:['nok','nigeria','terracotta','iron age','west africa','sculpture','sub-saharan'] },
-
   183: { lang:'bantu',         rel:'polytheist', gov:'kingdom',    pop:'medium',
          locationType:'A',
          tags:['great zimbabwe','shona','dry-stone','gold trade','indian ocean','southern africa','colonialism'] },
-
   184: { lang:'niger-congo',   rel:'polytheist', gov:'monarchy',   pop:'large',
          locationType:'A',
          tags:['benin','nigeria','bronze','looted art','oba','divine king','pre-colonial africa','bronzes'] },
-
   185: { lang:'bantu',         rel:'polytheist', gov:'city-state', pop:'medium',
          locationType:'A',
          tags:['swahili','east africa','kilwa','mombasa','indian ocean','trade','ibn battuta','monsoon'] },
-
   186: { lang:'dravidian',     rel:'polytheist', gov:'empire',     pop:'massive',
          locationType:'A',
          tags:['chola','tamil','south india','naval','sri lanka','southeast asia','temple','brihadeeswara'] },
-
   187: { lang:'austro-asiatic',rel:'polytheist', gov:'empire',     pop:'massive',
          locationType:'A',
          tags:['khmer','cambodia','angkor wat','hydraulic','rice','southeast asia','meru','largest temple'] },
-
   188: { lang:'austronesian',  rel:'polytheist', gov:'kingdom',    pop:'medium',
          locationType:'A',
          tags:['champa','vietnam','my son','hinduism','maritime','coastal','cham'] },
-
   189: { lang:'sino-tibetan',  rel:'buddhist',   gov:'kingdom',    pop:'large',
          locationType:'A',
          tags:['bagan','myanmar','burma','theravada','buddhist','temples','irrawaddy','mongol'] },
-
   190: { lang:'indo-european', rel:'polytheist', gov:'confederacy',pop:'medium',
          locationType:'A',
          tags:['scythian','steppe','nomadic','gold','kurgan','tattooed mummies','pontic','amazon warriors'] },
-
   191: { lang:'unknown',       rel:'polytheist', gov:'empire',     pop:'large',
          locationType:'A',
          tags:['xiongnu','mongolia','steppe','great wall','nomadic','china','han dynasty','huns origin'] },
-
   192: { lang:'turkic-mongolic',rel:'polytheist',gov:'empire',     pop:'large',
          locationType:'A',
          tags:['gokturk','turkic','orkhon script','central asia','khaganate','steppe','silk road'] },
-
   193: { lang:'muskogean',     rel:'polytheist', gov:'chiefdom',   pop:'large',
          locationType:'A',
          tags:['cahokia','mississippian','mounds','monks mound','illinois','sacrifice','north america','urban'] },
-
   194: { lang:'mesoamerican',  rel:'polytheist', gov:'city-state', pop:'medium',
          locationType:'A',
          tags:['zapotec','oaxaca','monte alban','mesoamerica','calendar','writing','mexico','astronomy'] },
-
   195: { lang:'andean',        rel:'polytheist', gov:'empire',     pop:'large',
          locationType:'A',
          tags:['wari','andes','peru','pre-inca','textile','administrative','road network','collapse'] },
-
   196: { lang:'muskogean',     rel:'polytheist', gov:'chiefdom',   pop:'medium',
          locationType:'A',
          tags:['moundville','mississippian','alabama','mounds','southern cult','chiefdom','ceremonial complex'] },
-
   197: { lang:'isolate',       rel:'polytheist', gov:'city-state', pop:'medium',
          locationType:'A',
          tags:['etruscan','italy','pre-roman','undeciphered','rome influence','tomb painting','gladiator'] },
-
   198: { lang:'undeciphered',  rel:'polytheist', gov:'palace',     pop:'medium',
          locationType:'A',
          tags:['minoan','crete','knossos','linear a','bull leaping','atlantis candidate','aegean','bronze age'] },
-
   199: { lang:'semitic',       rel:'polytheist', gov:'city-state', pop:'medium',
          locationType:'A',
          tags:['phoenician','alphabet','carthage','maritime','levant','trade','circumnavigation','writing system'] },
-
   200: { lang:'indo-european', rel:'polytheist', gov:'confederacy',pop:'large',
          locationType:'A',
          tags:['celtic','europe','druids','la tene','iron age','gaul','oral tradition','western europe'] },
-
   201: { lang:'indo-european', rel:'polytheist', gov:'empire',     pop:'large',
          locationType:'A',
          tags:['hittite','anatolia','iron','kadesh','cuneiform','peace treaty','chariot','bronze age collapse'] },
-
   202: { lang:'semitic',       rel:'polytheist', gov:'kingdom',    pop:'medium',
          locationType:'A',
          tags:['nabataean','petra','jordan','spice trade','hydraulic','arabic script','frankincense','desert'] },
-
   203: { lang:'indo-european', rel:'polytheist', gov:'unknown',    pop:'unknown',
          locationType:'C',
          tags:['vedic','vimana','india','frawley','ancient technology','flying craft','mahabharata','brahmastra'],
@@ -773,28 +701,24 @@ const CIV_META = {
            { lat:25.0, lng:81.0, label:'Gangetic Plain — Vedic heartland', source:'General Vedic geography', researcher:null, up:640, dn:480 },
            { lat:30.0, lng:76.0, label:'Saraswati River basin — Frawley', source:'Gods, Sages and Kings (1991)', researcher:'David Frawley', up:840, dn:640 },
          ] },
-
   204: { lang:'unknown',       rel:'unknown',    gov:'unknown',    pop:'unknown',
          locationType:'C',
          tags:['atlantis','richat','mauritania','eye of sahara','corsetti','plato','concentric rings','sahara'],
          locationTheories: [
            { lat:21.12, lng:-11.40, label:'Richat Structure, Mauritania — Corsetti', source:'Bright Insight (2018)', researcher:'Jimmy Corsetti', up:1640, dn:1840 },
          ] },
-
   205: { lang:'austronesian',  rel:'unknown',    gov:'unknown',    pop:'unknown',
          locationType:'C',
          tags:['sundaland','southeast asia','flood','austronesian','oppenheimer','santos','atlantis','drowned'],
          locationTheories: [
            { lat:-2.0, lng:108.0, label:'Sundaland shelf — Santos/Oppenheimer', source:'Eden in the East (1998)', researcher:'Stephen Oppenheimer', up:1140, dn:840 },
          ] },
-
   206: { lang:'unknown',       rel:'unknown',    gov:'unknown',    pop:'unknown',
          locationType:'B',
          tags:['dwarka','india','submerged','gulf of khambhat','mahabharata','krishna','harappan','underwater'],
          locationTheories: [
            { lat:22.24, lng:68.97, label:'Dwarka coast, Gujarat — NIOT sonar survey', source:'NIOT Survey (2002)', researcher:null, up:1240, dn:1480 },
          ] },
-
   207: { lang:'unknown',       rel:'unknown',    gov:'unknown',    pop:'unknown',
          locationType:'C',
          tags:['amazon','lost city of z','fawcett','brazil','geoglyphs','heckenberger','xingu','mato grosso'],
@@ -802,7 +726,6 @@ const CIV_META = {
            { lat:-12.0, lng:-53.5, label:'Upper Xingu, Mato Grosso — Heckenberger network', source:'The Ecology of Power (2005)', researcher:'Michael Heckenberger', up:1040, dn:480 },
            { lat:-11.5, lng:-55.0, label:'Fawcett\'s Z — estimated search area', source:'Exploration Fawcett (1953)', researcher:null, up:640, dn:720 },
          ] },
-
   208: { lang:'unknown',       rel:'unknown',    gov:'unknown',    pop:'unknown',
          locationType:'C',
          tags:['pre-clovis','americas','paleolithic','monte verde','topper','chiquihuite','hancock','ice age'],
@@ -811,14 +734,12 @@ const CIV_META = {
            { lat:33.5, lng:-81.0, label:'Topper Site, South Carolina — possible 50,000 BCE', source:'Topper Site excavations (2004)', researcher:null, up:640, dn:1240 },
            { lat:22.8, lng:-99.6, label:'Chiquihuite Cave, Mexico — possible 26,000 BCE', source:'Nature (2020)', researcher:null, up:980, dn:1240 },
          ] },
-
   209: { lang:'unknown',       rel:'unknown',    gov:'unknown',    pop:'unknown',
          locationType:'C',
          tags:['anunnaki','sitchin','nibiru','sumerian','extraterrestrial','ancient aliens','gold mining','genetic engineering'],
          locationTheories: [
            { lat:32.5, lng:45.5, label:'Sumer / Mesopotamia — Sitchin\'s primary site', source:'The 12th Planet (1976)', researcher:'Zecharia Sitchin', up:940, dn:2840 },
          ] },
-
   210: { lang:'unknown',       rel:'unknown',    gov:'unknown',    pop:'unknown',
          locationType:'C',
          tags:['denisovan','paleoanthropology','collins','gobekli tepe','ancient dna','hybrid','siberia','megalithic'],
@@ -826,45 +747,33 @@ const CIV_META = {
            { lat:51.4, lng:84.7, label:'Denisova Cave, Altai — discovery site', source:'Nature (2010)', researcher:null, up:1640, dn:240 },
            { lat:30.0, lng:90.0, label:'Tibet — Denisovan high-altitude gene (EPAS1)', source:'Nature (2014) — Nielsen et al.', researcher:null, up:1240, dn:480 },
          ] },
-
-  // ── BATCH 5o ── ids 211–240 ──────────────────────────────────────────────
-
   211: { lang:'niger-congo',    rel:'animist',    gov:'empire',     pop:'large',
          locationType:'A',
          tags:['ghana empire','wagadu','west africa','gold trade','trans-saharan','koumbi saleh','salt trade'] },
-
   212: { lang:'niger-congo',    rel:'animist',    gov:'kingdom',    pop:'medium',
          locationType:'A',
          tags:['buganda','great lakes','uganda','kabaka','centralized state','lake victoria'] },
-
   213: { lang:'afroasiatic',    rel:'monotheist', gov:'theocracy',  pop:'large',
          locationType:'A',
          tags:['sokoto caliphate','hausa','jihad','usman dan fodio','islamic empire','nigeria','emirates'] },
-
   214: { lang:'unknown',        rel:'animist',    gov:'tribal',     pop:'small',
          locationType:'A',
          tags:['tassili najjer','sahara','rock art','green sahara','round head style','algeria','prehistoric'] },
-
   215: { lang:'unknown',        rel:'animist',    gov:'tribal',     pop:'small',
          locationType:'A',
          tags:['clovis','paleo-indian','north america','fluted points','big game hunters','first americans'] },
-
   216: { lang:'unknown',        rel:'animist',    gov:'tribal',     pop:'small',
          locationType:'A',
          tags:['adena','ohio valley','mound builders','earthworks','hopewell precursor','burial mounds'] },
-
   217: { lang:'unknown',        rel:'animist',    gov:'tribal',     pop:'medium',
          locationType:'A',
          tags:['tairona','colombia','sierra nevada de santa marta','goldwork','terraced cities','kogi descendants','ciudad perdida'] },
-
   218: { lang:'unknown',        rel:'animist',    gov:'tribal',     pop:'medium',
          locationType:'A',
          tags:['muisca','colombia','el dorado','lake guatavita','goldwork','andes','emerald trade'] },
-
   219: { lang:'unknown',        rel:'animist',    gov:'tribal',     pop:'medium',
          locationType:'A',
          tags:['calusa','florida','maritime','non-agricultural','shell mounds','fishing economy'] },
-
   220: { lang:'unknown',        rel:'polytheist', gov:'kingdom',    pop:'medium',
          locationType:'B',
          tags:['dilmun','bahrain','trade hub','sumerian texts','paradise myth','persian gulf','pearl trade'],
@@ -872,23 +781,18 @@ const CIV_META = {
            { lat:26.00, lng:50.55, label:'Bahrain — primary identification of Dilmun', source:'A.T. Olmstead; Bahrain National Museum excavations', researcher:null, up:1140, dn:480 },
            { lat:29.40, lng:48.40, label:'Failaka Island, Kuwait — alternative/extended Dilmun zone', source:'Danish excavations, Failaka Island', researcher:null, up:480, dn:640 },
          ] },
-
   221: { lang:'austro-asiatic', rel:'hindu',      gov:'kingdom',    pop:'medium',
          locationType:'A',
          tags:['funan','cambodia','mekong delta','oc eo','indianization','khmer precursor','maritime trade'] },
-
   222: { lang:'isolate',        rel:'buddhist',   gov:'kingdom',    pop:'large',
          locationType:'A',
          tags:['silla','korea','three kingdoms','gyeongju','buddhism','gold crowns','unification'] },
-
   223: { lang:'japonic',        rel:'shamanic',   gov:'empire',     pop:'large',
          locationType:'A',
          tags:['yamato','kofun','japan','keyhole tombs','shinto','emperor lineage','asuka period'] },
-
   224: { lang:'sino-tibetan',   rel:'buddhist',   gov:'empire',     pop:'large',
          locationType:'A',
          tags:['tibetan empire','tibet','himalaya','buddhism','songtsen gampo','silk road','central asia'] },
-
   225: { lang:'undeciphered',   rel:'polytheist', gov:'kingdom',    pop:'medium',
          locationType:'B',
          tags:['tartessos','iberia','tarshish','atlantis candidate','phoenician trade','silver','spain'],
@@ -896,56 +800,45 @@ const CIV_META = {
            { lat:37.27, lng:-6.06, label:'Guadalquivir estuary, Huelva — Tartessian core zone', source:'Various Tartessian archaeology surveys', researcher:null, up:1040, dn:380 },
            { lat:37.00, lng:-6.30, label:'Doñana Marshes — Atlantis/Tartessos overlap (Freund)', source:'Richard Freund, Atlantis survey project', researcher:'Richard Freund', up:480, dn:1480 },
          ] },
-
   226: { lang:'unknown',        rel:'polytheist', gov:'tribal',     pop:'small',
          locationType:'A',
          tags:['malta','megalithic temples','ggantija','hypogeum','neolithic','oldest freestanding structures','mediterranean'] },
-
   227: { lang:'indo-european',  rel:'polytheist', gov:'kingdom',    pop:'medium',
          locationType:'A',
          tags:['thracian','balkans','odrysian kingdom','gold treasures','orpheus','bulgaria','rome conquest'] },
-
   228: { lang:'unknown',        rel:'animist',    gov:'tribal',     pop:'small',
          locationType:'C',
          tags:['doggerland','north sea','drowned land','mesolithic','sea level rise','britain','flood myth','storegga'],
          locationTheories: [
            { lat:54.50, lng:3.00, label:'Dogger Bank — Doggerland core, North Sea', source:"Europe's Lost World (2009) — Gaffney et al.", researcher:'Vincent Gaffney', up:1140, dn:240 },
          ] },
-
   229: { lang:'semitic',        rel:'polytheist', gov:'kingdom',    pop:'medium',
          locationType:'A',
          tags:['saba','sheba','yemen','incense trade','queen of sheba','marib dam','south arabia'] },
-
   230: { lang:'isolate',        rel:'polytheist', gov:'kingdom',    pop:'medium',
          locationType:'A',
          tags:['urartu','armenia','van','fortresses','iron age','assyrian rival','lake van'] },
-
   231: { lang:'indo-european',  rel:'zoroastrian',gov:'empire',     pop:'medium',
          locationType:'A',
          tags:['median empire','iran','zoroastrianism','achaemenid precursor','ecbatana','assyria fall'] },
-
   232: { lang:'unknown',        rel:'animist',    gov:'tribal',     pop:'medium',
          locationType:'A',
          tags:['aboriginal australia','dreaming','continuous culture','rock art','oldest culture','songlines','australia'] },
-
   233: { lang:'austronesian',   rel:'animist',    gov:'tribal',     pop:'small',
          locationType:'A',
          tags:['maori','new zealand','aotearoa','polynesian migration','waka','pa fortifications','moa extinction'] },
-
   234: { lang:'unknown',        rel:'unknown',    gov:'unknown',    pop:'unknown',
          locationType:'C',
          tags:['bimini road','atlantis','bahamas','edgar cayce','underwater formation','beachrock','psychic prediction'],
          locationTheories: [
            { lat:25.70, lng:-79.30, label:'Bimini Road, Bahamas — Cayce prediction site', source:'Edgar Cayce Readings (1930s-40s)', researcher:'Edgar Cayce', up:840, dn:1640 },
          ] },
-
   235: { lang:'unknown',        rel:'unknown',    gov:'unknown',    pop:'unknown',
          locationType:'C',
          tags:['olmec','van sertima','trans-atlantic','african contact','colossal heads','afrocentric theory','mesoamerica'],
          locationTheories: [
            { lat:18.00, lng:-95.00, label:'Olmec heartland, Gulf Coast Mexico — Van Sertima claim site', source:'They Came Before Columbus (1976)', researcher:'Ivan Van Sertima', up:740, dn:1840 },
          ] },
-
   236: { lang:'unknown',        rel:'unknown',    gov:'unknown',    pop:'unknown',
          locationType:'C',
          tags:['solutrean hypothesis','ice age','atlantic crossing','clovis origins','stanford bradley','paleolithic europe'],
@@ -953,27 +846,21 @@ const CIV_META = {
            { lat:45.00, lng:0.00,  label:'Southwestern France/Iberia — Solutrean heartland', source:'Across Atlantic Ice (2012)', researcher:'Dennis Stanford & Bruce Bradley', up:640, dn:480 },
            { lat:35.00, lng:-65.00, label:'Mid-Atlantic — proposed Ice Age crossing route', source:'Across Atlantic Ice (2012)', researcher:'Dennis Stanford & Bruce Bradley', up:480, dn:840 },
          ] },
-
   237: { lang:'unknown',        rel:'unknown',    gov:'unknown',    pop:'unknown',
          locationType:'A',
          tags:['kennewick man','ancient one','columbia river','repatriation','ancient dna','paleo-indian','washington state'] },
-
   238: { lang:'unknown',        rel:'unknown',    gov:'unknown',    pop:'unknown',
          locationType:'A',
          tags:['longyou caves','china','underground excavation','mystery','engineering','zhejiang','undated'] },
-
   239: { lang:'semitic',        rel:'polytheist', gov:'unknown',    pop:'unknown',
          locationType:'A',
          tags:['baalbek','lebanon','trilithon','megaliths','heliopolis','roman temple','pre-roman platform'] },
-
   240: { lang:'unknown',        rel:'polytheist', gov:'unknown',    pop:'unknown',
          locationType:'C',
          tags:['el dorado','muisca','lake guatavita','golden city','spanish conquest','colombia','legend'],
          locationTheories: [
            { lat:5.13, lng:-73.78, label:'Lake Guatavita, Colombia — Muisca golden offering ritual site', source:'Juan Rodríguez Freyle, El Carnero (1638)', researcher:null, up:1040, dn:240 },
          ] },
-
-  // ── PHASE 5r — ids 241–270 ─────────────────────────────────
   241: { lang:'cushitic', rel:'polytheist', gov:'monarchy', pop:'large',
          tags:['kerma','nubia','africa','bronze-age','egypt','rival','tumuli'],
          locationType:'A', locationTheories:[] },
@@ -1100,8 +987,6 @@ const CIV_META = {
          locationTheories: [
            { lat:40.54, lng:81.28, label:'Tarim Basin, Xinjiang — primary mummy burial sites (Loulan, Cherchen, Yingpan)', source:'Mallory & Mair, The Tarim Mummies (2000)', researcher:null, isDefault:true, up:1240, dn:280 },
          ] },
-
-  // ── PHASE 5u — ids 271–300 ─────────────────────────────────
   271: { lang:'ge-ez', rel:'christian', gov:'empire', pop:'large',
          tags:['aksum','ethiopia','eritrea','red-sea','trade','obelisk','ark-of-covenant','christianity'],
          locationType:'A', locationTheories:[] },
@@ -1200,8 +1085,6 @@ const CIV_META = {
   300: { lang:'hawaiian', rel:'animist', gov:'monarchy', pop:'medium',
          tags:['hawaii','pacific','polynesian','navigation','kapu','isolation','cook'],
          locationType:'A', locationTheories:[] },
-
-  // ── PHASE 5v — ids 301–330 ─────────────────────────────────
   301: { lang:'ge-ez', rel:'polytheist', gov:'city-state', pop:'medium',
          tags:['adulis','aksum','red-sea','trade','eritrea','port','periplus'],
          locationType:'A', locationTheories:[] },
@@ -1301,8 +1184,6 @@ const CIV_META = {
   330: { lang:'punic', rel:'polytheist', gov:'republic', pop:'large',
          tags:['carthage','phoenician','punic-wars','hannibal','rome','north-africa','mediterranean'],
          locationType:'A', locationTheories:[] },
-
-  // ── PHASE 5w — ids 331–360 ─────────────────────────────────
   331: { lang:'greek', rel:'polytheist', gov:'empire', pop:'large',
          tags:['alexander','macedon','hellenistic','greece','persia','silk-road','diadochi'],
          locationType:'A', locationTheories:[] },
@@ -1397,8 +1278,6 @@ const CIV_META = {
   360: { lang:'khmer', rel:'hindu', gov:'monarchy', pop:'medium',
          tags:['funan','mekong','cambodia','indianised','oc-eo','trade','rome'],
          locationType:'A', locationTheories:[] },
-
-  // ── PHASE 5x — ids 361–390 ─────────────────────────────────
   361: { lang:'akkadian', rel:'polytheist', gov:'empire', pop:'large',
          tags:['assyrian','mesopotamia','nineveh','library','deportation','iron','siege'],
          locationType:'A', locationTheories:[] },
@@ -1510,8 +1389,6 @@ const CIV_META = {
            { lat:51.40, lng:84.68, label:'Denisova Cave, Altai Mountains, Siberia — primary find site', source:'Reich et al., Nature (2010)', researcher:null, up:1240, dn:320 },
            { lat: 5.00, lng:125.00, label:'Wallacea / Philippines — highest living Denisovan ancestry in Negritos', source:'Larena et al., Current Biology (2021)', researcher:null, up:880, dn:360 },
          ] },
-
-  // ── PHASE 5y — ids 391–400 ─────────────────────────────────
   391: { lang:'unknown', rel:'animist', gov:'tribal', pop:'medium',
          tags:['neanderthal','archaic-human','europe','burial','art','interbreeding','palaeolithic'],
          locationType:'C',
@@ -1562,8 +1439,6 @@ const CIV_META = {
            { lat:47.00, lng:-114.00, label:'Glacial Lake Missoula, Montana — source of megaflood dam failures', source:'Bretz (1923)', researcher:null, up:1380, dn:380 },
            { lat:47.50, lng:-117.00, label:'Channeled Scablands, Washington — carved in days by outburst floods', source:'Baker, Science (1978)', researcher:null, up:1240, dn:320 },
          ] },
-
-
   401: { locationType:"A", tags:["nubian","kerma","nile","burial","tumuli","africa-east","egypt-contemporary"] },
   402: { locationType:"A", tags:["phrygian","anatolia","midas","cybele","mystery-cult","bronze-age-collapse"] },
   403: { locationType:"A", tags:["lydian","anatolia","coinage","croesus","herodotus","persian-conquest","trade"] },
@@ -2375,7 +2250,6 @@ const CIV_META = {
     keyFacts: ["Concept originated with Augustus Le Plongeon, expanded by James Churchward", "Claimed derivation from secret Naacal tablets — no independent verification", "Mainstream geology rejects sunken Pacific continent hypothesis", "Polynesian oral traditions of sunken homelands cited as supporting evidence"],
     researchers: ["Graham Hancock", "Stephen Oppenheimer"]
   },
-
   671: {
     locationType: "A",
     tags: ["madagascar", "merina", "austronesian", "christianity", "colonial", "africa"],
@@ -2591,7 +2465,6 @@ const CIV_META = {
     keyFacts: ["YDB event dated to c.12,900 years ago — comet/asteroid airburst hypothesis", "Nanodiamond, platinum-group element, and magnetic spherule evidence at YDB layer across 4 continents", "Göbekli Tepe and sudden agricultural revolution cited as post-catastrophe knowledge-transmission evidence", "Mainstream geology contested but peer-reviewed geological support growing"],
     researchers: ["Graham Hancock", "Randall Carlson", "Richard Firestone"]
   },
-
   701: {
     locationType: "A",
     tags: ["achaemenid", "persia", "cyrus", "satrapy", "royal-road", "iron-age", "iran"],
@@ -2802,7 +2675,6 @@ const CIV_META = {
     researchers: [],
     relatedCivs: [729, 728, 723]
   },
-
   731: {
     locationType: "A",
     tags: ["maratha", "shivaji", "deccan", "india", "guerrilla-warfare", "hindu"],
@@ -3013,7 +2885,6 @@ const CIV_META = {
     researchers: [],
     relatedCivs: [757, 758, 759]
   },
-
   761: {
     locationType: "A",
     tags: ["han", "china", "silk-road", "confucianism", "paper", "seismoscope"],
@@ -3224,7 +3095,6 @@ const CIV_META = {
     researchers: [],
     relatedCivs: [785, 783, 789]
   },
-
   791: {
     locationType: "A",
     tags: ["almoravid", "berber", "morocco", "al-andalus", "ribat", "sahara", "reconquista"],
@@ -3435,7 +3305,6 @@ const CIV_META = {
     researchers: [],
     relatedCivs: [811, 819, 813]
   },
-
   821: {
     locationType: "A",
     tags: ["tiwanaku", "lake-titicaca", "bolivia", "raised-fields", "megalithic", "gateway-of-sun"],
@@ -3651,7 +3520,6 @@ const CIV_META = {
     researchers: [],
     relatedCivs: [849, 847, 691]
   },
-
   851: {
     locationType: "A",
     tags: ["holy-roman-empire", "habsburg", "thirty-years-war", "westphalia", "germany", "medieval-europe"],
@@ -3862,7 +3730,6 @@ const CIV_META = {
     researchers: [],
     relatedCivs: [699, 749, 756]
   },
-
   881: {
     locationType: "A",
     tags: ["maritime-empire", "polynesia", "pacific", "tribute-network", "kava-ritual", "lapita-descendant"],
@@ -5628,9 +5495,12 @@ function deriveEra(startYear) {
   return 'modern';
 }
 
+// ── MERGE INTO CIVS ────────────────────────────────────────────
+// Runs once on load. Merges CIV_META + era into each CIVS record.
 (function mergeMeta() {
   CIVS.forEach(c => {
     const ext = CIV_META[c.id] || {};
     Object.assign(c, ext);
+    c.era = deriveEra(c.s);
   });
 })();

@@ -7,7 +7,7 @@
    Usage: TimelineEngine.init('canvas-id', 'wrap-id')
    ============================================================ */
 
-const TimelineEngine = (() => {
+window.TimelineEngine = (() => {
 
   // ── STATE ────────────────────────────────────────────────
   let vS = -5000, vE = 2100;
@@ -157,29 +157,25 @@ const TimelineEngine = (() => {
       perfCapped = visible.slice(0, 900);
     }
 
-    // ── ROW LIMIT — user-chosen cap on simultaneously visible LANES ──
-    // Sort by relevance (confirmed first, then by upvotes), lane the full
-    // set, then cap by actual lane index — this limits visual rows, not
-    // raw civ count (many civs can share one lane back-to-back in time).
+    // ── ROW LIMIT — user-chosen cap on simultaneously visible lanes ──
+    // Sort by relevance (confirmed first, then by upvotes) before laning,
+    // so the most significant civs always claim the visible rows.
     // rowLimit === 0 means "show all".
-    const typeRank = { confirmed: 0, debated: 1, theorized: 2 };
-    const ranked = [...perfCapped].sort((a, b) => {
-      const tr = (typeRank[a.t] ?? 3) - (typeRank[b.t] ?? 3);
-      if (tr !== 0) return tr;
-      return (b.up || 0) - (a.up || 0);
-    });
-
-    let laned;
-    if (rowLimit > 0) {
-      // Lane the relevance-sorted list so important civs claim low lane
-      // numbers first, then keep only items whose lane < rowLimit.
-      const allLaned = assignLanes(ranked);
-      laned    = allLaned.filter(c => c.lane < rowLimit);
-      overflow = allLaned.filter(c => c.lane >= rowLimit);
+    let working = perfCapped;
+    if (rowLimit > 0 && perfCapped.length > rowLimit) {
+      const typeRank = { confirmed: 0, debated: 1, theorized: 2 };
+      const ranked = [...perfCapped].sort((a, b) => {
+        const tr = (typeRank[a.t] ?? 3) - (typeRank[b.t] ?? 3);
+        if (tr !== 0) return tr;
+        return (b.up || 0) - (a.up || 0);
+      });
+      working   = ranked.slice(0, rowLimit);
+      overflow  = ranked.slice(rowLimit);
     } else {
-      laned = assignLanes(ranked.sort((a, b) => a.s - b.s));
       overflow = [];
     }
+
+    const laned = assignLanes(working);
 
     // Notify UI layer of overflow count so the drawer can update
     if (window.ChronosUI && ChronosUI.updateOverflowDrawer) {
@@ -338,25 +334,8 @@ const TimelineEngine = (() => {
   function resize() {
     const r = wrap.getBoundingClientRect();
     CW = r.width || 680;
-
-    // Mirror the same row-limit logic used in render() so the canvas
-    // height matches exactly what will actually be drawn — otherwise
-    // the wrapper stays tall even when fewer rows are shown.
-    const vis = getVisible();
-    let laned;
-    if (rowLimit > 0 && vis.length > 0) {
-      const typeRank = { confirmed: 0, debated: 1, theorized: 2 };
-      const ranked = [...vis].sort((a, b) => {
-        const tr = (typeRank[a.t] ?? 3) - (typeRank[b.t] ?? 3);
-        if (tr !== 0) return tr;
-        return (b.up || 0) - (a.up || 0);
-      });
-      const allLaned = assignLanes(ranked);
-      laned = allLaned.filter(c => c.lane < rowLimit);
-    } else {
-      laned = assignLanes(vis);
-    }
-
+    const vis   = getVisible();
+    const laned = assignLanes(vis);
     const maxLane = laned.length ? Math.max(...laned.map(c => c.lane)) : 0;
     CH = HDR + (maxLane + 1) * (LH + LG) + 20;
     const dpr = window.devicePixelRatio || 1;
