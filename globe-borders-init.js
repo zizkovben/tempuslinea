@@ -56,6 +56,10 @@
       // Hook year getter to GlobeUI if available
       if (window.GlobeUI && typeof GlobeUI.getCurrentYear === 'function') {
         GlobeBordersUI.setYearGetter(GlobeUI.getCurrentYear);
+        // Force an immediate sync — GlobeBorders otherwise starts at its
+        // internal default year (2024) until the next epoch change fires,
+        // which would be wrong for any epoch other than the present.
+        GlobeBordersUI.onYearChange(GlobeUI.getCurrentYear());
       }
 
       // Hook civ selection for border highlighting

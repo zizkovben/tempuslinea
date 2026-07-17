@@ -67,7 +67,7 @@ const GlobeBordersUI = (() => {
     container.appendChild(_opacityWrap);
     container.appendChild(legendBtn);
 
-    const toolbar = document.querySelector('#globe-toolbar, .globe-toolbar, #globe-controls');
+    const toolbar = document.querySelector('#globe-toolbar, .globe-toolbar, #globe-controls, .globe-controls');
     if (toolbar) {
       toolbar.parentNode.insertBefore(container, toolbar.nextSibling);
     } else {

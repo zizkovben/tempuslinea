@@ -102,6 +102,9 @@ window.GlobeUI = (() => {
     GlobeEngine.loadEpoch(snap.key);
     hideInfo();
 
+    // Border sync — tell globe-borders-ui.js the year changed
+    document.dispatchEvent(new CustomEvent('chronos-year-change', { detail: { year: snap.year } }));
+
     // Update civ count badge
     const badge = document.getElementById('globe-badge');
     if (badge) {
@@ -186,6 +189,13 @@ window.GlobeUI = (() => {
 
     el.className = 'earth-state ' + resolvedState;
 
+    // Border sync — glacial-era borders differ; skip during transient 'morphing'
+    if (resolvedState === 'glacial') {
+      document.dispatchEvent(new CustomEvent('chronos-glacial-start'));
+    } else if (resolvedState === 'holocene') {
+      document.dispatchEvent(new CustomEvent('chronos-glacial-end'));
+    }
+
     const labelEl   = el.querySelector('.state-label');
     const seaLabel  = el.querySelector('.sea-label');
 
@@ -254,6 +264,13 @@ window.GlobeUI = (() => {
   function hideInfo() {
     if (window.ChronosUI) ChronosUI.hideInfo();
     GlobePinPanel.hidePinPanel();
+    document.dispatchEvent(new CustomEvent('chronos-civ-deselected'));
+  }
+
+  // ── CURRENT YEAR (for globe-borders-init.js's year-getter hookup) ──
+  function getCurrentYear() {
+    const snap = GLOBE_DATA.EPOCH_SNAPSHOTS[currentSnapshotIdx];
+    return snap ? snap.year : 0;
   }
 
   // ── TOOLTIP ───────────────────────────────────────────────
@@ -298,7 +315,7 @@ window.GlobeUI = (() => {
   // Moved to globe-ui-pins.js (GlobePinPanel) — see file header.
 
   return {
-    init, loadSnapshot, hideInfo,
+    init, loadSnapshot, hideInfo, getCurrentYear,
     // Backward-compatible facade: anything still calling
     // GlobeUI.showPinPanel / GlobeUI.hidePinPanel directly keeps working.
     showPinPanel: (civId) => GlobePinPanel.showPinPanel(civId),

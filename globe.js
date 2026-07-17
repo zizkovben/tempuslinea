@@ -90,6 +90,16 @@ const GlobeEngine = (() => {
     renderer.setAnimationLoop(animate);
     window.addEventListener('resize', onResize);
     onResize();
+
+    // ── Border system integration hook ───────────────────────
+    // globe-borders-init.js polls window._chronosScene (fast path) and
+    // falls back to a 'chronos-scene-ready' event after 4s. Set both
+    // here so it never has to wait for the fallback.
+    window._chronosScene       = scene;
+    window._chronosSceneRadius = EARTH_R;
+    document.dispatchEvent(new CustomEvent('chronos-scene-ready', {
+      detail: { scene, radius: EARTH_R }
+    }));
   }
 
   // ── SCENE ─────────────────────────────────────────────────
@@ -347,6 +357,7 @@ const GlobeEngine = (() => {
         selectedId = civId;
         const civ = CIVS.find(c => c.id === civId);
         if (onSelectCb && civ) onSelectCb(civ);
+        if (civ) document.dispatchEvent(new CustomEvent('chronos-civ-selected', { detail: { civ } }));
       }
 
       // Check pin hit test
@@ -474,6 +485,12 @@ const GlobeEngine = (() => {
     loadCivPins,
     clearPins,
     onResize,
+    // Exposed for globe-borders-init.js's window.GlobeEngine._scene / ._radius
+    // poll path — getters so they reflect the real value once init() has run.
+    get _scene()  { return scene;  },
+    get _radius() { return EARTH_R; },
   };
 
 })();
+
+window.GlobeEngine = GlobeEngine;
