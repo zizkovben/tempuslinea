@@ -856,4 +856,4 @@ const ThemeEngine = (() => {
   return { init, toggle, apply };
 })();
 
-document.addEventLi
+document.addEventListener('DOMContentLoaded', ThemeEngine.init);

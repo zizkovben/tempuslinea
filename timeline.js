@@ -6,9 +6,9 @@
    Depends on: data.js → data-extended.js → timeline.js → timeline-ghosts.js
    Usage: TimelineEngine.init('canvas-id', 'wrap-id')
    ============================================================ */
- 
+
 window.TimelineEngine = (() => {
- 
+
   // ── STATE ────────────────────────────────────────────────
   let vS = -5000, vE = 2100;
   let CW = 0, CH = 0;
@@ -22,23 +22,23 @@ window.TimelineEngine = (() => {
   let filteredCivs = null;
   let rowLimit = 20;       // 0 = show all; default caps to 20 visible lanes
   let overflow = [];       // civs bumped out of view by the row limit
- 
+
   // ── CANVAS REFS ──────────────────────────────────────────
   let wrap, cvs, ctx;
- 
+
   // ── LAYOUT CONSTANTS ─────────────────────────────────────
   const EPH = 18;               // epoch label band height
   const TCK = 30;               // tick label band height
   const HDR = EPH + TCK;        // total header height
   const LH  = 36;               // lane height
   const LG  = 5;                // lane gap
- 
+
   // Ghost visual spec (Bible §27)
   const GHOST_ALPHA   = 0.25;
   const GHOST_VIOLET  = '#3a5fa8';   // lapis lazuli (theorized dates)
   const GHOST_TEAL    = '#1a8a80';   // aegean teal (mainstream/debated dates)
   const GHOST_LBL_SZ  = 10;
- 
+
   // ── TYPE STYLES — Mediterranean Antiquity palette ─────────
   // bar: fill colour · hi: selected fill · lbl: text colour
   const TYPE_STYLES = {
@@ -58,26 +58,26 @@ window.TimelineEngine = (() => {
       lbl: '#60D0C8',          // pale turquoise text
     },
   };
- 
- 
+
+
   // ── COORD HELPERS ────────────────────────────────────────
   function toX(year)  { return (year - vS) / (vE - vS) * CW; }
   function fromX(px)  { return vS + (px / CW) * (vE - vS); }
- 
+
   function fmtYear(y) {
     if (y === 0) return '1 CE';
     return y < 0
       ? Math.abs(Math.round(y)).toLocaleString() + ' BCE'
       : Math.round(y).toLocaleString() + ' CE';
   }
- 
+
   function clampView(s, e) {
     const sp = e - s;
     if (sp < 60)     { const m = (s+e)/2; return { s: m-30, e: m+30 }; }
     if (sp > 120000) return { s: -100000, e: 2100 };
     return { s, e };
   }
- 
+
   function tickInterval() {
     const sp = vE - vS;
     // Deep Time spans up to ~13.8 billion years (Big Bang preset) — without
@@ -100,7 +100,7 @@ window.TimelineEngine = (() => {
     if (sp > 300)   return 100;
     return 50;
   }
- 
+
   // ── LANE ASSIGNMENT ──────────────────────────────────────
   function assignLanes(civs) {
     const sorted = [...civs].sort((a, b) => a.s - b.s);
@@ -112,20 +112,20 @@ window.TimelineEngine = (() => {
       return { ...c, lane };
     });
   }
- 
+
   // ── FILTERED CIV LIST ─────────────────────────────────────
   function getVisible() {
     const source = filteredCivs !== null ? filteredCivs : CIVS;
     return source.filter(c => c.e >= vS && c.s <= vE);
   }
- 
+
   function setFilteredCivs(list) {
     filteredCivs = list;
     selCiv = null;
     if (window.ChronosUI) window.ChronosUI.hideInfo();
     resize();
   }
- 
+
   // ── ROUNDED RECT ─────────────────────────────────────────
   function rrect(x, y, w, h, r) {
     ctx.beginPath();
@@ -139,14 +139,14 @@ window.TimelineEngine = (() => {
     ctx.quadraticCurveTo(x, y, x+r, y);
     ctx.closePath();
   }
- 
- 
+
+
   // ── HIT TESTS ────────────────────────────────────────────
   function hitTest(mx, my) {
     return civRects.find(({ x, y, w, h }) =>
       mx >= x && mx <= x + w && my >= y && my <= y + h);
   }
- 
+
   // ── MAIN RENDER ───────────────────────────────────────────
   function render() {
     ctx.clearRect(0, 0, CW, CH);
@@ -155,9 +155,9 @@ window.TimelineEngine = (() => {
     ctx.fillRect(0, 0, CW, CH);
     civRects   = [];
     ghostRects = [];
- 
+
     const visible = getVisible();
- 
+
     // ── PERFORMANCE FLOOR — hard safety cap, independent of user row limit ──
     // Prevents main-thread freeze at extreme zoom-out regardless of settings.
     const pxPerYear = (CW / Math.max(vE - vS, 1));
@@ -167,7 +167,7 @@ window.TimelineEngine = (() => {
     } else if (pxPerYear < 0.01 && visible.length > 900) {
       perfCapped = visible.slice(0, 900);
     }
- 
+
     // ── ROW LIMIT — user-chosen cap on simultaneously visible lanes ──
     // Sort by relevance (confirmed first, then by upvotes) before laning,
     // so the most significant civs always claim the visible rows.
@@ -185,14 +185,14 @@ window.TimelineEngine = (() => {
     } else {
       overflow = [];
     }
- 
+
     const laned = assignLanes(working);
- 
+
     // Notify UI layer of overflow count so the drawer can update
     if (window.ChronosUI && ChronosUI.updateOverflowDrawer) {
       ChronosUI.updateOverflowDrawer(overflow);
     }
- 
+
     // — Epoch bands —
     EPOCHS.forEach((ep, i) => {
       const x1 = toX(ep.s), x2 = toX(ep.e);
@@ -212,7 +212,7 @@ window.TimelineEngine = (() => {
       ctx.beginPath(); ctx.moveTo(lx, 0); ctx.lineTo(lx, CH); ctx.stroke();
       ctx.setLineDash([]);
     });
- 
+
     // — Grid ticks —
     const iv = tickInterval();
     const t0 = Math.ceil(vS / iv) * iv;
@@ -222,7 +222,7 @@ window.TimelineEngine = (() => {
       ctx.lineWidth = 1;
       ctx.beginPath(); ctx.moveTo(x, HDR); ctx.lineTo(x, CH); ctx.stroke();
     }
- 
+
     // — Axis & tick labels —
     ctx.strokeStyle = 'rgba(255,255,255,.2)'; ctx.lineWidth = 1;
     ctx.beginPath(); ctx.moveTo(0, HDR); ctx.lineTo(CW, HDR); ctx.stroke();
@@ -234,7 +234,7 @@ window.TimelineEngine = (() => {
       ctx.textAlign = 'center';
       ctx.fillText(fmtYear(y), x, EPH + TCK - 6);
     }
- 
+
     // — NOW marker —
     const nx = toX(2025);
     if (nx > 0 && nx < CW) {
@@ -244,38 +244,38 @@ window.TimelineEngine = (() => {
       ctx.font = '400 10px "Jost",sans-serif'; ctx.textAlign = 'center';
       ctx.fillText('NOW', nx, EPH + 13);
     }
- 
+
     // ── GHOST BARS — render BEFORE main bars (behind) ───────
     // Semi-transparent date challenge theories per Bible §27.
     laned.forEach(c => {
       if (!c.dateTheories || !c.dateTheories.length) return;
       const by = HDR + c.lane * (LH + LG) + 2;
- 
+
       c.dateTheories.forEach((dt, idx) => {
         if (dt.e < vS || dt.s > vE) return;
         const x1 = toX(dt.s), x2 = toX(dt.e);
         const bx = Math.max(0, x1), bx2 = Math.min(CW, x2);
         const bw = Math.max(4, bx2 - bx);
         if (bx2 < 0 || bx > CW) return;
- 
+
         const isMain = dt.label.toLowerCase().includes('mainstream');
         const gc = isMain ? GHOST_TEAL : GHOST_VIOLET;
         const inset = idx * 2;
         const gy = by + inset;
         const gh = Math.max(LH - inset * 2, 8);
- 
+
         // Fill
         ctx.globalAlpha = GHOST_ALPHA;
         ctx.fillStyle = gc;
         rrect(bx, gy, bw, gh, 3); ctx.fill();
- 
+
         // Dashed border
         ctx.globalAlpha = GHOST_ALPHA * 1.9;
         ctx.strokeStyle = gc; ctx.lineWidth = 1;
         ctx.setLineDash([4, 4]);
         rrect(bx, gy, bw, gh, 3); ctx.stroke();
         ctx.setLineDash([]); ctx.globalAlpha = 1;
- 
+
         // Researcher micro-label
         if (bw > 50 && dt.researcher) {
           const shortName = dt.researcher.split(/[/,]/)[0].trim().split(' ').slice(-1)[0];
@@ -287,14 +287,14 @@ window.TimelineEngine = (() => {
           ctx.fillText(shortName, bx + 5, gy + gh / 2 + 3);
           ctx.globalAlpha = 1; ctx.restore();
         }
- 
+
         ghostRects.push({ dt, civName: c.n, x: bx, y: gy, w: bw, h: gh });
       });
     });
- 
+
     // Push ghost rects to GhostTooltip module for hover hit-testing
     if (window.GhostTooltip) GhostTooltip.setRects(ghostRects);
- 
+
     // ── MAIN CIVILIZATION BARS — on top of ghost bars ───────
     // Viewport culling: skip bars entirely outside visible area
     const CULL_MARGIN = 200; // px buffer beyond edges
@@ -307,23 +307,23 @@ window.TimelineEngine = (() => {
       const bh  = LH;
       const st  = TYPE_STYLES[c.t];
       const sel = selCiv && selCiv.id === c.id;
- 
+
       ctx.globalAlpha = sel ? 1 : 0.85;
       ctx.fillStyle   = sel ? st.hi : st.bar;
       rrect(bx, by, bw, bh, 4); ctx.fill();
- 
+
       if (sel) {
         ctx.strokeStyle = st.lbl; ctx.lineWidth = 1.5;
         rrect(bx, by, bw, bh, 4); ctx.stroke();
       }
- 
+
       // Small violet pip if civ has date challenge theories
       if (c.dateTheories && c.dateTheories.length) {
         ctx.globalAlpha = 0.75; ctx.fillStyle = '#8b41c8';
         ctx.beginPath(); ctx.arc(bx + bw - 6, by + 6, 3, 0, Math.PI * 2); ctx.fill();
       }
       ctx.globalAlpha = 1;
- 
+
       if (bw > 32) {
         ctx.save();
         ctx.beginPath(); ctx.rect(bx + 3, by, bw - 6, bh); ctx.clip();
@@ -333,19 +333,19 @@ window.TimelineEngine = (() => {
         ctx.fillText(c.n, bx + 9, by + bh / 2 + 4);
         ctx.restore();
       }
- 
+
       civRects.push({ c, x: bx, y: by, w: bw, h: bh });
     });
- 
+
     // Phase 4 celestial overlay sync
     if (window.CelestialEngine) CelestialEngine.syncViewport(vS, vE, CW, CH, HDR);
   }
- 
+
   // ── RESIZE & HEIGHT RECALC ────────────────────────────────
   function resize() {
     const r = wrap.getBoundingClientRect();
     CW = r.width || 680;
- 
+
     // Mirror render()'s performance floor + row-limit selection so canvas
     // height is computed from the same capped set that actually gets drawn.
     // Without this, extreme zoom-out (e.g. Deep Time, which spans billions
@@ -378,19 +378,19 @@ window.TimelineEngine = (() => {
     ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.scale(dpr, dpr);
     render();
   }
- 
+
   // ── PRESET ───────────────────────────────────────────────
   function setPreset(idx) {
     const p = PRESETS[idx]; vS = p.s; vE = p.e; activePresetIdx = idx; resize();
   }
- 
+
   // ── ROW LIMIT ─────────────────────────────────────────────
   function setRowLimit(n) {
     rowLimit = n;
     resize();
   }
   function getOverflow() { return overflow; }
- 
+
   // ── FOCUS CIV — pan/zoom viewport to centre a specific civ ──
   function focusCiv(civId) {
     const c = CIVS.find(x => x.id === civId);
@@ -402,10 +402,10 @@ window.TimelineEngine = (() => {
     activePresetIdx = -1;
     resize();
   }
- 
+
   // ── GET VOTES — expose current vote state for cross-page reads ──
   function getVotes() { return votes; }
- 
+
   // ── EVENT WIRING ──────────────────────────────────────────
   function wireEvents() {
     cvs.addEventListener('click', e => {
@@ -415,7 +415,7 @@ window.TimelineEngine = (() => {
       else     { selCiv = null;  if (window.ChronosUI) ChronosUI.hideInfo(); }
       render();
     });
- 
+
     cvs.addEventListener('mousemove', e => {
       if (drag) return;
       const r  = cvs.getBoundingClientRect();
@@ -430,9 +430,9 @@ window.TimelineEngine = (() => {
         cvs.style.cursor = 'grab';
       }
     });
- 
+
     cvs.addEventListener('mouseleave', () => { if (window.GhostTooltip) GhostTooltip.hide(); });
- 
+
     cvs.addEventListener('mousedown', e => {
       drag = true; dx0 = e.clientX; dS0 = vS; dE0 = vE;
       cvs.style.cursor = 'grabbing';
@@ -445,7 +445,7 @@ window.TimelineEngine = (() => {
       vS = dS0 - shift; vE = dE0 - shift; render();
     });
     window.addEventListener('mouseup', () => { drag = false; cvs.style.cursor = 'grab'; });
- 
+
     wrap.addEventListener('wheel', e => {
       e.preventDefault();
       const r = wrap.getBoundingClientRect();
@@ -454,7 +454,7 @@ window.TimelineEngine = (() => {
       const { s, e: en } = clampView(py - (py - vS) * f, py + (vE - py) * f);
       vS = s; vE = en; render();
     }, { passive: false });
- 
+
     wrap.addEventListener('touchstart', e => {
       e.preventDefault();
       if (e.touches.length === 1) {
@@ -468,7 +468,7 @@ window.TimelineEngine = (() => {
         tmY = fromX(mx); dS0 = vS; dE0 = vE;
       }
     }, { passive: false });
- 
+
     wrap.addEventListener('touchmove', e => {
       e.preventDefault();
       if (e.touches.length === 1 && drag) {
@@ -483,11 +483,11 @@ window.TimelineEngine = (() => {
         vS = s; vE = en; render();
       }
     }, { passive: false });
- 
+
     wrap.addEventListener('touchend', () => { drag = false; td0 = null; });
     window.addEventListener('resize', resize);
   }
- 
+
   // ── INIT ──────────────────────────────────────────────────
   function init(canvasId, wrapperId) {
     cvs  = document.getElementById(canvasId);
@@ -498,7 +498,7 @@ window.TimelineEngine = (() => {
     document.fonts.ready.then(resize);
     setTimeout(resize, 120);
   }
- 
+
   // ── VOTE ─────────────────────────────────────────────────
   function registerVote(civId, type) {
     const prev = votes[civId] || {};
@@ -506,8 +506,7 @@ window.TimelineEngine = (() => {
     if (selCiv && selCiv.id === civId && window.ChronosUI) ChronosUI.showInfo(selCiv, votes);
     render();
   }
- 
+
   return { init, resize, setFilteredCivs, setPreset, registerVote, fmtYear, render, focusCiv, getVotes, setRowLimit, getOverflow };
- 
+
 })();
- 
