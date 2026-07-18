@@ -36,6 +36,13 @@ const GlobeBordersGeom = (() => {
 
   // ─── Snapshot resolution ─────────────────────────────────────────────────
 
+  // How many years before/after an entity's own recorded lifespan it's
+  // allowed to softly fade in/out. Was hardcoded at 500 — far too wide
+  // given many entities are only 100-300 years apart historically, which
+  // caused several unrelated empires (e.g. Rome, Han, Macedon, Maurya —
+  // none of which existed yet) to all render simultaneously at 500 BCE.
+  const FADE_WINDOW = 150;
+
   function getSnapshotYears(entity) {
     return Object.keys(entity.snapshots).map(Number).sort((a, b) => a - b);
   }
@@ -47,13 +54,13 @@ const GlobeBordersGeom = (() => {
     const firstYear = years[0];
     const lastYear  = years[years.length - 1];
 
-    if (year < firstYear - 500 || year > lastYear + 500) {
+    if (year < firstYear - FADE_WINDOW || year > lastYear + FADE_WINDOW) {
       return { entityActive: false };
     }
 
     if (years.length === 1 || year <= firstYear) {
       const fadeT = year < firstYear
-        ? Math.max(0, 1 - (firstYear - year) / 500) : 1;
+        ? Math.max(0, 1 - (firstYear - year) / FADE_WINDOW) : 1;
       return {
         entityActive: true,
         polyA: entity.snapshots[firstYear],
@@ -64,7 +71,7 @@ const GlobeBordersGeom = (() => {
 
     if (year >= lastYear) {
       const fadeT = year > lastYear
-        ? Math.max(0, 1 - (year - lastYear) / 500) : 1;
+        ? Math.max(0, 1 - (year - lastYear) / FADE_WINDOW) : 1;
       return {
         entityActive: true,
         polyA: entity.snapshots[lastYear],
