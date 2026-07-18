@@ -465,3 +465,5 @@ const GlobeTerrain = (() => {
   };
 
 })();
+
+window.GlobeTerrain = GlobeTerrain;
