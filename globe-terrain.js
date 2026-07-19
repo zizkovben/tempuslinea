@@ -488,7 +488,10 @@ const GlobeTerrain = (() => {
  
   // ── SYNC ROTATION WITH GLOBE ──────────────────────────────
   // Called by globe.js after it updates globe.rotation
+  let _lastRotY = 0, _lastRotX = 0;
   function syncRotation(rotY, rotX) {
+    _lastRotY = rotY;
+    _lastRotX = rotX;
     if (terrainMesh) {
       terrainMesh.rotation.y = rotY;
       terrainMesh.rotation.x = rotX;
@@ -499,6 +502,11 @@ const GlobeTerrain = (() => {
     }
   }
  
+  // Lets other modules (e.g. globe-borders.js) mirror the globe's
+  // current spin without globe.js needing to know they exist —
+  // they can poll this instead of requiring a new wired-in call.
+  function getRotation() { return { y: _lastRotY, x: _lastRotX }; }
+ 
   // ── PUBLIC API ────────────────────────────────────────────
   function getCurrentState() { return morphState; }
  
@@ -506,6 +514,7 @@ const GlobeTerrain = (() => {
     init,
     tick,
     syncRotation,
+    getRotation,
     morphToGlacial,
     morphToHolocene,
     setEarthState,
