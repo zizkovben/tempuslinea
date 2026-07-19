@@ -125,14 +125,32 @@ const GlobeBordersGeom = (() => {
     }
   }
 
-  function makeMaterial(entity, STYLE) {
-    const style = STYLE[entity.type] || STYLE.confirmed;
+  function makeMaterial(entity, STYLE, color) {
+    const style   = STYLE[entity.type] || STYLE.confirmed;
+    const opacity = style.baseOpacity * (1 - entity.dissolve);
+    const col     = color !== undefined ? color : style.color;
+
+    // Certainty is meant to read as line pattern per the legend (solid /
+    // dashed / dotted), not just color — previously every line was solid
+    // regardless of type, so the legend's dash/dot swatches didn't match
+    // what was actually on the globe.
+    if (entity.type === 'estimated') {
+      return new THREE.LineDashedMaterial({
+        color: col, transparent: true, opacity,
+        depthWrite: false, linewidth: 1,
+        dashSize: 0.035, gapSize: 0.022
+      });
+    }
+    if (entity.type === 'theorized') {
+      return new THREE.LineDashedMaterial({
+        color: col, transparent: true, opacity,
+        depthWrite: false, linewidth: 1,
+        dashSize: 0.012, gapSize: 0.016
+      });
+    }
     return new THREE.LineBasicMaterial({
-      color: style.color,
-      transparent: true,
-      opacity: style.baseOpacity * (1 - entity.dissolve),
-      depthWrite: false,
-      linewidth: 1
+      color: col, transparent: true, opacity,
+      depthWrite: false, linewidth: 1
     });
   }
 

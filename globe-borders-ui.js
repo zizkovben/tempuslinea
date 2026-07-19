@@ -6,7 +6,11 @@
 const GlobeBordersUI = (() => {
   // ─── State ───────────────────────────────────────────────────────────────
   let _bordersOn  = true;
-  let _legendOpen = false;
+  // Was false — the "visible now" legend, which is the only thing that
+  // actually explains what the border lines are, was hidden behind a
+  // small toggle a first-time visitor had no reason to click. Opens by
+  // default now; still collapsible via the legend button.
+  let _legendOpen = true;
   let _opacity    = 0.85;
   let _yearGetter = () => 2024;
 
@@ -35,6 +39,21 @@ const GlobeBordersUI = (() => {
     _toggleBtn.title = 'Toggle political borders overlay';
     _toggleBtn.addEventListener('click', toggleBorders);
 
+    // Honest disclosure: only ~20 entities exist right now, concentrated
+    // in the Old World. Without this, an empty region reads as "nothing
+    // was here" rather than "not mapped yet" — worth a few characters of
+    // permanent, low-key text rather than letting the overlay imply more
+    // completeness than it has.
+    const coverageTag = document.createElement('span');
+    coverageTag.id = 'gb-coverage-tag';
+    coverageTag.textContent = 'partial coverage · Old World';
+    coverageTag.title = 'Border data currently covers a limited set of major Old World empires. ' +
+      'Most regions and all modern nation-states are not yet mapped — a marker with no ' +
+      'border line just means that entity hasn\'t been drawn yet, not that nothing was there.';
+    coverageTag.style.cssText =
+      'font-size:10px;letter-spacing:0.03em;color:rgba(200,215,220,0.55);' +
+      'margin-left:8px;cursor:help;white-space:nowrap;align-self:center;';
+
     _opacityWrap = document.createElement('div');
     _opacityWrap.id = 'gb-opacity-wrap';
 
@@ -59,11 +78,12 @@ const GlobeBordersUI = (() => {
 
     const legendBtn = document.createElement('button');
     legendBtn.id = 'gb-legend-btn';
-    legendBtn.textContent = '▾ legend';
+    legendBtn.textContent = (_legendOpen ? '▴' : '▾') + ' legend';
     legendBtn.title = 'Border type legend';
     legendBtn.addEventListener('click', toggleLegend);
 
     container.appendChild(_toggleBtn);
+    container.appendChild(coverageTag);
     container.appendChild(_opacityWrap);
     container.appendChild(legendBtn);
 
@@ -111,6 +131,7 @@ const GlobeBordersUI = (() => {
                  document.getElementById('globe-container') || document.body;
     wrap.style.position = 'relative';
     wrap.appendChild(_legendPanel);
+    if (_legendOpen) _legendPanel.classList.add('open');
   }
 
   // ─── Active entity list ───────────────────────────────────────────────────
@@ -123,10 +144,9 @@ const GlobeBordersUI = (() => {
       listEl.innerHTML = '<div class="gb-active-item" style="color:var(--text-secondary)">None</div>';
       return;
     }
-    const DOT = { confirmed: '#1a9a99', estimated: '#9a6e08', theorized: '#8b41c8' };
     listEl.innerHTML = active.slice(0, 12).map(e =>
       `<div class="gb-active-item">
-        <div class="gb-dot" style="background:${DOT[e.type]||'#445566'};opacity:${e.type==='theorized'?0.5:0.9};"></div>
+        <div class="gb-dot" style="background:${e.color};opacity:${e.type==='theorized'?0.6:0.95};"></div>
         ${e.label}
       </div>`
     ).join('');
