@@ -251,22 +251,45 @@ const GlobeTerrain = (() => {
   // ── SHELF EXPOSURE FACTOR ─────────────────────────────────
   // Returns 1.0 for exposed land, 0.0 for deep ocean.
   // Used to decide how much to pull glacial vertices inward.
-  function _shelfExposureFactor(lat, lng) {
-    // Key glacial exposure zones — these match the visual shader zones
-    // Doggerland (North Sea) — between Britain and mainland Europe
-    if (lat > 51 && lat < 59 && lng > -5 && lng < 10)  return 0.85;
-    // Sunda Shelf — SE Asia connecting Borneo/Java/Sumatra
-    if (lat > -10 && lat < 10 && lng > 100 && lng < 120) return 0.90;
-    // Persian Gulf — mostly dry at -120m
-    if (lat > 24 && lat < 30 && lng > 48 && lng < 57)   return 0.80;
-    // Bering Land Bridge
-    if (lat > 60 && lat < 68 && (lng > 170 || lng < -165)) return 0.75;
-    // Bahama Banks
-    if (lat > 22 && lat < 27 && lng > -80 && lng < -72) return 0.70;
+  // Zones and rough extents cross-checked against the LGM (~20,000
+  // years ago, sea level -125m) reference map — source: University
+  // of Koeln, Svendsen et al. (2004).
+  const SHELF_ZONES = [
+    // Beringia — the Bering land bridge. Much larger than a narrow
+    // strait: spanned most of the modern Bering Sea shelf.
+    { lat: [52, 72], lng: [[172, 180], [-180, -158]], v: 0.85 },
+    // Doggerland / North Sea — Britain joined to mainland Europe
+    { lat: [50, 59], lng: [[-4, 9]], v: 0.90 },
+    // Celtic shelf — Ireland/Britain shelf margin
+    { lat: [49, 56], lng: [[-11, -4]], v: 0.75 },
     // English Channel
-    if (lat > 49 && lat < 52 && lng > -2 && lng < 2)    return 0.70;
-    // Default: taper based on proximity to land (approximated by fbm-style)
-    return 0.0;
+    { lat: [48, 51], lng: [[-5, 2]], v: 0.75 },
+    // Sunda Shelf — SE Asia: Borneo/Java/Sumatra joined to mainland
+    { lat: [-10, 10], lng: [[95, 120]], v: 0.90 },
+    // Sahul — Torres Strait / Arafura Sea, Australia joined to New Guinea
+    { lat: [-12, -2], lng: [[130, 145]], v: 0.85 },
+    // Sahul — Bass Strait, Tasmania joined to mainland Australia
+    { lat: [-41, -39], lng: [[143, 148]], v: 0.80 },
+    // Persian Gulf — mostly dry at -120m
+    { lat: [24, 30], lng: [[48, 57]], v: 0.85 },
+    // Yellow Sea / Bohai — China/Korea shelf, dry at LGM
+    { lat: [33, 41], lng: [[118, 126]], v: 0.85 },
+    // Sea of Japan land bridge (Sakhalin–Siberia, partial Korea Strait)
+    { lat: [41, 47], lng: [[130, 142]], v: 0.65 },
+    // Florida / Bahama Banks shelf, broadened
+    { lat: [22, 30], lng: [[-83, -70]], v: 0.75 },
+    // Adriatic Sea
+    { lat: [40, 45], lng: [[12, 19]], v: 0.60 },
+  ];
+ 
+  function _shelfExposureFactor(lat, lng) {
+    let best = 0.0;
+    for (const z of SHELF_ZONES) {
+      if (lat < z.lat[0] || lat > z.lat[1]) continue;
+      const inLng = z.lng.some(([a, b]) => lng >= a && lng <= b);
+      if (inLng && z.v > best) best = z.v;
+    }
+    return best;
   }
  
   // ── ICE SHEET OVERLAY ─────────────────────────────────────
@@ -309,26 +332,39 @@ const GlobeTerrain = (() => {
         float fbm(vec2 p){float v=0.0;float a=0.5;
           for(int i=0;i<4;i++){v+=a*noise(p);p*=2.1;a*=0.5;}return v;}
  
+        // Soft rectangle mask in lat/lng space. lat0<lat1 and lng0<lng1
+        // are required — smoothstep is undefined if edges are reversed,
+        // which was the bug in the old version of this function (the
+        // Canada/Laurentide term used reversed edges and collapsed to
+        // near-zero coverage).
+        float box(float lat, float lng, float lat0, float lat1, float lng0, float lng1, float f) {
+          float latF = smoothstep(lat0 - f, lat0 + f, lat) * (1.0 - smoothstep(lat1 - f, lat1 + f, lat));
+          float lngF = smoothstep(lng0 - f, lng0 + f, lng) * (1.0 - smoothstep(lng1 - f, lng1 + f, lng));
+          return latF * lngF;
+        }
+ 
         void main() {
           // Lat from position
           float lat = asin(vPosition.y / length(vPosition)) * (180.0 / 3.14159);
           float lng = atan(vPosition.z, -vPosition.x) * (180.0/3.14159);
           vec2 coord = vec2(lng/60.0, lat/30.0);
  
-          // Ice sheet coverage — north pole + Canada + N.Europe + expanded Antarctica
-          float northIce = smoothstep(55.0, 72.0, lat)
-                         + smoothstep(48.0, 62.0, lat) * fbm(coord*1.5) * 0.7;
-          // Canada / Laurentide
-          float canadaIce = smoothstep(48.0, 65.0, lat) *
-                            smoothstep(-110.0,-55.0,lng)*smoothstep(-40.0,-115.0,lng)
-                            * 0.9;
-          // Antarctica (expanded)
-          float southIce  = smoothstep(-62.0, -75.0, lat);
-          // Scandinavia / British Isles
-          float scandIce  = smoothstep(52.0,65.0,lat)*smoothstep(-5.0,30.0,lng)*
-                            smoothstep(35.0,-5.0,lng)*0.8;
+          // Ice sheet coverage — named real regions, cross-checked against
+          // the LGM (~20,000 years ago) reference map. Siberia/Eastern Asia
+          // deliberately has NO ice term: despite the latitude, it stayed
+          // too dry for ice sheets to form (real historical detail, not
+          // an oversight).
+          float laurentide  = box(lat, lng,  42.0, 72.0, -130.0, -55.0, 3.0);
+          float cordilleran = box(lat, lng,  48.0, 70.0, -140.0, -118.0, 3.0);
+          float greenland   = box(lat, lng,  58.0, 84.0,  -75.0, -10.0, 3.0);
+          // Celtic Isles + Scandinavian + Barents ice, as one band —
+          // stops at lng 63 so it never bleeds into Siberia
+          float euroIce     = box(lat, lng,  48.0, 78.0,  -12.0,  63.0, 3.0);
+          float patagonian  = box(lat, lng, -56.0,-38.0,  -76.0, -66.0, 2.0);
+          // Antarctic — simple polar cap, expanded vs. present day
+          float antarctic   = 1.0 - smoothstep(-75.0, -58.0, lat);
  
-          float coverage = clamp(northIce + canadaIce + southIce + scandIce, 0.0, 1.0);
+          float coverage = clamp(laurentide + cordilleran + greenland + euroIce + patagonian + antarctic, 0.0, 1.0);
  
           // Add noise edge softening
           coverage = coverage * (0.7 + 0.3*fbm(coord*3.0));
