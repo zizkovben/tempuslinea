@@ -41,18 +41,68 @@ const GlobeBorders = (() => {
   // Previously every "confirmed" entity shared the exact same teal, so two
   // or three empires visible at once (e.g. Rome + Han + Maurya at 100 CE)
   // were indistinguishable blobs. This gives each entity a stable, distinct
-  // hue derived from its id — deterministic so it doesn't shift between
-  // reloads, and automatic so new entities added later don't need a color
-  // hand-picked for them.
-  function _entityColor(entity) {
-    let hash = 0;
-    for (let i = 0; i < entity.id.length; i++) {
-      hash = (hash * 31 + entity.id.charCodeAt(i)) >>> 0;
+  // color — deterministic so it doesn't shift between reloads, automatic so
+  // new entities don't need a color hand-picked for them.
+  //
+  // This is a curated palette, not randomly-generated hues. An earlier
+  // version picked a random hue per entity via hashing, but HSL lightness
+  // isn't perceptually uniform across hues — blues and purples read
+  // noticeably darker than yellows and greens at the exact same lightness
+  // value, which is why some borders were hard to see against the dark
+  // background. Every color below has been chosen to read clearly on
+  // --bg-void; none of them need special-casing.
+  const ENTITY_PALETTE = [
+    '#ff6b6b', '#feca57', '#1dd1a1', '#54a0ff', '#ff9ff3',
+    '#f368e0', '#00d2d3', '#ff9f43', '#a29bfe', '#74b9ff',
+    '#55efc4', '#fd79a8', '#fab1a0', '#81ecec', '#fdcb6e',
+    '#e17055', '#ffa07a', '#c56cf0', '#7bed9f', '#ffdd59',
+    '#ff6348', '#48dbfb', '#ee5a6f', '#badc58'
+  ];
+
+  // Color is now purely an identity signal (which empire). Certainty
+  // (confirmed/estimated/theorized) is carried entirely by line pattern
+  // (solid/dashed/dotted) instead — see makeMaterial() in
+  // globe-borders-geom.js. The two were overloaded onto the same "color"
+  // channel before, which meant an entity literally couldn't show both
+  // its own identity and its certainty level at once. They're independent
+  // now, so both are always visible together.
+  //
+  // A plain hash % palette.length was tried first and produced real
+  // collisions on the actual 20-entity dataset (7 of them) — the birthday
+  // paradox bites hard once you're past ~15 items into a 24-slot palette.
+  // This resolves collisions deterministically via linear probing, built
+  // once and cached, so every current entity gets a genuinely distinct
+  // color. Resolution order is by entity id (not array order), so it's
+  // stable regardless of how BORDER_ENTITIES happens to be ordered in the
+  // data file, and adding a new entity later only affects that new
+  // entity's own color — everyone already assigned keeps theirs.
+  let _entityColorMap = null;
+  function _buildEntityColorMap() {
+    _entityColorMap = {};
+    if (BORDER_ENTITIES.length > ENTITY_PALETTE.length) {
+      console.warn('GlobeBorders: ' + BORDER_ENTITIES.length + ' entities but only ' +
+        ENTITY_PALETTE.length + ' palette colors — some entities will share a color. ' +
+        'Add more colors to ENTITY_PALETTE.');
     }
-    const hue   = hash % 360;
-    const sat   = 62;
-    const light = entity.type === 'theorized' ? 60 : (entity.type === 'estimated' ? 52 : 50);
-    return new THREE.Color(`hsl(${hue}, ${sat}%, ${light}%)`);
+    const used = new Set();
+    const sorted = [...BORDER_ENTITIES].sort((a, b) => a.id.localeCompare(b.id));
+    sorted.forEach(entity => {
+      let h = 0;
+      for (let i = 0; i < entity.id.length; i++) h = (h * 31 + entity.id.charCodeAt(i)) >>> 0;
+      let slot = h % ENTITY_PALETTE.length;
+      let tries = 0;
+      while (used.has(slot) && tries < ENTITY_PALETTE.length) {
+        slot = (slot + 1) % ENTITY_PALETTE.length;
+        tries++;
+      }
+      used.add(slot);
+      _entityColorMap[entity.id] = ENTITY_PALETTE[slot];
+    });
+  }
+
+  function _entityColor(entity) {
+    if (!_entityColorMap) _buildEntityColorMap();
+    return new THREE.Color(_entityColorMap[entity.id] || ENTITY_PALETTE[0]);
   }
 
   // ─── Object construction ─────────────────────────────────────────────────

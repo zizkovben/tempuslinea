@@ -103,29 +103,37 @@ const GlobeBordersUI = (() => {
     _legendPanel.id = 'gb-legend';
     _legendPanel.innerHTML = `
       <h4>Border certainty</h4>
+      <div class="gb-legend-note">Shown by line pattern below — color identifies
+        the empire instead (see "visible at this time")</div>
       <div class="gb-legend-row">
-        <div class="gb-legend-line" style="background:#1a9a99;"></div>
+        <div class="gb-legend-line" style="background:#b9c6c6;"></div>
         <div class="gb-legend-text">Confirmed
-          <span class="gb-legend-sub">Documented, archaeological consensus</span>
+          <span class="gb-legend-sub">Documented, archaeological consensus — solid</span>
         </div>
       </div>
       <div class="gb-legend-row">
-        <div class="gb-legend-line" style="border-top:2px dashed #9a6e08;height:0;background:none;"></div>
+        <div class="gb-legend-line" style="border-top:2px dashed #b9c6c6;height:0;background:none;"></div>
         <div class="gb-legend-text">Estimated
-          <span class="gb-legend-sub">Scholarly approximation, pre-500 BCE</span>
+          <span class="gb-legend-sub">Scholarly approximation, pre-500 BCE — dashed</span>
         </div>
       </div>
       <div class="gb-legend-row">
-        <div class="gb-legend-line" style="border-top:2px dotted #8b41c8;height:0;background:none;"></div>
+        <div class="gb-legend-line" style="border-top:2px dotted #b9c6c6;height:0;background:none;"></div>
         <div class="gb-legend-text">Theorized
-          <span class="gb-legend-sub">Alternative / disputed — community ranked</span>
+          <span class="gb-legend-sub">Alternative / disputed — community ranked — dotted</span>
         </div>
       </div>
+      <div class="gb-legend-divider"></div>
       <div id="gb-active-list">
-        <h5>Visible at this time</h5>
+        <h5>Visible at this time <span class="gb-legend-note">— color = which empire</span></h5>
         <div id="gb-active-items"></div>
       </div>
     `;
+    _legendPanel.querySelectorAll('.gb-legend-note').forEach(el => {
+      el.style.cssText = 'font-size:10px;color:rgba(200,215,220,0.5);margin:2px 0 8px;line-height:1.4;';
+    });
+    const divider = _legendPanel.querySelector('.gb-legend-divider');
+    if (divider) divider.style.cssText = 'height:1px;background:rgba(255,255,255,0.08);margin:10px 0;';
 
     const wrap = document.getElementById('globe-wrapper') ||
                  document.getElementById('globe-container') || document.body;
