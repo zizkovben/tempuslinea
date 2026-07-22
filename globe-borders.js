@@ -1,6 +1,8 @@
 // globe-borders.js
 // CHRONOS Phase 6 — Dynamic Borders renderer and public API
-// Depends on: three.min.js, globe-borders-data.js, globe-borders-geom.js
+// Depends on: three.min.js, globe-borders-data.js, globe-borders-geom.js,
+//             globe-borders-glow.js (optional — glow is skipped gracefully
+//             if not loaded, same defensive pattern as the camera lookup below)
 // Exposes: window.GlobeBorders
 
 const GlobeBorders = (() => {
@@ -129,6 +131,14 @@ const GlobeBorders = (() => {
     });
 
     _objects[entity.id] = { meshes, entity, color };
+
+    // Soft influence glow — theorized entities only, automatic (not
+    // hardcoded to specific ids), degrades gracefully if the glow module
+    // isn't loaded rather than breaking border rendering.
+    if (entity.type === 'theorized' && window.GlobeBordersGlow) {
+      try { GlobeBordersGlow.buildForEntity(entity, _radius, _group, color); }
+      catch (e) { console.warn('GlobeBordersGlow: failed to build glow for', entity.id, e); }
+    }
   }
 
   // ─── Per-entity geometry update ───────────────────────────────────────────
@@ -142,6 +152,9 @@ const GlobeBorders = (() => {
 
     if (!blend.entityActive) {
       obj.meshes.forEach(m => { m.visible = false; });
+      if (entity.type === 'theorized' && window.GlobeBordersGlow) {
+        GlobeBordersGlow.updateEntity(entity.id, 0, false);
+      }
       return;
     }
 
@@ -165,6 +178,10 @@ const GlobeBorders = (() => {
       );
       mesh.visible = _visible && opacity > 0.01;
     });
+
+    if (entity.type === 'theorized' && window.GlobeBordersGlow) {
+      GlobeBordersGlow.updateEntity(entity.id, opacity, _visible && opacity > 0.01);
+    }
   }
 
   // ─── Public API ───────────────────────────────────────────────────────────
@@ -367,6 +384,7 @@ const GlobeBorders = (() => {
       _tooltipEl.remove();
       _tooltipEl = null;
     }
+    if (window.GlobeBordersGlow) GlobeBordersGlow.dispose();
     _rotationSyncRunning = false;
   }
 

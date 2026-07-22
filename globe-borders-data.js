@@ -254,6 +254,197 @@ const BORDER_ENTITIES = [
     }
   },
 
+  // ─── MALI EMPIRE ─────────────────────────────────────────────────────────
+  // First entity outside the Old World / Old World-adjacent Americas —
+  // closes the "no Africa beyond Egypt" gap flagged in Bible v31. Two
+  // snapshots: peak extent under Mansa Musa (c.1350, the era of his famous
+  // 1324 hajj through Cairo — one of the best-documented pre-colonial
+  // Sub-Saharan African empires, via Ibn Battuta's firsthand account and
+  // Arab/Portuguese trade records) and the contracted state c.1450, before
+  // Songhai eclipsed it later that century. dissolve kept low (0.05, in
+  // line with similarly well-documented entities like Byzantine/Han) since
+  // its existence and rough extent are not seriously contested — only the
+  // precise border, like every pre-modern empire here, is approximate.
+
+  {
+    id: "mali-empire",
+    label: "Mali Empire",
+    parentCiv: null,
+    type: "confirmed",
+    dissolve: 0.05,
+    snapshots: {
+      "1350": [[16.5,-16.5],[20.0,-15.0],[23.0,-11.0],[23.5,-6.0],[21.0,-3.0],[17.5,-1.0],[16.3,0.0],[14.5,-1.5],[12.0,-4.0],[10.0,-8.0],[9.5,-11.0],[11.0,-13.5],[13.0,-16.0],[16.5,-16.5]],
+      "1450": [[15.5,-16.5],[18.5,-14.5],[20.5,-11.5],[19.5,-8.0],[17.0,-6.0],[14.5,-6.5],[12.5,-8.5],[10.5,-11.0],[10.0,-13.5],[12.0,-16.0],[15.5,-16.5]]
+    }
+  },
+
+  // ─── KHMER EMPIRE ────────────────────────────────────────────────────────
+  // Closes the "no Southeast Asia" gap flagged in Bible v31 — first entity
+  // in that region. Two snapshots: peak extent (c.1200, spanning the reigns
+  // of temple-builders Suryavarman II and Jayavarman VII — Angkor Wat and
+  // the Bayon respectively) and the contracted state (c.1400, after
+  // Ayutthaya's rise in the west began pulling territory away).
+
+  {
+    id: "khmer-empire",
+    label: "Khmer Empire",
+    parentCiv: null,
+    type: "confirmed",
+    dissolve: 0.1,
+    snapshots: {
+      "1200": [[19.5,101.0],[19.0,104.5],[17.0,106.0],[14.0,107.5],[11.5,107.0],[9.5,105.0],[10.0,102.5],[12.0,99.5],[15.0,98.0],[17.5,97.5],[19.5,99.0],[19.5,101.0]],
+      "1400": [[15.0,102.0],[15.5,104.5],[14.0,106.0],[12.0,105.5],[10.5,104.0],[11.0,102.0],[13.0,101.0],[15.0,102.0]]
+    }
+  },
+
+  // ─── KINGDOM OF AKSUM ────────────────────────────────────────────────────
+  // Closes the Horn of Africa / East Africa gap — the second Sub-Saharan
+  // African entity in the file (after Mali), and the first from antiquity
+  // rather than the medieval period. Genuinely well-documented for an
+  // ancient African power: Aksum minted its own coinage, left royal
+  // inscriptions (King Ezana's in particular), and was named by the
+  // 3rd-century Persian prophet Mani as one of the four great powers of the
+  // world alongside Rome, Persia, and China — not a marginal or obscure
+  // civilization, dissolve kept low accordingly. Two snapshots: peak core
+  // extent under Ezana (c.350) and the contracted highland state (c.700)
+  // after losing Red Sea trade dominance to the expanding Islamic
+  // caliphates. (Aksum's brief conquest of parts of South Arabia under King
+  // Kaleb, c.525, is not included here — kept to the stable African
+  // mainland core rather than a short-lived overseas foothold.)
+
+  {
+    id: "aksumite-empire",
+    label: "Kingdom of Aksum",
+    parentCiv: null,
+    type: "confirmed",
+    dissolve: 0.1,
+    snapshots: {
+      "350": [[18.0,36.0],[18.0,39.5],[15.5,42.0],[12.5,43.5],[9.5,42.0],[8.0,39.0],[9.5,36.5],[13.0,35.0],[16.0,35.0],[18.0,36.0]],
+      "700": [[16.5,37.0],[16.0,39.5],[13.5,40.5],[11.0,39.5],[10.0,37.5],[11.5,36.0],[14.5,35.5],[16.5,37.0]]
+    }
+  },
+
+  // ─── MAYA CIVILIZATION ───────────────────────────────────────────────────
+  // Fills the multi-century gap in Mesoamerica before Aztec (1500) — Maya
+  // civilization was flourishing many centuries earlier. Marked
+  // type:"confirmed" for consistency with how every other entity in this
+  // file already handles fluctuating/approximate borders (Rome's borders
+  // shifted constantly too, and it's still "confirmed" here) — BUT flagging
+  // explicitly: unlike every other entity so far, Maya was never one
+  // unified government. It was a network of rival city-states (Tikal,
+  // Calakmul, Copán, and others) sharing one civilization, writing system,
+  // and calendar, not one throne. This polygon traces the archaeological
+  // extent of that shared civilization, not a single empire's border —
+  // worth a second look/discussion if that distinction matters enough to
+  // handle differently (e.g. multiple smaller city-state entities instead
+  // of one). Two snapshots: Late Classic peak (c.750, the southern lowlands
+  // at their most populous) and the Postclassic contraction (c.950, after
+  // the Classic Maya collapse emptied the southern lowlands and activity
+  // shifted north into Yucatán — Chichen Itza's rise).
+
+  {
+    id: "maya-civilization",
+    label: "Maya Civilization",
+    parentCiv: null,
+    type: "confirmed",
+    dissolve: 0.15,
+    snapshots: {
+      "750": [[21.5,-89.5],[20.0,-87.0],[17.5,-88.0],[15.0,-89.0],[14.5,-91.5],[15.5,-92.5],[17.5,-93.0],[19.0,-91.0],[20.5,-90.0],[21.5,-89.5]],
+      "950": [[21.5,-89.5],[20.5,-87.5],[19.0,-87.5],[18.0,-88.5],[18.5,-90.0],[20.0,-90.5],[21.5,-89.5]]
+    }
+  },
+
+  // ─── SONGHAI EMPIRE ──────────────────────────────────────────────────────
+  // Mali's direct successor as the dominant West African power — a natural
+  // narrative continuation of last round's Mali entity. Peak under Askia
+  // Muhammad (r.1493-1528), who expanded past Mali's own historical extent;
+  // well documented via the Arabic Tarikh al-Sudan chronicle written in
+  // Timbuktu itself. Two snapshots: peak (c.1500) and the shattered
+  // post-collapse state (c.1600) after the 1591 Moroccan invasion broke the
+  // empire's cohesion.
+
+  {
+    id: "songhai-empire",
+    label: "Songhai Empire",
+    parentCiv: null,
+    type: "confirmed",
+    dissolve: 0.1,
+    snapshots: {
+      "1500": [[16.5,-16.0],[20.0,-13.0],[23.5,-6.0],[22.0,-1.0],[19.0,3.0],[16.0,4.5],[13.5,3.0],[11.0,1.0],[10.0,-2.0],[9.5,-6.0],[10.5,-10.0],[13.0,-13.5],[16.5,-16.0]],
+      "1600": [[15.0,-8.0],[16.5,-5.0],[17.5,-2.0],[16.0,0.5],[14.0,-0.5],[12.5,-2.5],[12.0,-5.0],[13.0,-7.5],[15.0,-8.0]]
+    }
+  },
+
+  // ─── KINGDOM OF KUSH (NUBIA) ─────────────────────────────────────────────
+  // One of Africa's oldest civilizations, immediately south of Egypt along
+  // the Nile — genuinely notable rather than a footnote: Kushite pharaohs of
+  // the 25th Dynasty ruled Egypt itself (the "Black Pharaohs," c.760-656
+  // BCE), and Kush developed its own Meroitic script. First snapshot
+  // (-700) captures that 25th Dynasty peak, when Kush controlled the Nile
+  // all the way to the Delta — no existing Egypt entity covers this exact
+  // period (the file's two Egypt entities stop at -1000 and don't resume),
+  // so this isn't overlapping/duplicating anything already on the globe.
+  // Second snapshot (-200) shows the later Meroitic-period kingdom, after
+  // Kush lost the north and contracted to its southern Nubian heartland.
+
+  {
+    id: "kingdom-of-kush",
+    label: "Kingdom of Kush (Nubia)",
+    parentCiv: null,
+    type: "confirmed",
+    dissolve: 0.1,
+    snapshots: {
+      "-700": [[31.5,30.0],[31.0,32.5],[27.5,31.0],[24.0,32.5],[22.0,31.0],[19.5,30.0],[16.5,32.5],[13.5,33.5],[11.0,32.0],[10.5,29.0],[14.0,27.0],[18.0,25.5],[22.0,29.0],[26.0,31.0],[29.0,30.5],[31.5,30.0]],
+      "-200": [[22.0,31.0],[22.0,33.5],[19.5,34.0],[16.0,34.5],[13.0,34.0],[10.5,32.5],[10.0,29.5],[12.5,27.5],[16.0,26.5],[19.5,28.0],[22.0,31.0]]
+    }
+  },
+
+  // ─── KINGDOM OF ZIMBABWE (GREAT ZIMBABWE) ────────────────────────────────
+  // Closes the Southern Africa gap — the third African entity in the file,
+  // and geographically distinct from Mali/Songhai (west) and Aksum/Kush
+  // (northeast). Controlled the gold trade with Indian Ocean Swahili coast
+  // city-states (Kilwa, Sofala) via the famous stone-walled capital whose
+  // ruins still stand. dissolve set slightly higher than the other African
+  // entities (0.15 vs 0.1) — Great Zimbabwe is extremely well evidenced
+  // archaeologically (the ruins are the primary source) but has much
+  // thinner contemporary written documentation than Aksum or Kush, so its
+  // exact political extent is comparatively less certain, not just its
+  // border precision.
+
+  {
+    id: "great-zimbabwe",
+    label: "Kingdom of Zimbabwe (Great Zimbabwe)",
+    parentCiv: null,
+    type: "confirmed",
+    dissolve: 0.15,
+    snapshots: {
+      "1300": [[-15.5,29.0],[-15.0,32.5],[-17.0,34.5],[-19.5,34.0],[-22.0,32.0],[-22.5,29.5],[-20.5,27.5],[-17.5,27.5],[-15.5,29.0]],
+      "1450": [[-16.5,29.5],[-16.0,32.0],[-17.5,33.5],[-19.5,33.0],[-21.0,31.0],[-20.5,29.0],[-18.0,28.0],[-16.5,29.5]]
+    }
+  },
+
+  // ─── SILLA (UNIFIED KOREA) ───────────────────────────────────────────────
+  // Closes the Korea / Northeast Asia gap — distinct from Han Dynasty China
+  // already in the file. Silla unified the Korean peninsula in 668 CE after
+  // defeating its rival kingdoms Baekje and Goguryeo (with Tang Chinese
+  // assistance, later expelling Tang forces too). Two snapshots: peak
+  // territorial control (c.700, shortly after unification) and the late
+  // period (c.900, just before Silla fragmented into the Later Three
+  // Kingdoms period). Northern Korea/Manchuria under the successor state
+  // Balhae is not included — kept to Silla's own actual controlled extent.
+
+  {
+    id: "silla-kingdom",
+    label: "Silla (Unified Korea)",
+    parentCiv: null,
+    type: "confirmed",
+    dissolve: 0.1,
+    snapshots: {
+      "700": [[34.0,126.3],[34.5,127.5],[35.5,129.3],[37.0,129.2],[38.0,128.5],[39.0,127.5],[39.3,125.8],[38.0,125.0],[36.5,126.0],[35.0,126.0],[34.0,126.3]],
+      "900": [[34.5,126.5],[35.0,127.5],[36.0,129.0],[37.5,129.0],[38.5,128.0],[38.5,126.0],[37.0,125.5],[35.5,126.0],[34.5,126.5]]
+    }
+  },
+
   // ─── THEORIZED / TYPE-C ZONES ─────────────────────────────────────────────
 
   {
