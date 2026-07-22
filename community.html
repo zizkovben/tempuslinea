@@ -526,10 +526,6 @@
           contribute theories, submit sources, and challenge dates.
           All perspectives are welcome — ranked by community plausibility.
         </div>
-        <button class="btn" style="margin-top:8px;border-color:rgba(107,33,168,.4);
-          color:var(--violet-text);" onclick="CLIO.open();CLIO.ask('What can I explore in the Tempus Linea Community?')">
-          ✦ Ask CLIO for a guided tour
-        </button>
       </div>
 
       <!-- Civ thread view — shown when a civ is selected -->
@@ -585,7 +581,7 @@
               </button>
               <span class="form-note">
                 Phase 3: threads will require an account.
-                Submissions are pre-screened by CLIO before publishing.
+                Submissions are reviewed before publishing.
               </span>
             </div>
           </div>
@@ -613,7 +609,7 @@
           <div class="phase3-notice">
             <span>✦</span>
             <span><strong>Source Registry — Phase 3.</strong>
-            Submit links, PDFs, and citations. CLIO summarizes each source.
+            Submit links, PDFs, and citations.
             Community votes on reliability.</span>
           </div>
           <div id="source-list">
@@ -656,9 +652,6 @@
 <script src="share-ui.js"></script>
 <script src="notifications.js"></script>
 <script src="notifications-ui.js"></script>
-<script src="clio-prompt.js"></script>
-<script src="clio-ui.js"></script>
-<script src="clio.js"></script>
 
 <script>
 // ── SEED THREAD DATA ──────────────────────────────────────
@@ -1175,9 +1168,6 @@ function selectCiv(civId) {
   const civ = CIVS.find(c => c.id === civId);
   if (!civ) return;
 
-  // Tell CLIO the context
-  if (window.CLIO) CLIO.setActiveCiv(civ);
-
   // Refresh active-row highlight in every open virtualized list. Unlike
   // the old flat DOM version, most rows don't exist in the DOM at any
   // given moment (that's the point), so this re-renders each list's
@@ -1199,10 +1189,6 @@ function selectCiv(civId) {
       <span class="comm-civ-title-inline" style="color:${tc};">${civ.n}</span>
     </div>
     <div style="display:flex;gap:8px;flex-wrap:wrap;">
-      <button class="btn" style="font-size:9px;"
-        onclick="CLIO.open();CLIO.ask('Tell me everything significant about ${civ.n.replace(/'/g,"\\'")}')">
-        ✦ Ask CLIO about ${civ.n}
-      </button>
       <a href="globe.html?civ=${civ.id}" class="btn" style="font-size:9px;text-decoration:none;">
         VIEW ON LIVING ATLAS →
       </a>
@@ -1279,12 +1265,6 @@ function renderTab(tab, civ) {
       if (followSlot && typeof NotificationsUI !== 'undefined') {
         followSlot.appendChild(NotificationsUI.makeFollowButton('thread', t.id, t.title));
       }
-      card.addEventListener('click', () => {
-        if (window.CLIO) {
-          CLIO.open();
-          CLIO.ask(`In the context of ${civ.n}: "${t.title}" — what are the key arguments on both sides?`);
-        }
-      });
     });
   }
 
@@ -1310,7 +1290,7 @@ function renderTab(tab, civ) {
     const el = document.getElementById('source-list');
     el.innerHTML = `<div style="font-size:10px;color:var(--text-dim);padding:8px 0;">
       Phase 3: Community source submissions for ${civ.n} will appear here.
-      Submit Tier 1–3 sources, PDFs, or research links. CLIO summarizes each.
+      Submit Tier 1–3 sources, PDFs, or research links.
     </div>`;
   }
 
@@ -1349,7 +1329,7 @@ document.getElementById('thread-submit-btn').addEventListener('click', () => {
   const body  = document.getElementById('thread-body-input').value.trim();
   if (!title || !body) { alert('Please provide a title and argument.'); return; }
   alert('Phase 3: Thread submission will go live with user accounts. ' +
-        'Your thread will be pre-screened by CLIO before publishing.');
+        'Your thread will be reviewed before publishing.');
 
   // Phase 8: offer a share prompt for the new contribution
   if (typeof ShareEngine !== 'undefined' && activeCivId != null) {
