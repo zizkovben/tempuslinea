@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tempus Linea — Astrolabe</title>
+  <meta name="description" content="Tempus Linea Astrolabe — a rotating dial navigator for the Celestial Layer, cross-referencing epoch, year, and civilization in one gesture.">
+  <meta property="og:title" content="Tempus Linea — Astrolabe">
+  <meta property="og:url" content="https://tempuslinea.com/astrolabe">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    /* ── ASTROLABE PAGE OVERRIDES ───────────────────────────── */
+    body { overflow: hidden; }
+
+    .astrolabe-shell {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    #astrolabe-container {
+      position: relative;
+      flex: 1;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(ellipse at 50% 45%,
+        rgba(8,14,35,1) 0%,
+        rgba(2,4,14,1)  60%,
+        rgba(0,1,6,1)   100%);
+    }
+
+    #astrolabe-svg {
+      width: min(88vh, 88vw);
+      height: min(88vh, 88vw);
+      display: block;
+    }
+
+    #astrolabe-readout {
+      position: absolute;
+      top: 14px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 2px;
+      color: var(--gold, #c8a030);
+      background: rgba(3,6,18,.82);
+      border: 1px solid rgba(12,35,80,.5);
+      border-radius: 3px;
+      padding: 6px 16px;
+      pointer-events: none;
+    }
+
+    #astrolabe-legend {
+      position: absolute;
+      bottom: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: var(--font-mono);
+      font-size: 9px;
+      letter-spacing: 0.8px;
+      color: var(--text-dim, #667799);
+      text-align: center;
+      pointer-events: none;
+      max-width: 480px;
+      line-height: 1.6;
+    }
+
+    #astrolabe-svg [id^="ring-"] path,
+    #astrolabe-svg [id^="ring-"] circle {
+      transition: fill-opacity 0.15s ease;
+    }
+  </style>
+</head>
+<body>
+
+<div class="astrolabe-shell">
+
+  <!-- ══ HEADER ═══════════════════════════════════════════ -->
+  <header class="app-header">
+    <div>
+      <div class="logo-title">TEMPUS LINEA</div>
+      <div class="logo-sub">ASTROLABE · THE CELESTIAL LAYER'S NATIVE NAVIGATOR</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;">
+      <span style="font-size:9px;color:var(--text-dim);letter-spacing:1px;">PHASE 1–5</span>
+    </div>
+  </header>
+
+  <!-- ══ NAVIGATION ════════════════════════════════════════ -->
+  <nav class="app-nav">
+    <a href="index.html">TIMELINE</a>
+    <span class="nav-sep">·</span>
+    <a href="globe.html">LIVING ATLAS</a>
+    <span class="nav-sep">·</span>
+    <a href="community.html">COMMUNITY</a>
+    <span class="nav-sep">·</span>
+    <a href="portal.html">MY PORTAL</a>
+    <span class="nav-sep">·</span>
+    <a href="about.html">ABOUT</a>
+  </nav>
+
+  <!-- ══ ASTROLABE VIEWPORT ═════════════════════════════════ -->
+  <div id="astrolabe-container">
+
+    <div id="astrolabe-readout">— · —</div>
+
+    <svg id="astrolabe-svg" viewBox="0 0 640 640" xmlns="http://www.w3.org/2000/svg"></svg>
+
+    <div id="astrolabe-legend">
+      OUTER RING — drag or click to choose an epoch &nbsp;·&nbsp;
+      MIDDLE RING — drag to scrub through the epoch's years &nbsp;·&nbsp;
+      INNER RING — click a civilization to select it &nbsp;·&nbsp;
+      CENTER — click the selected civilization to view details
+    </div>
+
+  </div>
+
+</div>
+
+<!-- ══ SCRIPTS ══════════════════════════════════════════════ -->
+<!-- Load order: data → astrolabe engine → astrolabe wiring → shared UI panel -->
+<script src="data.js"></script>
+<script src="data-extended.js"></script>
+<script src="astrolabe-rings.js"></script>
+<script src="astrolabe-ui.js"></script>
+<script src="ui.js"></script>
+
+</body>
+</html>
