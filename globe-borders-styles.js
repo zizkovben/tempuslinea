@@ -80,14 +80,15 @@ const GlobeBordersStyles = (() => {
       #gb-legend-btn:hover { color: var(--text-primary, #8899aa); }
       #gb-legend {
         position: absolute;
-        bottom: 56px;
-        left: 12px;
+        top: 100%;
+        left: 0;
+        margin-top: 6px;
         z-index: 20;
         background: var(--bg-panel, #0a0d18);
         border: 1px solid rgba(100,120,160,0.18);
         border-radius: 8px;
         padding: 12px 14px;
-        min-width: 220px;
+        min-width: 240px;
         display: none;
       }
       #gb-legend.open { display: block; }
@@ -148,6 +149,29 @@ const GlobeBordersStyles = (() => {
         width: 6px; height: 6px;
         border-radius: 50%;
         flex-shrink: 0;
+      }
+      /* Per-empire opacity toggle — added this session. A small filled/
+         hollow circle, distinct from the identity-color .gb-dot next to
+         it, so it reads as an interactive control rather than another
+         color swatch. */
+      .gb-entity-toggle {
+        width: 12px;
+        height: 12px;
+        flex-shrink: 0;
+        border-radius: 50%;
+        border: 1.5px solid var(--teal, #0c6a69);
+        background: var(--teal-hi, #1a9a99);
+        padding: 0;
+        cursor: pointer;
+        transition: background 0.15s, border-color 0.15s, opacity 0.15s;
+      }
+      .gb-entity-toggle.off {
+        background: transparent;
+        border-color: rgba(100,120,160,0.35);
+        opacity: 0.6;
+      }
+      .gb-entity-toggle:hover {
+        border-color: var(--teal-hi, #1a9a99);
       }
     `;
     document.head.appendChild(style);

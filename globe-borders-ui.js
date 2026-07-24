@@ -18,6 +18,7 @@ const GlobeBordersUI = (() => {
   let _toggleBtn   = null;
   let _opacityWrap = null;
   let _legendPanel = null;
+  let _controlsEl  = null;
 
   // ─── Slider track helper ─────────────────────────────────────────────────
 
@@ -32,6 +33,7 @@ const GlobeBordersUI = (() => {
   function buildControls() {
     const container = document.createElement('div');
     container.id = 'gb-controls';
+    _controlsEl = container;
 
     _toggleBtn = document.createElement('button');
     _toggleBtn.id = 'gb-toggle';
@@ -108,7 +110,8 @@ const GlobeBordersUI = (() => {
     _legendPanel.innerHTML = `
       <h4>Empires visible now</h4>
       <div class="gb-legend-note">Color identifies which empire — certainty
-        (confirmed / theorized / debated) is shown by the civ marker dots</div>
+        (confirmed / theorized / debated) is shown by the civ marker dots.
+        Use the toggle to hide/show that empire's border.</div>
       <div id="gb-active-list">
         <div id="gb-active-items"></div>
       </div>
@@ -116,14 +119,35 @@ const GlobeBordersUI = (() => {
     _legendPanel.querySelectorAll('.gb-legend-note').forEach(el => {
       el.style.cssText = 'font-size:10px;color:rgba(200,215,220,0.5);margin:2px 0 8px;line-height:1.4;';
     });
-    const divider = _legendPanel.querySelector('.gb-legend-divider');
-    if (divider) divider.style.cssText = 'height:1px;background:rgba(255,255,255,0.08);margin:10px 0;';
 
-    const wrap = document.getElementById('globe-wrapper') ||
-                 document.getElementById('globe-container') || document.body;
-    wrap.style.position = 'relative';
-    wrap.appendChild(_legendPanel);
+    // Docked directly under the controls bar (#gb-controls) as its own
+    // child, positioned via CSS (top:100%) rather than appended into an
+    // unrelated wrapper element positioned separately on the page. This
+    // was the actual cause of the "legend disappears, borders behave
+    // oddly" confusion — the legend button lived in the controls bar, but
+    // the panel it opened floated bottom-left of the globe, spatially
+    // disconnected from the button that controlled it. Now it's a real
+    // dropdown: open it, and it appears right under where you clicked.
+    _controlsEl.style.position = 'relative';
+    _controlsEl.appendChild(_legendPanel);
     if (_legendOpen) _legendPanel.classList.add('open');
+
+    // Delegated click handler for the per-empire opacity toggles built in
+    // updateActiveLegend() below — delegated because #gb-active-items is
+    // rebuilt via innerHTML on every year change, so per-row listeners
+    // would be lost each time; one listener on the stable parent survives
+    // re-renders. Deliberately a distinct visible button (.gb-entity-
+    // toggle), not the color dot doubling as a hidden control — that would
+    // repeat the exact "not obvious" problem this session's other fix
+    // (docking the legend under its own button) was meant to solve.
+    _legendPanel.addEventListener('click', e => {
+      const btn = e.target.closest('.gb-entity-toggle');
+      if (!btn || !btn.dataset.entityId) return;
+      const id = btn.dataset.entityId;
+      const isOn = GlobeBorders.getEntityOpacity(id) > 0;
+      GlobeBorders.setEntityOpacity(id, isOn ? 0 : 1);
+      updateActiveLegend(_yearGetter());
+    });
   }
 
   // ─── Active entity list ───────────────────────────────────────────────────
@@ -136,12 +160,15 @@ const GlobeBordersUI = (() => {
       listEl.innerHTML = '<div class="gb-active-item" style="color:var(--text-secondary)">None</div>';
       return;
     }
-    listEl.innerHTML = active.slice(0, 12).map(e =>
-      `<div class="gb-active-item">
+    listEl.innerHTML = active.slice(0, 12).map(e => {
+      const isOn = GlobeBorders.getEntityOpacity(e.id) > 0;
+      return `<div class="gb-active-item">
+        <button class="gb-entity-toggle ${isOn ? 'on' : 'off'}" data-entity-id="${e.id}"
+          title="${isOn ? 'Hide' : 'Show'} ${e.label}'s border" aria-pressed="${isOn}"></button>
         <div class="gb-dot" style="background:${e.color};opacity:${e.type==='theorized'?0.6:0.95};"></div>
         ${e.label}
-      </div>`
-    ).join('');
+      </div>`;
+    }).join('');
     if (active.length > 12) {
       listEl.innerHTML += `<div class="gb-active-item" style="color:var(--text-secondary)">+${active.length-12} more</div>`;
     }

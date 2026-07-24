@@ -29,6 +29,16 @@ const GlobeBorders = (() => {
   // entityId → { meshes: [THREE.Line], entity }
   const _objects = {};
 
+  // Per-entity opacity override, layered on top of the global _opacity
+  // slider — added this session so an individual empire can be faded/
+  // hidden (e.g. Rome down to see Han underneath it) without touching
+  // every other border. 1 = full, matches the entity's normal computed
+  // opacity; 0 = fully hidden. Defaults to 1 for every entity (no override)
+  // until the UI's per-empire toggle sets one. Stored separately from
+  // _opacity so the two multiply together rather than one replacing the
+  // other — see updateEntityGeometry().
+  const _entityOpacityOverride = {};
+
   // ─── Visual style config ─────────────────────────────────────────────────
   const STYLE = {
     confirmed: { color: 0x1a9a99, baseOpacity: 0.80 },
@@ -151,7 +161,8 @@ const GlobeBorders = (() => {
     const style   = STYLE[entity.type] || STYLE.confirmed;
     const ancient = year < ANCIENT_THRESHOLD && entity.type === 'confirmed';
     const dimMul  = ancient ? ANCIENT_DIM : 1.0;
-    const opacity = style.baseOpacity * (1 - entity.dissolve) * dimMul * (blend.fadeIn || 1) * _opacity;
+    const entityMul = _entityOpacityOverride[entityId] !== undefined ? _entityOpacityOverride[entityId] : 1;
+    const opacity = style.baseOpacity * (1 - entity.dissolve) * dimMul * (blend.fadeIn || 1) * _opacity * entityMul;
 
     const multi  = GlobeBordersGeom.isMultiPart(blend.polyA);
     const partsA = multi ? blend.polyA : [blend.polyA];
@@ -317,6 +328,19 @@ const GlobeBorders = (() => {
     updateYear(_currentYear);
   }
 
+  // Per-empire opacity control — added this session. Independent of the
+  // global slider above; an entity toggled to 0 here stays hidden even at
+  // full global opacity, and vice versa. Clamped the same way as the
+  // global slider for consistency.
+  function setEntityOpacity(entityId, val) {
+    _entityOpacityOverride[entityId] = Math.max(0, Math.min(1, val));
+    updateEntityGeometry(entityId, _currentYear);
+  }
+
+  function getEntityOpacity(entityId) {
+    return _entityOpacityOverride[entityId] !== undefined ? _entityOpacityOverride[entityId] : 1;
+  }
+
   function setGlacialMode(bool) {
     _glacial = bool;
     BORDER_ENTITIES.forEach(entity => {
@@ -369,10 +393,11 @@ const GlobeBorders = (() => {
       _tooltipEl.remove();
       _tooltipEl = null;
     }
+    Object.keys(_entityOpacityOverride).forEach(k => delete _entityOpacityOverride[k]);
     _rotationSyncRunning = false;
   }
 
-  return { init, updateYear, setVisible, setOpacity, setGlacialMode, highlightCiv, clearHighlight, getEntityAtYear, dispose };
+  return { init, updateYear, setVisible, setOpacity, setEntityOpacity, getEntityOpacity, setGlacialMode, highlightCiv, clearHighlight, getEntityAtYear, dispose };
 })();
 
 window.GlobeBorders = GlobeBorders;
