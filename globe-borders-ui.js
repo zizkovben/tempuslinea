@@ -18,7 +18,7 @@ const GlobeBordersUI = (() => {
   let _toggleBtn   = null;
   let _opacityWrap = null;
   let _legendPanel = null;
-  let _controlsEl  = null;
+  let _toggleGroup = null;
 
   // ─── Slider track helper ─────────────────────────────────────────────────
 
@@ -33,7 +33,6 @@ const GlobeBordersUI = (() => {
   function buildControls() {
     const container = document.createElement('div');
     container.id = 'gb-controls';
-    _controlsEl = container;
 
     _toggleBtn = document.createElement('button');
     _toggleBtn.id = 'gb-toggle';
@@ -80,14 +79,30 @@ const GlobeBordersUI = (() => {
 
     const legendBtn = document.createElement('button');
     legendBtn.id = 'gb-legend-btn';
-    legendBtn.textContent = (_legendOpen ? '▴' : '▾') + ' legend';
-    legendBtn.title = 'Border type legend';
+    // Restyled from a plain text link ("▴/▾ legend") to a bordered pill
+    // matching gb-toggle's visual language — was easy to miss as an
+    // interactive control at all when it just looked like stray label
+    // text. Icon-only now (caret), title attribute carries the label.
+    legendBtn.textContent = _legendOpen ? '▴' : '▾';
+    legendBtn.title = 'Legend — which empires are visible now';
+    legendBtn.setAttribute('aria-label', 'Toggle legend');
     legendBtn.addEventListener('click', toggleLegend);
 
-    container.appendChild(_toggleBtn);
+    // BORDERS + legend button now share one grouped cluster instead of
+    // sitting at opposite ends of the control bar (BORDERS far left,
+    // "legend" far right) — moved next to each other per owner feedback:
+    // the legend toggle read as "lonely and disconnected" out on its own.
+    // This group is also what the legend panel docks directly under (see
+    // buildLegend()), so the button that opens the panel and the panel
+    // itself are now both spatially and visually one unit.
+    _toggleGroup = document.createElement('div');
+    _toggleGroup.id = 'gb-toggle-group';
+    _toggleGroup.appendChild(_toggleBtn);
+    _toggleGroup.appendChild(legendBtn);
+
+    container.appendChild(_toggleGroup);
     container.appendChild(coverageTag);
     container.appendChild(_opacityWrap);
-    container.appendChild(legendBtn);
 
     const toolbar = document.querySelector('#globe-toolbar, .globe-toolbar, #globe-controls, .globe-controls');
     if (toolbar) {
@@ -120,16 +135,15 @@ const GlobeBordersUI = (() => {
       el.style.cssText = 'font-size:10px;color:rgba(200,215,220,0.5);margin:2px 0 8px;line-height:1.4;';
     });
 
-    // Docked directly under the controls bar (#gb-controls) as its own
-    // child, positioned via CSS (top:100%) rather than appended into an
-    // unrelated wrapper element positioned separately on the page. This
-    // was the actual cause of the "legend disappears, borders behave
-    // oddly" confusion — the legend button lived in the controls bar, but
-    // the panel it opened floated bottom-left of the globe, spatially
-    // disconnected from the button that controlled it. Now it's a real
-    // dropdown: open it, and it appears right under where you clicked.
-    _controlsEl.style.position = 'relative';
-    _controlsEl.appendChild(_legendPanel);
+    // Docked directly under the BORDERS+legend button cluster (see the
+    // _toggleGroup wrapper in buildControls()) rather than the whole
+    // control bar — now that those two buttons sit next to each other,
+    // the panel should hug that specific pair, not float under wherever
+    // the opacity slider happens to end. A small connector arrow (added
+    // via CSS, see globe-borders-styles.js) points from the panel back up
+    // toward the legend button for extra visual continuity.
+    _toggleGroup.style.position = 'relative';
+    _toggleGroup.appendChild(_legendPanel);
     if (_legendOpen) _legendPanel.classList.add('open');
 
     // Delegated click handler for the per-empire opacity toggles built in
@@ -188,7 +202,10 @@ const GlobeBordersUI = (() => {
     _legendOpen = !_legendOpen;
     if (_legendPanel) _legendPanel.classList.toggle('open', _legendOpen);
     const btn = document.getElementById('gb-legend-btn');
-    if (btn) btn.textContent = (_legendOpen ? '▴' : '▾') + ' legend';
+    if (btn) {
+      btn.textContent = _legendOpen ? '▴' : '▾';
+      btn.setAttribute('aria-pressed', _legendOpen);
+    }
     if (_legendOpen) updateActiveLegend(_yearGetter());
   }
 

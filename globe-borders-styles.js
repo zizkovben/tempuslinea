@@ -20,6 +20,10 @@ const GlobeBordersStyles = (() => {
         border-radius: 8px;
         margin-top: 8px;
       }
+      #gb-toggle-group {
+        display: flex;
+        align-items: stretch;
+      }
       #gb-toggle {
         font-family: var(--font-mono, monospace);
         font-size: 11px;
@@ -27,7 +31,8 @@ const GlobeBordersStyles = (() => {
         color: var(--teal-hi, #1a9a99);
         background: transparent;
         border: 1px solid var(--teal, #0c6a69);
-        border-radius: 5px;
+        border-radius: 5px 0 0 5px;
+        border-right: none;
         padding: 4px 10px;
         cursor: pointer;
         transition: background 0.2s, color 0.2s;
@@ -67,22 +72,30 @@ const GlobeBordersStyles = (() => {
         background: var(--teal-hi, #1a9a99);
         cursor: pointer;
       }
+      /* Legend button restyled from a bare text link to a bordered pill
+         fused directly onto BORDERS' right edge (shared border, no gap,
+         rounded only on the outer corner) — reads as "one control with
+         two parts" rather than two unrelated buttons, per owner feedback
+         that the old far-right text link felt lonely and disconnected. */
       #gb-legend-btn {
         font-family: var(--font-mono, monospace);
-        font-size: 10px;
-        color: var(--text-secondary, #445566);
+        font-size: 11px;
+        color: var(--teal-hi, #1a9a99);
         background: transparent;
-        border: none;
+        border: 1px solid var(--teal, #0c6a69);
+        border-radius: 0 5px 5px 0;
         cursor: pointer;
-        padding: 2px 4px;
+        padding: 4px 8px;
         white-space: nowrap;
+        line-height: 1;
       }
-      #gb-legend-btn:hover { color: var(--text-primary, #8899aa); }
+      #gb-legend-btn:hover { background: rgba(26,154,153,0.1); }
+      #gb-legend-btn[aria-pressed="true"] { background: rgba(26,154,153,0.15); }
       #gb-legend {
         position: absolute;
         top: 100%;
         left: 0;
-        margin-top: 6px;
+        margin-top: 10px;
         z-index: 20;
         background: var(--bg-panel, #0a0d18);
         border: 1px solid rgba(100,120,160,0.18);
@@ -92,6 +105,21 @@ const GlobeBordersStyles = (() => {
         display: none;
       }
       #gb-legend.open { display: block; }
+      /* Small connector arrow — visually ties the panel back to the
+         BORDERS+legend button cluster it dropped down from, instead of it
+         reading as a disconnected floating box. */
+      #gb-legend::before {
+        content: '';
+        position: absolute;
+        top: -6px;
+        left: 16px;
+        width: 10px;
+        height: 10px;
+        background: var(--bg-panel, #0a0d18);
+        border-left: 1px solid rgba(100,120,160,0.18);
+        border-top: 1px solid rgba(100,120,160,0.18);
+        transform: rotate(45deg);
+      }
       #gb-legend h4 {
         font-family: var(--font-mono, monospace);
         font-size: 10px;
