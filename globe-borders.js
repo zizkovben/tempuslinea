@@ -154,7 +154,15 @@ const GlobeBorders = (() => {
     const blend = GlobeBordersGeom.resolveBlend(entity, year);
 
     if (!blend.entityActive) {
-      obj.meshes.forEach(m => { m.visible = false; });
+      // Bug fix: previously only mesh.visible was set to false here,
+      // leaving material.opacity at whatever value it had from the last
+      // epoch this entity WAS active. setVisible() (used by the BORDERS
+      // on/off toggle) decides visibility purely from that opacity number
+      // — so toggling borders off and back on was resurrecting every
+      // entity that had ever been active this session, not just the ones
+      // active at the current year. Zeroing opacity here keeps that check
+      // honest regardless of what toggled it.
+      obj.meshes.forEach(m => { m.visible = false; m.material.opacity = 0; });
       return;
     }
 
@@ -169,7 +177,11 @@ const GlobeBorders = (() => {
     const partsB = multi ? blend.polyB : [blend.polyB];
 
     obj.meshes.forEach((mesh, pi) => {
-      if (pi >= partsA.length) { mesh.visible = false; return; }
+      // Same fix as the two branches above — a part that doesn't exist in
+      // this frame's polygon (rare: only happens if a multi-part entity's
+      // part count changes between snapshots) needs its opacity zeroed
+      // too, not just visible=false, for the same setVisible() reason.
+      if (pi >= partsA.length) { mesh.visible = false; mesh.material.opacity = 0; return; }
       const lerped = GlobeBordersGeom.lerpPolygons(partsA[pi], partsB[pi], blend.t);
       GlobeBordersGeom.updateLineGeometry(mesh, lerped, _radius * SURFACE_OFFSET);
       mesh.material.opacity = opacity;
@@ -348,7 +360,10 @@ const GlobeBorders = (() => {
       if (!obj) return;
       const years = GlobeBordersGeom.getSnapshotYears(entity);
       if (bool && years.length && years[0] > -9600) {
-        obj.meshes.forEach(m => { m.visible = false; });
+        // Same fix as the entityActive=false branch above — zero opacity,
+        // not just visible, so a BORDERS toggle while in glacial mode
+        // can't resurrect these from stale opacity values either.
+        obj.meshes.forEach(m => { m.visible = false; m.material.opacity = 0; });
       } else {
         updateEntityGeometry(entity.id, _currentYear);
       }
