@@ -130,24 +130,14 @@ const GlobeBordersGeom = (() => {
     const opacity = style.baseOpacity * (1 - entity.dissolve);
     const col     = color !== undefined ? color : style.color;
 
-    // Certainty is meant to read as line pattern per the legend (solid /
-    // dashed / dotted), not just color — previously every line was solid
-    // regardless of type, so the legend's dash/dot swatches didn't match
-    // what was actually on the globe.
-    if (entity.type === 'estimated') {
-      return new THREE.LineDashedMaterial({
-        color: col, transparent: true, opacity,
-        depthWrite: false, linewidth: 1,
-        dashSize: 0.035, gapSize: 0.022
-      });
-    }
-    if (entity.type === 'theorized') {
-      return new THREE.LineDashedMaterial({
-        color: col, transparent: true, opacity,
-        depthWrite: false, linewidth: 1,
-        dashSize: 0.012, gapSize: 0.016
-      });
-    }
+    // Line-pattern certainty encoding (solid/dashed/dotted for
+    // confirmed/estimated/theorized) removed this session — owner
+    // decision: certainty is the civ-marker dots' job exclusively, border
+    // lines are pure empire-identity color, always solid. Previously this
+    // branched into LineDashedMaterial for estimated/theorized entities;
+    // now every entity gets the same solid LineBasicMaterial regardless
+    // of type, differing only by color (per-entity) and opacity
+    // (still scaled by dissolve, unchanged).
     return new THREE.LineBasicMaterial({
       color: col, transparent: true, opacity,
       depthWrite: false, linewidth: 1

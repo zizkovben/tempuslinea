@@ -67,10 +67,9 @@ const GlobeBorders = (() => {
   // Certainty (confirmed/estimated/theorized) used to also be carried by
   // line pattern (solid/dashed/dotted) via makeMaterial() in
   // globe-borders-geom.js. Owner decision this session: retire that —
-  // certainty is the civ-marker dots' job, borders should just be solid
-  // identity color. That dash/dot logic lives in globe-borders-geom.js,
-  // which wasn't available this session — it still needs to be edited to
-  // stop branching on entity.type for line style. Flagged, not guessed at.
+  // certainty is the civ-marker dots' job, borders are just solid identity
+  // color now. makeMaterial() has been updated accordingly (always returns
+  // LineBasicMaterial, no more type-based dash branching).
   //
   // A plain hash % palette.length was tried first and produced real
   // collisions on the actual 20-entity dataset (7 of them) — the birthday
@@ -127,7 +126,6 @@ const GlobeBorders = (() => {
       const geo  = GlobeBordersGeom.buildLineGeometry(pts);
       const line = new THREE.Line(geo, mat.clone());
       line.renderOrder = 1;
-      if (line.material.isLineDashedMaterial) line.computeLineDistances();
       line.userData.entityId = entity.id;
       _group.add(line);
       return line;
@@ -163,7 +161,6 @@ const GlobeBorders = (() => {
       if (pi >= partsA.length) { mesh.visible = false; return; }
       const lerped = GlobeBordersGeom.lerpPolygons(partsA[pi], partsB[pi], blend.t);
       GlobeBordersGeom.updateLineGeometry(mesh, lerped, _radius * SURFACE_OFFSET);
-      if (mesh.material.isLineDashedMaterial) mesh.computeLineDistances();
       mesh.material.opacity = opacity;
       mesh.material.color.set(
         _highlighted === entity.id ? STYLE.highlight.color : obj.color
