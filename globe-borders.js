@@ -1,8 +1,10 @@
 // globe-borders.js
 // CHRONOS Phase 6 — Dynamic Borders renderer and public API
-// Depends on: three.min.js, globe-borders-data.js, globe-borders-geom.js,
-//             globe-borders-glow.js (optional — glow is skipped gracefully
-//             if not loaded, same defensive pattern as the camera lookup below)
+// Depends on: three.min.js, globe-borders-data.js, globe-borders-geom.js
+// The soft influence-glow module (globe-borders-glow.js) was removed this
+// session — owner reviewed it live and didn't want it. All glow build/
+// update/dispose calls that used to live here are gone; this file no
+// longer references window.GlobeBordersGlow at all.
 // Exposes: window.GlobeBorders
 
 const GlobeBorders = (() => {
@@ -61,13 +63,14 @@ const GlobeBorders = (() => {
     '#ff6348', '#48dbfb', '#ee5a6f', '#badc58'
   ];
 
-  // Color is now purely an identity signal (which empire). Certainty
-  // (confirmed/estimated/theorized) is carried entirely by line pattern
-  // (solid/dashed/dotted) instead — see makeMaterial() in
-  // globe-borders-geom.js. The two were overloaded onto the same "color"
-  // channel before, which meant an entity literally couldn't show both
-  // its own identity and its certainty level at once. They're independent
-  // now, so both are always visible together.
+  // Color is a pure identity signal (which empire) — unchanged this session.
+  // Certainty (confirmed/estimated/theorized) used to also be carried by
+  // line pattern (solid/dashed/dotted) via makeMaterial() in
+  // globe-borders-geom.js. Owner decision this session: retire that —
+  // certainty is the civ-marker dots' job, borders should just be solid
+  // identity color. That dash/dot logic lives in globe-borders-geom.js,
+  // which wasn't available this session — it still needs to be edited to
+  // stop branching on entity.type for line style. Flagged, not guessed at.
   //
   // A plain hash % palette.length was tried first and produced real
   // collisions on the actual 20-entity dataset (7 of them) — the birthday
@@ -131,14 +134,6 @@ const GlobeBorders = (() => {
     });
 
     _objects[entity.id] = { meshes, entity, color };
-
-    // Soft influence glow — theorized entities only, automatic (not
-    // hardcoded to specific ids), degrades gracefully if the glow module
-    // isn't loaded rather than breaking border rendering.
-    if (entity.type === 'theorized' && window.GlobeBordersGlow) {
-      try { GlobeBordersGlow.buildForEntity(entity, _radius, _group, color); }
-      catch (e) { console.warn('GlobeBordersGlow: failed to build glow for', entity.id, e); }
-    }
   }
 
   // ─── Per-entity geometry update ───────────────────────────────────────────
@@ -152,9 +147,6 @@ const GlobeBorders = (() => {
 
     if (!blend.entityActive) {
       obj.meshes.forEach(m => { m.visible = false; });
-      if (entity.type === 'theorized' && window.GlobeBordersGlow) {
-        GlobeBordersGlow.updateEntity(entity.id, 0, false);
-      }
       return;
     }
 
@@ -178,10 +170,6 @@ const GlobeBorders = (() => {
       );
       mesh.visible = _visible && opacity > 0.01;
     });
-
-    if (entity.type === 'theorized' && window.GlobeBordersGlow) {
-      GlobeBordersGlow.updateEntity(entity.id, opacity, _visible && opacity > 0.01);
-    }
   }
 
   // ─── Public API ───────────────────────────────────────────────────────────
@@ -384,7 +372,6 @@ const GlobeBorders = (() => {
       _tooltipEl.remove();
       _tooltipEl = null;
     }
-    if (window.GlobeBordersGlow) GlobeBordersGlow.dispose();
     _rotationSyncRunning = false;
   }
 

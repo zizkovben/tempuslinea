@@ -101,31 +101,15 @@ const GlobeBordersUI = (() => {
   function buildLegend() {
     _legendPanel = document.createElement('div');
     _legendPanel.id = 'gb-legend';
+    // "Border certainty" section (solid/dashed/dotted line-pattern legend)
+    // removed this session — owner decision: certainty is the civ-marker
+    // dots' job exclusively; border lines are pure empire-identity color
+    // now, so a legend explaining a line-pattern system no longer applies.
     _legendPanel.innerHTML = `
-      <h4>Border certainty</h4>
-      <div class="gb-legend-note">Shown by line pattern below — color identifies
-        the empire instead (see "visible at this time")</div>
-      <div class="gb-legend-row">
-        <div class="gb-legend-line" style="background:#b9c6c6;"></div>
-        <div class="gb-legend-text">Confirmed
-          <span class="gb-legend-sub">Documented, archaeological consensus — solid</span>
-        </div>
-      </div>
-      <div class="gb-legend-row">
-        <div class="gb-legend-line" style="border-top:2px dashed #b9c6c6;height:0;background:none;"></div>
-        <div class="gb-legend-text">Estimated
-          <span class="gb-legend-sub">Scholarly approximation, pre-500 BCE — dashed</span>
-        </div>
-      </div>
-      <div class="gb-legend-row">
-        <div class="gb-legend-line" style="border-top:2px dotted #b9c6c6;height:0;background:none;"></div>
-        <div class="gb-legend-text">Theorized
-          <span class="gb-legend-sub">Alternative / disputed — community ranked — dotted</span>
-        </div>
-      </div>
-      <div class="gb-legend-divider"></div>
+      <h4>Empires visible now</h4>
+      <div class="gb-legend-note">Color identifies which empire — certainty
+        (confirmed / theorized / debated) is shown by the civ marker dots</div>
       <div id="gb-active-list">
-        <h5>Visible at this time <span class="gb-legend-note">— color = which empire</span></h5>
         <div id="gb-active-items"></div>
       </div>
     `;
