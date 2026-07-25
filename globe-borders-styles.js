@@ -173,33 +173,31 @@ const GlobeBordersStyles = (() => {
         align-items: center;
         gap: 6px;
       }
+      /* The color dot IS the toggle now — was two separate dots (a fixed
+         identity-color swatch plus a distinct teal on/off control next to
+         it). Collapsed into one this session per owner feedback, once the
+         toggle was live and established: a real <button>, sized up
+         slightly from the old 6px pure-swatch dot for a comfortable click
+         target, reset of default button chrome, filled with the entity's
+         own color when on, a hollow ring in that same color when off —
+         so it never loses the identity-color meaning, just adds an
+         interactive on/off state to it. */
       .gb-dot {
-        width: 6px; height: 6px;
-        border-radius: 50%;
-        flex-shrink: 0;
-      }
-      /* Per-empire opacity toggle — added this session. A small filled/
-         hollow circle, distinct from the identity-color .gb-dot next to
-         it, so it reads as an interactive control rather than another
-         color swatch. */
-      .gb-entity-toggle {
-        width: 12px;
-        height: 12px;
+        width: 10px;
+        height: 10px;
         flex-shrink: 0;
         border-radius: 50%;
-        border: 1.5px solid var(--teal, #0c6a69);
-        background: var(--teal-hi, #1a9a99);
+        border: 1.5px solid transparent;
         padding: 0;
         cursor: pointer;
-        transition: background 0.15s, border-color 0.15s, opacity 0.15s;
+        transition: opacity 0.15s, border-color 0.15s, transform 0.1s;
       }
-      .gb-entity-toggle.off {
-        background: transparent;
-        border-color: rgba(100,120,160,0.35);
-        opacity: 0.6;
+      .gb-dot.off {
+        background: transparent !important;
+        opacity: 1;
       }
-      .gb-entity-toggle:hover {
-        border-color: var(--teal-hi, #1a9a99);
+      .gb-dot:hover {
+        transform: scale(1.15);
       }
     `;
     document.head.appendChild(style);
@@ -207,5 +205,6 @@ const GlobeBordersStyles = (() => {
 
   return { inject };
 })();
+
 
 window.GlobeBordersStyles = GlobeBordersStyles;

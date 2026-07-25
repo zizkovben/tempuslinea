@@ -146,18 +146,25 @@ const GlobeBordersUI = (() => {
     _toggleGroup.appendChild(_legendPanel);
     if (_legendOpen) _legendPanel.classList.add('open');
 
-    // Delegated click handler for the per-empire opacity toggles built in
+    // Delegated click handler for the per-empire opacity toggle in
     // updateActiveLegend() below — delegated because #gb-active-items is
     // rebuilt via innerHTML on every year change, so per-row listeners
     // would be lost each time; one listener on the stable parent survives
-    // re-renders. Deliberately a distinct visible button (.gb-entity-
-    // toggle), not the color dot doubling as a hidden control — that would
-    // repeat the exact "not obvious" problem this session's other fix
-    // (docking the legend under its own button) was meant to solve.
+    // re-renders.
+    //
+    // Was a separate visible button next to the color dot (two dots per
+    // row). Collapsed into the dot itself this session, per owner
+    // feedback once the toggle was live and in use — the earlier
+    // reasoning against overloading the dot (a first-time visitor has no
+    // reason to expect a color swatch is clickable) was about *initial*
+    // discoverability, not a permanent objection. Now that the feature is
+    // established, an explicit off-state style (hollow ring instead of a
+    // solid fill, see .gb-dot.off in globe-borders-styles.js) plus a
+    // title/cursor still give a first-time visitor something to notice.
     _legendPanel.addEventListener('click', e => {
-      const btn = e.target.closest('.gb-entity-toggle');
-      if (!btn || !btn.dataset.entityId) return;
-      const id = btn.dataset.entityId;
+      const dot = e.target.closest('.gb-dot');
+      if (!dot || !dot.dataset.entityId) return;
+      const id = dot.dataset.entityId;
       const isOn = GlobeBorders.getEntityOpacity(id) > 0;
       GlobeBorders.setEntityOpacity(id, isOn ? 0 : 1);
       updateActiveLegend(_yearGetter());
@@ -176,10 +183,14 @@ const GlobeBordersUI = (() => {
     }
     listEl.innerHTML = active.slice(0, 12).map(e => {
       const isOn = GlobeBorders.getEntityOpacity(e.id) > 0;
+      // Single dot now doubles as the toggle — a real <button> for
+      // accessibility/semantics, styled as a filled circle when on and a
+      // hollow ring when off, colored by empire identity either way.
+      const dimForType = e.type === 'theorized' ? 0.6 : 0.95;
       return `<div class="gb-active-item">
-        <button class="gb-entity-toggle ${isOn ? 'on' : 'off'}" data-entity-id="${e.id}"
+        <button class="gb-dot ${isOn ? 'on' : 'off'}" data-entity-id="${e.id}"
+          style="${isOn ? `background:${e.color};opacity:${dimForType};` : `border-color:${e.color};`}"
           title="${isOn ? 'Hide' : 'Show'} ${e.label}'s border" aria-pressed="${isOn}"></button>
-        <div class="gb-dot" style="background:${e.color};opacity:${e.type==='theorized'?0.6:0.95};"></div>
         ${e.label}
       </div>`;
     }).join('');
