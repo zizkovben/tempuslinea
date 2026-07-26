@@ -429,7 +429,12 @@ const GlobeEngine = (() => {
     const civs = GLOBE_DATA.getSnapshotCivs(snap);
     setEpochMarkers(civs);
 
-    const targetY = (-snap.centerLng) * (Math.PI / 180);
+    // Same fix as rotateToLatLng() below — this had the identical missing
+    // -90° term, plus never used _shortestAngleTo, so epoch transitions
+    // were also centering on the wrong point and had no protection
+    // against the "long way around" spin. Fixed here for the same root
+    // cause rather than leaving a second copy of the bug in place.
+    const targetY = _shortestAngleTo(rotY, -(snap.centerLng + 90) * (Math.PI / 180));
     _animateTo(rotY, targetY, 1200);
   }
 
@@ -479,7 +484,16 @@ const GlobeEngine = (() => {
   // "click an empire to spin to it" feature — doesn't touch selection
   // state or the rotation hold, it just moves the camera's view.
   function rotateToLatLng(lat, lng, ms) {
-    const targetY = _shortestAngleTo(rotY, (-lng) * (Math.PI / 180));
+    // Target-longitude fix: latLngToVec3() places a marker's local angle
+    // at theta = (lng+180) around the group's Y axis. Solving for the
+    // rotY that brings that point to the camera-facing point (x=0, z=+r)
+    // gives rotY = -(lng+90) in radians — the previous formula used
+    // -lng only, silently missing that fixed -90° term. That made every
+    // rotation land a consistent quarter-turn (90°/360° = 25%) short of
+    // the real target, reading exactly like the "spins ~25% off" bug
+    // reported against the live site. Verified against latLngToVec3's
+    // own trig before changing this.
+    const targetY = _shortestAngleTo(rotY, -(lng + 90) * (Math.PI / 180));
     const targetX = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, lat * (Math.PI / 180)));
     _animateRotationTo(targetY, targetX, ms || 900);
   }

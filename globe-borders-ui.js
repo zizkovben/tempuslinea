@@ -122,6 +122,17 @@ const GlobeBordersUI = (() => {
     // removed this session — owner decision: certainty is the civ-marker
     // dots' job exclusively; border lines are pure empire-identity color
     // now, so a legend explaining a line-pattern system no longer applies.
+    // Type legend (confirmed/theorized/debated) moved here from its old
+    // standalone spot in the bottom-right corner of globe.html — owner
+    // feedback: it explains the civ-marker dot colors that this same
+    // panel's note already references, so it reads more clearly stacked
+    // directly underneath the empire list than floating disconnected
+    // elsewhere on the page. Same class names (.globe-legend /
+    // .globe-legend-item / .globe-legend-dot) as before so any existing
+    // styles.css rules for cosmetics (padding, font, dot shape) still
+    // apply — only position/layout properties are overridden inline
+    // below, since this instance now needs to sit inside a panel rather
+    // than be independently absolute-positioned on the page.
     _legendPanel.innerHTML = `
       <h4>Empires visible now</h4>
       <div class="gb-legend-note">Color identifies which empire — certainty
@@ -129,6 +140,23 @@ const GlobeBordersUI = (() => {
         Use the toggle to hide/show that empire's border.</div>
       <div id="gb-active-list">
         <div id="gb-active-items"></div>
+      </div>
+      <div class="globe-legend" id="gb-type-legend" style="position:static;
+        top:auto;right:auto;bottom:auto;left:auto;display:flex;
+        flex-direction:column;gap:6px;margin:10px 0 0;padding-top:10px;
+        border-top:1px solid rgba(100,120,160,.15);">
+        <div class="globe-legend-item">
+          <div class="globe-legend-dot" style="background:#d4a017;"></div>
+          <span style="color:rgba(230,195,80,.9);">CONFIRMED</span>
+        </div>
+        <div class="globe-legend-item">
+          <div class="globe-legend-dot" style="background:#8b41c8;"></div>
+          <span style="color:rgba(185,130,235,.9);">THEORIZED</span>
+        </div>
+        <div class="globe-legend-item">
+          <div class="globe-legend-dot" style="background:#1a9a99;"></div>
+          <span style="color:rgba(80,200,200,.9);">DEBATED</span>
+        </div>
       </div>
     `;
     _legendPanel.querySelectorAll('.gb-legend-note').forEach(el => {
