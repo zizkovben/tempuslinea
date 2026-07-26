@@ -100,13 +100,56 @@ const GlobeBorders = (() => {
   // A plain hash % palette.length was tried first and produced real
   // collisions on the actual 20-entity dataset (7 of them) — the birthday
   // paradox bites hard once you're past ~15 items into a 24-slot palette.
-  // This resolves collisions deterministically via linear probing, built
-  // once and cached, so every current entity gets a genuinely distinct
-  // color. Resolution order is by entity id (not array order), so it's
-  // stable regardless of how BORDER_ENTITIES happens to be ordered in the
-  // data file, and adding a new entity later only affects that new
-  // entity's own color — everyone already assigned keeps theirs.
+  // A 34-color, hue-spread palette (see above) fixed the collision count,
+  // but a live screenshot then surfaced a deeper problem with the hash
+  // approach itself: it picks each entity's color in total isolation, with
+  // no idea which entities actually appear on screen together. At 500 BCE,
+  // Babylonian Empire (hash → 85°), Kingdom of Kush (106°), and Assyrian
+  // Empire (74°) all independently landed in the same yellow-green band —
+  // a well-spread palette doesn't help if the handful of entities visible
+  // at once all happen to hash near each other, which with only ~4-12
+  // entities on screen out of a 34-color wheel is a real possibility, not
+  // an edge case.
+  //
+  // Rebuilt as a co-occurrence-aware greedy assignment instead. For each
+  // entity, in chronological order (earliest active year first), the
+  // colors already used by every entity it could actually appear alongside
+  // are found, and the palette color that maximizes the *minimum* hue
+  // distance to all of them is chosen — a classic farthest-point greedy.
+  // Entities that never overlap in time are free to reuse any color; nudge
+  // is spent only where it actually matters (contemporaries), not force-
+  // spread across the whole dataset the way linear probing did.
+  //
+  // Co-occurrence is approximated from each entity's own snapshot years
+  // (min/max, ± a fade buffer) rather than the exact fade window
+  // GlobeBordersGeom.resolveBlend() computes internally — good enough for
+  // "could these two ever be visible together," not pixel-exact, but far
+  // better than no time-awareness at all. Deterministic and stable: same
+  // input data always produces the same colors, and adding a new entity
+  // only affects colors chosen after it in chronological order.
   let _entityColorMap = null;
+
+  const CO_OCCURRENCE_FADE_BUFFER = 300; // years, on each side of an entity's own min/max snapshot year
+
+  function _hexToHue(hex) {
+    const r = parseInt(hex.slice(1, 3), 16) / 255;
+    const g = parseInt(hex.slice(3, 5), 16) / 255;
+    const b = parseInt(hex.slice(5, 7), 16) / 255;
+    const max = Math.max(r, g, b), min = Math.min(r, g, b);
+    if (max === min) return 0;
+    const d = max - min;
+    let h;
+    if (max === r)      h = ((g - b) / d + (g < b ? 6 : 0));
+    else if (max === g) h = (b - r) / d + 2;
+    else                 h = (r - g) / d + 4;
+    return h * 60;
+  }
+
+  function _hueDistance(h1, h2) {
+    const d = Math.abs(h1 - h2) % 360;
+    return d > 180 ? 360 - d : d;
+  }
+
   function _buildEntityColorMap() {
     _entityColorMap = {};
     if (BORDER_ENTITIES.length > ENTITY_PALETTE.length) {
@@ -114,19 +157,49 @@ const GlobeBorders = (() => {
         ENTITY_PALETTE.length + ' palette colors — some entities will share a color. ' +
         'Add more colors to ENTITY_PALETTE.');
     }
-    const used = new Set();
-    const sorted = [...BORDER_ENTITIES].sort((a, b) => a.id.localeCompare(b.id));
+
+    const paletteHues = ENTITY_PALETTE.map(_hexToHue);
+
+    // Each entity's approximate active window, from its own snapshot years.
+    const windows = {};
+    BORDER_ENTITIES.forEach(entity => {
+      const years = Object.keys(entity.snapshots).map(Number);
+      windows[entity.id] = {
+        min: Math.min(...years) - CO_OCCURRENCE_FADE_BUFFER,
+        max: Math.max(...years) + CO_OCCURRENCE_FADE_BUFFER,
+      };
+    });
+    function overlaps(idA, idB) {
+      return windows[idA].min <= windows[idB].max && windows[idB].min <= windows[idA].max;
+    }
+
+    // Chronological order — earlier-appearing entities claim colors first,
+    // later ones are chosen to stay maximally distinct from whichever of
+    // their real contemporaries are already assigned.
+    const sorted = [...BORDER_ENTITIES].sort((a, b) =>
+      windows[a.id].min - windows[b.id].min || a.id.localeCompare(b.id));
+
     sorted.forEach(entity => {
+      const conflictHues = sorted
+        .filter(o => o.id !== entity.id && _entityColorMap[o.id] !== undefined && overlaps(entity.id, o.id))
+        .map(o => _hexToHue(_entityColorMap[o.id]));
+
+      // Deterministic tie-break / starting point so entities with no
+      // contemporaries yet still spread out across the palette instead of
+      // all defaulting to index 0.
       let h = 0;
       for (let i = 0; i < entity.id.length; i++) h = (h * 31 + entity.id.charCodeAt(i)) >>> 0;
-      let slot = h % ENTITY_PALETTE.length;
-      let tries = 0;
-      while (used.has(slot) && tries < ENTITY_PALETTE.length) {
-        slot = (slot + 1) % ENTITY_PALETTE.length;
-        tries++;
+      const startOffset = h % ENTITY_PALETTE.length;
+
+      let bestIdx = startOffset, bestScore = -1;
+      for (let k = 0; k < ENTITY_PALETTE.length; k++) {
+        const idx = (startOffset + k) % ENTITY_PALETTE.length;
+        const score = conflictHues.length
+          ? Math.min(...conflictHues.map(ch => _hueDistance(paletteHues[idx], ch)))
+          : 0; // no contemporaries assigned yet — first candidate is fine
+        if (score > bestScore) { bestScore = score; bestIdx = idx; }
       }
-      used.add(slot);
-      _entityColorMap[entity.id] = ENTITY_PALETTE[slot];
+      _entityColorMap[entity.id] = ENTITY_PALETTE[bestIdx];
     });
   }
 
