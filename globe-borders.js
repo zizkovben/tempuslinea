@@ -65,12 +65,28 @@ const GlobeBorders = (() => {
   // value, which is why some borders were hard to see against the dark
   // background. Every color below has been chosen to read clearly on
   // --bg-void; none of them need special-casing.
+  //
+  // Rebuilt this session — two real problems with the previous 24-color
+  // version, found from a live screenshot: (1) it had only 24 colors for
+  // 28 live entities, so four were guaranteed to collide via the linear-
+  // probing fallback below, and (2) of those 24, eight sat in the same
+  // yellow/orange family with barely any lightness separation (that's
+  // exactly what made Babylonian Empire and Kingdom of Kush look like
+  // the same color in the screenshot). This palette has 34 entries —
+  // headroom past the current 28 so new entities don't immediately
+  // force collisions again — generated at even ~10.6° hue steps around
+  // the full color wheel, with lightness compensated per-hue (darker in
+  // the yellow/green band, lighter in the blue/violet band) so every
+  // color reads with roughly equal visual weight, not just evenly-spaced
+  // hue values that still look uneven once rendered.
   const ENTITY_PALETTE = [
-    '#ff6b6b', '#feca57', '#1dd1a1', '#54a0ff', '#ff9ff3',
-    '#f368e0', '#00d2d3', '#ff9f43', '#a29bfe', '#74b9ff',
-    '#55efc4', '#fd79a8', '#fab1a0', '#81ecec', '#fdcb6e',
-    '#e17055', '#ffa07a', '#c56cf0', '#7bed9f', '#ffdd59',
-    '#ff6348', '#48dbfb', '#ee5a6f', '#badc58'
+    '#e84646', '#e47c66', '#dc7339', '#e99e4a', '#d9a427',
+    '#decb42', '#cad51a', '#b5dc37', '#82c423', '#77e52a',
+    '#49c423', '#41dc37', '#1ad530', '#42de70', '#27d97b',
+    '#4be9b1', '#3adcc0', '#67e4e4', '#46cce8', '#7bc1e8',
+    '#629fe3', '#88a7f0', '#7380e6', '#a09ced', '#9377ee',
+    '#c0a0ee', '#be81e9', '#de9bf3', '#e27de8', '#ed9be4',
+    '#ed6cc7', '#eb8dbf', '#e3628f', '#ee758a'
   ];
 
   // Color is a pure identity signal (which empire) — unchanged this session.
@@ -391,6 +407,25 @@ const GlobeBorders = (() => {
       });
   }
 
+  // ─── Entity center (for "click legend row → rotate to it") ───────────────
+  // Simple average of the currently-active polygon's points — not a true
+  // geographic centroid (doesn't area-weight), but plenty accurate for
+  // "spin the globe roughly toward this empire," which is all this is
+  // for. Uses the first part of a multi-part entity (islands/exclaves)
+  // since that's the natural "main body" to center on.
+  function getEntityCenter(entityId, year) {
+    const obj = _objects[entityId];
+    if (!obj) return null;
+    const blend = GlobeBordersGeom.resolveBlend(obj.entity, year != null ? year : _currentYear);
+    if (!blend.entityActive) return null;
+    const multi = GlobeBordersGeom.isMultiPart(blend.polyA);
+    const poly  = multi ? blend.polyA[0] : blend.polyA;
+    if (!poly || !poly.length) return null;
+    let sumLat = 0, sumLng = 0;
+    poly.forEach(pt => { sumLat += pt[0]; sumLng += pt[1]; });
+    return { lat: sumLat / poly.length, lng: sumLng / poly.length };
+  }
+
   function dispose() {
     Object.values(_objects).forEach(obj => {
       obj.meshes.forEach(m => {
@@ -412,7 +447,7 @@ const GlobeBorders = (() => {
     _rotationSyncRunning = false;
   }
 
-  return { init, updateYear, setVisible, setOpacity, setEntityOpacity, getEntityOpacity, setGlacialMode, highlightCiv, clearHighlight, getEntityAtYear, dispose };
+  return { init, updateYear, setVisible, setOpacity, setEntityOpacity, getEntityOpacity, setGlacialMode, highlightCiv, clearHighlight, getEntityAtYear, getEntityCenter, dispose };
 })();
 
 window.GlobeBorders = GlobeBorders;

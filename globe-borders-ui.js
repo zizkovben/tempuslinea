@@ -163,11 +163,25 @@ const GlobeBordersUI = (() => {
     // title/cursor still give a first-time visitor something to notice.
     _legendPanel.addEventListener('click', e => {
       const dot = e.target.closest('.gb-dot');
-      if (!dot || !dot.dataset.entityId) return;
-      const id = dot.dataset.entityId;
-      const isOn = GlobeBorders.getEntityOpacity(id) > 0;
-      GlobeBorders.setEntityOpacity(id, isOn ? 0 : 1);
-      updateActiveLegend(_yearGetter());
+      if (dot && dot.dataset.entityId) {
+        const id = dot.dataset.entityId;
+        const isOn = GlobeBorders.getEntityOpacity(id) > 0;
+        GlobeBorders.setEntityOpacity(id, isOn ? 0 : 1);
+        updateActiveLegend(_yearGetter());
+        return;
+      }
+
+      // Clicking the empire's name (not its dot) rotates the globe to
+      // center on it — reads the entity's current-year polygon centroid
+      // from GlobeBorders and hands it to GlobeEngine's generic
+      // rotate-to-lat/lng, the same tween civ selection uses.
+      const label = e.target.closest('.gb-label');
+      if (label && label.dataset.entityId) {
+        const center = GlobeBorders.getEntityCenter(label.dataset.entityId, _yearGetter());
+        if (center && window.GlobeEngine && typeof GlobeEngine.rotateToLatLng === 'function') {
+          GlobeEngine.rotateToLatLng(center.lat, center.lng);
+        }
+      }
     });
   }
 
@@ -187,11 +201,18 @@ const GlobeBordersUI = (() => {
       // accessibility/semantics, styled as a filled circle when on and a
       // hollow ring when off, colored by empire identity either way.
       const dimForType = e.type === 'theorized' ? 0.6 : 0.95;
+      // Label is now its own clickable span, separate from the dot —
+      // the dot keeps its existing job (show/hide toggle), clicking the
+      // name spins the globe to center on that empire. Kept as two
+      // distinct targets rather than overloading one control with two
+      // behaviors again, the same reasoning that led to giving the dot
+      // its own single job when it was split from the old two-dot row.
       return `<div class="gb-active-item">
         <button class="gb-dot ${isOn ? 'on' : 'off'}" data-entity-id="${e.id}"
           style="${isOn ? `background:${e.color};opacity:${dimForType};` : `border-color:${e.color};`}"
           title="${isOn ? 'Hide' : 'Show'} ${e.label}'s border" aria-pressed="${isOn}"></button>
-        ${e.label}
+        <span class="gb-label" data-entity-id="${e.id}" title="Rotate globe to ${e.label}"
+          style="cursor:pointer;">${e.label}</span>
       </div>`;
     }).join('');
     if (active.length > 12) {

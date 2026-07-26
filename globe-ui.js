@@ -264,6 +264,7 @@ window.GlobeUI = (() => {
   function hideInfo() {
     if (window.ChronosUI) ChronosUI.hideInfo();
     GlobePinPanel.hidePinPanel();
+    GlobeEngine.clearSelection();
     document.dispatchEvent(new CustomEvent('chronos-civ-deselected'));
   }
 

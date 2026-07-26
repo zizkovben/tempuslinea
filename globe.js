@@ -29,6 +29,16 @@ const GlobeEngine = (() => {
   let onHoverCb     = null;
   let onPinSelectCb = null;   // Phase 2c — pin click callback
 
+  // ── Selection rotation hold ──────────────────────────────
+  // True while a civ marker is selected (info panel open). Auto-rotate
+  // is suspended for the duration — separate from the user's own
+  // autoRotate on/off preference so it can be released again on
+  // deselect without stomping on a manual pause the user set themselves.
+  let _selectionHold = false;
+  // In-flight tween token — lets a fast second click cancel/replace an
+  // in-progress rotation instead of both tweens fighting over rotY/rotX.
+  let _tweenToken = 0;
+
   // Pending pin placement (Phase 2c) — set when user clicks globe in pin mode
   let pendingPin    = null;   // { lat, lng } | null
   let pinPlaceMode  = false;
@@ -50,6 +60,12 @@ const GlobeEngine = (() => {
     theorized: 0xc870ff,
     debated:   0x50e8e8,
   };
+  // Selected state — a marker keeps this color/scale until explicitly
+  // deselected, unlike hover which only applies while the pointer is
+  // actually over it. Same hues as hover (already tuned for visibility)
+  // so a selected-then-unhovered marker doesn't visually revert to
+  // looking unselected.
+  const TYPE_COL_SEL = TYPE_COL_HOV;
 
   // ── COORDINATE HELPER ─────────────────────────────────────
   function latLngToVec3(lat, lng, r) {
@@ -255,7 +271,7 @@ const GlobeEngine = (() => {
     clock.last = now;
     clock.t   += dt;
 
-    if (autoRotate && !isDragging) {
+    if (autoRotate && !isDragging && !_selectionHold) {
       rotY += rotateSpeed;
     }
 
@@ -313,9 +329,11 @@ const GlobeEngine = (() => {
           hoveredId = hovId;
           activeMarkers.forEach(m => {
             const isHov = m.civId === hovId;
+            const isSel = m.civId === selectedId;
             const civ   = CIVS.find(c => c.id === m.civId);
             if (!civ) return;
-            m.mesh.material.color.set(isHov ? TYPE_COL_HOV[civ.t] : TYPE_COL[civ.t]);
+            const col = isHov ? TYPE_COL_HOV[civ.t] : (isSel ? TYPE_COL_SEL[civ.t] : TYPE_COL[civ.t]);
+            m.mesh.material.color.set(col);
           });
           renderer.domElement.style.cursor = hovId ? 'pointer' : 'grab';
           if (onHoverCb) onHoverCb(hovId ? CIVS.find(c => c.id === hovId) : null);
@@ -423,29 +441,94 @@ const GlobeEngine = (() => {
   }
 
   // ── PUBLIC: highlight a single civ ───────────────────────
+  // Selects the civ marker (bright color + 2x scale, held until
+  // deselected), spins the globe to bring it to center on both axes,
+  // and holds auto-rotate for the duration of the selection.
   function highlightCiv(civId) {
-    selectedId = civId;
+    selectedId     = civId;
+    _selectionHold = true;
     activeMarkers.forEach(m => {
       const civ = CIVS.find(c => c.id === m.civId);
       if (!civ) return;
       const isS = m.civId === civId;
-      m.mesh.material.color.set(isS ? TYPE_COL_HOV[civ.t] : TYPE_COL[civ.t]);
+      m.mesh.material.color.set(isS ? TYPE_COL_SEL[civ.t] : TYPE_COL[civ.t]);
       m.mesh.scale.setScalar(isS ? 2.0 : 1.0);
     });
     const coords = GLOBE_DATA.getCivCoords(civId);
-    if (coords) {
-      const targetY = (-coords.lng) * (Math.PI / 180);
-      _animateTo(rotY, targetY, 800);
-    }
+    if (coords) rotateToLatLng(coords.lat, coords.lng, 900);
+  }
+
+  // ── PUBLIC: clear selection ──────────────────────────────
+  // Releases the rotation hold (auto-rotate resumes next frame if the
+  // user's own autoRotate preference is still on — untouched here) and
+  // restores every marker to its normal, unselected appearance.
+  function clearSelection() {
+    selectedId     = null;
+    _selectionHold = false;
+    activeMarkers.forEach(m => {
+      const civ = CIVS.find(c => c.id === m.civId);
+      if (!civ) return;
+      const isHov = m.civId === hoveredId;
+      m.mesh.material.color.set(isHov ? TYPE_COL_HOV[civ.t] : TYPE_COL[civ.t]);
+      m.mesh.scale.setScalar(1.0);
+    });
+  }
+
+  // ── PUBLIC: rotate to any lat/lng ─────────────────────────
+  // Used both for civ selection (above) and for the border legend's
+  // "click an empire to spin to it" feature — doesn't touch selection
+  // state or the rotation hold, it just moves the camera's view.
+  function rotateToLatLng(lat, lng, ms) {
+    const targetY = _shortestAngleTo(rotY, (-lng) * (Math.PI / 180));
+    const targetX = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, lat * (Math.PI / 180)));
+    _animateRotationTo(targetY, targetX, ms || 900);
+  }
+
+  // ── ANGLE WRAP ────────────────────────────────────────────
+  // rotY accumulates without ever wrapping (auto-rotate just keeps
+  // adding to it), so after enough spins it can be an arbitrarily large
+  // number. Tweening straight to a freshly-computed target (always in
+  // -π..π) without accounting for that used to send the globe the long
+  // way around — reading as "spinning away" before it corrected course.
+  // This finds the equivalent target closest to the current angle so
+  // the tween always takes the shortest path.
+  function _shortestAngleTo(from, target) {
+    const twoPi = Math.PI * 2;
+    let delta = (target - from) % twoPi;
+    if (delta > Math.PI)  delta -= twoPi;
+    if (delta < -Math.PI) delta += twoPi;
+    return from + delta;
   }
 
   // ── TWEEN ─────────────────────────────────────────────────
   function _animateTo(from, to, ms) {
+    const token = ++_tweenToken;
     const start = Date.now();
     const tick  = () => {
+      if (token !== _tweenToken) return; // superseded by a newer tween
       const t = Math.min((Date.now() - start) / ms, 1);
       const e = t < 0.5 ? 2*t*t : -1+(4-2*t)*t;
       rotY = from + (to - from) * e;
+      if (t < 1) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  }
+
+  // Two-axis version — animates rotY and rotX together on one shared
+  // easing curve so a civ (or legend empire) centers on both longitude
+  // and latitude in a single, smooth motion instead of two separate
+  // corrections.
+  function _animateRotationTo(targetY, targetX, ms) {
+    const token  = ++_tweenToken;
+    const fromY  = rotY;
+    const fromX  = rotX;
+    const start  = Date.now();
+    const tick   = () => {
+      if (token !== _tweenToken) return;
+      const t = Math.min((Date.now() - start) / ms, 1);
+      const e = t < 0.5 ? 2*t*t : -1+(4-2*t)*t;
+      rotY = fromY + (targetY - fromY) * e;
+      rotX = fromX + (targetX - fromX) * e;
       if (t < 1) requestAnimationFrame(tick);
     };
     requestAnimationFrame(tick);
@@ -478,6 +561,8 @@ const GlobeEngine = (() => {
     init,
     loadEpoch,
     highlightCiv,
+    clearSelection,
+    rotateToLatLng,
     setAutoRotate,
     setPinPlaceMode,
     getPendingPin,
@@ -489,6 +574,10 @@ const GlobeEngine = (() => {
     // poll path — getters so they reflect the real value once init() has run.
     get _scene()  { return scene;  },
     get _radius() { return EARTH_R; },
+    // globe-borders.js's hover-tooltip system (_findCamera) already looks
+    // for this exact getter — was never actually wired up, so border
+    // hover tooltips silently fell back to disabled. Now it is.
+    get _camera() { return camera; },
   };
 
 })();
