@@ -33,6 +33,22 @@ window.GlobeUI = (() => {
 
     GlobeEngine.init('globe-container', onCivSelect, onCivHover, GlobePinPanel.onPinClick);
     loadSnapshot(currentSnapshotIdx);
+
+    // This is the actual fix for auto-rotate staying paused after
+    // closing a civ panel: the × CLOSE button and backdrop click both
+    // call ChronosUI.hideInfo() directly (see ui.js) and never went
+    // through this file's own hideInfo() below — so clearSelection()
+    // (which releases the rotation hold) never ran for those two
+    // controls, only for closes triggered some other way (e.g. epoch
+    // navigation). Registering here means it now runs regardless of
+    // which control closed the panel.
+    if (window.ChronosUI && ChronosUI.onPanelClose) {
+      ChronosUI.onPanelClose(() => {
+        GlobePinPanel.hidePinPanel();
+        GlobeEngine.clearSelection();
+        document.dispatchEvent(new CustomEvent('chronos-civ-deselected'));
+      });
+    }
   }
 
   // ── EPOCH SCRUBBER ────────────────────────────────────────
@@ -262,10 +278,11 @@ window.GlobeUI = (() => {
   }
 
   function hideInfo() {
+    // Cleanup (pin panel, clearSelection, deselect event) now lives in
+    // the onPanelClose hook registered in init() above, so it runs the
+    // same way whether this function, the × CLOSE button, or the
+    // backdrop click triggered the close.
     if (window.ChronosUI) ChronosUI.hideInfo();
-    GlobePinPanel.hidePinPanel();
-    GlobeEngine.clearSelection();
-    document.dispatchEvent(new CustomEvent('chronos-civ-deselected'));
   }
 
   // ── CURRENT YEAR (for globe-borders-init.js's year-getter hookup) ──

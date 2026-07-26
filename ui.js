@@ -21,6 +21,23 @@ window.ChronosUI = (() => {
   let _lastCiv   = null;
   let _lastVotes = null;
 
+  // ── PANEL-CLOSE HOOKS ─────────────────────────────────────
+  // This file is deliberately page-agnostic — it knows nothing about
+  // GlobeEngine, TimelineEngine internals it doesn't already guard for,
+  // etc. But the × CLOSE button and the backdrop click both call
+  // hideInfo() directly (see the button's onclick below and the
+  // backdrop listener in init()), which meant any page-specific
+  // cleanup that only lived in a page's own wrapper (e.g. globe.html's
+  // GlobeUI.hideInfo(), which releases the auto-rotate hold) was never
+  // reached by those two controls — only by whatever *other* code path
+  // happened to call that page's own hideInfo() instead of this one.
+  // onPanelClose() lets a page register its own cleanup here once, so
+  // it runs no matter which control triggered the close.
+  const _closeHooks = [];
+  function onPanelClose(fn) {
+    if (typeof fn === 'function') _closeHooks.push(fn);
+  }
+
   // ── LOCAL VOTE STORE ──────────────────────────────────────
   // Used on any page where TimelineEngine isn't loaded (globe.html,
   // community.html). Persists for the page's lifetime only — matches
@@ -262,6 +279,13 @@ window.ChronosUI = (() => {
     if (backdrop) backdrop.classList.remove('visible');
     document.body.classList.remove('panel-open');
     if (window.CLIO) CLIO.setActiveCiv(null);
+
+    // Page-specific cleanup — see onPanelClose() above for why this
+    // exists. Wrapped per-hook so one page's broken cleanup can't stop
+    // another's from running.
+    _closeHooks.forEach(fn => {
+      try { fn(); } catch (err) { console.error('[ChronosUI] onPanelClose hook threw:', err); }
+    });
   }
 
   // ── DEEP LINK — open a civ panel from ?civ=ID in the URL ───
@@ -482,6 +506,7 @@ window.ChronosUI = (() => {
   return {
     init, showInfo, hideInfo, handleVote, toggleFollowCiv, openFromURL,
     updateOverflowDrawer, openOverflowCiv, toggleOverflowDrawer, getVotes,
+    onPanelClose,
   };
 
 })();
