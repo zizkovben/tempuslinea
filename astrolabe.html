@@ -177,9 +177,12 @@
 <!-- ══ SCRIPTS ══════════════════════════════════════════════ -->
 <!-- Load order: data → celestial data (zodiac ages, real Phase 4 data,
      reused rather than re-invented) → astrolabe engine → astrolabe wiring
-     → shared UI panel -->
+     → shared UI panel.
+     NOTE: data-extended.js deliberately NOT loaded here — confirmed unused
+     by any astrolabe file (CIV_META isn't referenced), and at ~360KB it
+     was adding real weight to first load for nothing. If a future phase
+     needs CIV_META on this page, add it back deliberately, not by habit. -->
 <script src="data.js"></script>
-<script src="data-extended.js"></script>
 <script src="celestial-data.js"></script>
 <script src="astrolabe-rings.js"></script>
 <script src="astrolabe-ui.js"></script>

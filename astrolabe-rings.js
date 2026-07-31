@@ -116,6 +116,21 @@ const AstrolabeRings = (() => {
     });
   }
 
+  // ─── Render throttling — pointermove during a drag can fire far faster
+  // than the DOM rebuild in render() can keep up with (every ring is torn
+  // down and rebuilt from scratch on every call). scheduleRender() coalesces
+  // any number of updates within a frame into a single render, which is
+  // what was actually causing the "struggling to rotate" feel — not the
+  // data volume itself. Discrete actions (epoch click, civ click) still
+  // call render() directly for zero-lag feedback; only the continuous drag
+  // and pinch/wheel-zoom paths route through this. ─────────────────────────
+  let renderScheduled = false;
+  function scheduleRender() {
+    if (renderScheduled) return;
+    renderScheduled = true;
+    requestAnimationFrame(() => { renderScheduled = false; render(); });
+  }
+
   // ─── Rendering ────────────────────────────────────────────────────────────
   function render() {
     while (svg.firstChild) svg.removeChild(svg.firstChild);
@@ -193,10 +208,15 @@ const AstrolabeRings = (() => {
       seg.addEventListener('click', () => selectEpoch(i));
       g.appendChild(seg);
 
-      // Label — counter-rotated so it stays upright regardless of ring spin
+      // Labels stay screen-upright regardless of ring rotation. (Previously
+      // wrapped in a `rotate(-outerRotation)` group intended to counter-
+      // rotate and stay upright — but that rotated every label by the same
+      // single global angle instead of canceling each label's own position,
+      // which is what actually produced the sideways/vertical text. Text
+      // placed at x/y with no rotation transform is upright by default —
+      // no counter-rotation was ever needed.)
       const midAngle = (a1 + a2) / 2;
       const lp = polar((OUTER_R_OUT + OUTER_R_IN) / 2, midAngle);
-      const labelGroup = svgEl('g', { transform: `rotate(${-outerRotation} ${lp.x} ${lp.y})` });
       const text = svgEl('text', {
         x: lp.x, y: lp.y, 'text-anchor': 'middle', 'dominant-baseline': 'middle',
         fill: active ? '#1a1204' : 'var(--text-secondary, #9fb0c0)',
@@ -204,8 +224,7 @@ const AstrolabeRings = (() => {
         'letter-spacing': '0.5px', 'pointer-events': 'none'
       });
       text.textContent = ep.n.length > 14 ? ep.n.slice(0, 13) + '…' : ep.n;
-      labelGroup.appendChild(text);
-      g.appendChild(labelGroup);
+      g.appendChild(text);
     });
     attachDrag(g, 'outer');
     svg.appendChild(g);
@@ -407,7 +426,7 @@ const AstrolabeRings = (() => {
       } else {
         middleRotation = normalizeAngle(startRotation + delta);
       }
-      render();
+      scheduleRender();
     });
     el.addEventListener('pointerup', () => {
       if (!dragging) return;
@@ -429,7 +448,7 @@ const AstrolabeRings = (() => {
 
   function setZoom(z) {
     zoom = Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, z));
-    render();
+    scheduleRender();
   }
   function zoomBy(delta) { setZoom(zoom + delta); }
 
