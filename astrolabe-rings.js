@@ -14,9 +14,22 @@ const AstrolabeRings = (() => {
   // ─── Geometry constants ───────────────────────────────────────────────────
   const CX = 320, CY = 320;
   const OUTER_R_OUT = 300, OUTER_R_IN = 252;   // epoch ring band
-  const MID_R_OUT   = 244, MID_R_IN   = 196;   // year ring band
-  const INNER_R_OUT = 188, INNER_R_IN = 132;   // civ ring band
-  const HUB_R = 116;
+  const ZODIAC_R = 240;                        // thin static band, astrological context
+  const MID_R_OUT   = 230, MID_R_IN   = 182;   // year ring band
+  const INNER_R_OUT = 174, INNER_R_IN = 118;   // civ ring band
+  const HUB_R = 104;
+
+  // ─── Zoom — modest "look closer at the dial" range per v3 doc. Not a
+  // semantic time-zoom (that's the middle ring's job) — pinch/wheel/buttons
+  // all drive this same clamped value. ──────────────────────────────────
+  const MIN_ZOOM = 0.85, MAX_ZOOM = 1.35;
+  let zoom = 1;
+
+  // ─── Ambient idle drift — mirrors the Living Atlas globe's existing
+  // auto-rotate pattern so this feels familiar rather than novel. Pauses
+  // instantly on any interaction. ───────────────────────────────────────
+  let idleTimer = null, ambientRAF = null;
+  const IDLE_DELAY_MS = 3500;
 
   // ─── Filtering tolerance — see Bible / v3 doc for why this is derived
   // locally rather than calling into TimelineEngine (no getGranularity()
@@ -106,11 +119,61 @@ const AstrolabeRings = (() => {
   // ─── Rendering ────────────────────────────────────────────────────────────
   function render() {
     while (svg.firstChild) svg.removeChild(svg.firstChild);
+    const zoomGroup = svgEl('g', {
+      id: 'astrolabe-zoom-group',
+      transform: `translate(${CX} ${CY}) scale(${zoom}) translate(${-CX} ${-CY})`
+    });
+    svg.appendChild(zoomGroup);
+    const prevSvg = svg;
+    svg = zoomGroup; // renderX() functions append to `svg` — temporarily retarget
     renderOuterRing();
+    renderZodiacRing();
     renderMiddleRing();
     renderInnerRing();
     renderHub();
+    svg = prevSvg;
     if (onYearChangeCb) onYearChangeCb(dialedYear(), currentEpoch());
+  }
+
+  // Static, non-interactive — shows astrological context for the dialed
+  // year rather than adding a fourth thing to drag. Reuses the real
+  // CELESTIAL_DATA zodiac ages (Phase 4) rather than inventing new ranges,
+  // so it stays consistent with the Timeline/Globe overlays.
+  function renderZodiacRing() {
+    const g = svgEl('g', { id: 'ring-zodiac' });
+    if (typeof CELESTIAL_DATA === 'undefined') { svg.appendChild(g); return; }
+
+    const year = dialedYear();
+    const active = CELESTIAL_DATA.getZodiacAge(year);
+    const ages = CELESTIAL_DATA.getZodiacAgesInRange
+      ? CELESTIAL_DATA.getZodiacAgesInRange(currentEpoch().s, currentEpoch().e)
+      : [];
+
+    g.appendChild(svgEl('circle', {
+      cx: CX, cy: CY, r: ZODIAC_R, fill: 'none',
+      stroke: 'var(--border-mid, rgba(255,255,255,0.1))', 'stroke-width': 14
+    }));
+
+    // Distribute whichever ages overlap the current epoch evenly around
+    // the band — illustrative placement, not a literal calendar mapping,
+    // same spirit as the outer ring's fixed epoch segments.
+    const list = ages.length ? ages : (active ? [active] : []);
+    list.forEach((age, i) => {
+      const angle = (i / Math.max(list.length, 1)) * 360;
+      const p = polar(ZODIAC_R, angle);
+      const isActive = active && age.name === active.name;
+      const t = svgEl('text', {
+        x: p.x, y: p.y, 'text-anchor': 'middle', 'dominant-baseline': 'middle',
+        fill: isActive ? 'var(--gold, #c8a030)' : 'var(--text-dim, #667799)',
+        'fill-opacity': isActive ? 1 : 0.55,
+        'font-size': isActive ? 15 : 12,
+        'font-family': 'var(--font-display, "Cinzel", serif)'
+      });
+      t.textContent = age.sym;
+      g.appendChild(t);
+    });
+
+    svg.appendChild(g);
   }
 
   function renderOuterRing() {
@@ -260,8 +323,10 @@ const AstrolabeRings = (() => {
       lines.push({ t: 'CLICK TO OPEN', sz: 7, w: 400, fill: 'var(--text-dim, #667799)' });
     } else {
       lines.push({ t: currentEpoch().n, sz: 12, w: 600, fill: '#fff' });
-      lines.push({ t: fmtRange(currentEpoch().s, currentEpoch().e), sz: 9, w: 400, fill: 'var(--text-secondary, #9fb0c0)' });
       lines.push({ t: fmtYearLabel(dialedYear()), sz: 14, w: 700, fill: 'var(--gold, #c8a030)' });
+      const zAge = (typeof CELESTIAL_DATA !== 'undefined') ? CELESTIAL_DATA.getZodiacAge(dialedYear()) : null;
+      lines.push({ t: zAge ? zAge.name.toUpperCase() : fmtRange(currentEpoch().s, currentEpoch().e),
+        sz: 8, w: 400, fill: 'var(--text-secondary, #9fb0c0)' });
       lines.push({ t: 'TURN THE RINGS', sz: 7, w: 400, fill: 'var(--text-dim, #667799)' });
     }
 
@@ -332,6 +397,7 @@ const AstrolabeRings = (() => {
       startAngle = angleAt(e.clientX, e.clientY);
       startRotation = which === 'outer' ? outerRotation : middleRotation;
       el.setPointerCapture(e.pointerId);
+      markInteraction();
     });
     el.addEventListener('pointermove', e => {
       if (!dragging) return;
@@ -355,19 +421,81 @@ const AstrolabeRings = (() => {
     selectEpoch(nearest);
   }
 
+  // ─── Zoom (pinch / wheel / buttons) — clamped modest range, see MIN_ZOOM/
+  // MAX_ZOOM above. Pinch uses a Map of active pointers, same technique as
+  // the concept-demo prototype this was ported from. ─────────────────────
+  const activePointers = new Map();
+  let pinchStartDist = null, pinchStartZoom = 1;
+
+  function setZoom(z) {
+    zoom = Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, z));
+    render();
+  }
+  function zoomBy(delta) { setZoom(zoom + delta); }
+
+  function attachZoom(rootEl) {
+    rootEl.addEventListener('pointerdown', e => {
+      activePointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+      if (activePointers.size === 2) {
+        const pts = [...activePointers.values()];
+        pinchStartDist = Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y);
+        pinchStartZoom = zoom;
+      }
+      markInteraction();
+    });
+    rootEl.addEventListener('pointermove', e => {
+      if (!activePointers.has(e.pointerId)) return;
+      activePointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+      if (activePointers.size === 2 && pinchStartDist) {
+        const pts = [...activePointers.values()];
+        const dist = Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y);
+        setZoom(pinchStartZoom * (dist / pinchStartDist));
+      }
+    });
+    ['pointerup', 'pointercancel'].forEach(evt =>
+      rootEl.addEventListener(evt, e => {
+        activePointers.delete(e.pointerId);
+        if (activePointers.size < 2) pinchStartDist = null;
+      })
+    );
+    rootEl.addEventListener('wheel', e => {
+      e.preventDefault();
+      zoomBy(-e.deltaY * 0.001);
+      markInteraction();
+    }, { passive: false });
+  }
+
+  // ─── Ambient idle drift — pauses instantly on any pointer/wheel activity,
+  // resumes ~3.5s after the last one. ─────────────────────────────────────
+  function markInteraction() {
+    clearTimeout(idleTimer);
+    if (ambientRAF) cancelAnimationFrame(ambientRAF);
+    idleTimer = setTimeout(startAmbientDrift, IDLE_DELAY_MS);
+  }
+  function startAmbientDrift() {
+    function step() {
+      middleRotation = normalizeAngle(middleRotation + 0.03);
+      render();
+      ambientRAF = requestAnimationFrame(step);
+    }
+    step();
+  }
+
   // ─── Public API ───────────────────────────────────────────────────────────
   function init(svgId, callbacks) {
     svg = document.getElementById(svgId);
     onCivSelectCb = (callbacks && callbacks.onCivSelect) || null;
     onYearChangeCb = (callbacks && callbacks.onYearChange) || null;
+    attachZoom(svg);
     selectEpoch(DEFAULT_EPOCH_INDEX);
+    markInteraction(); // schedules the first ambient-drift start
   }
 
   function getState() {
-    return { epoch: currentEpoch(), year: dialedYear(), civId: selectedCivId };
+    return { epoch: currentEpoch(), year: dialedYear(), civId: selectedCivId, zoom };
   }
 
-  return { init, selectEpoch, getState };
+  return { init, selectEpoch, getState, setZoom, zoomBy };
 })();
 
 window.AstrolabeRings = AstrolabeRings;

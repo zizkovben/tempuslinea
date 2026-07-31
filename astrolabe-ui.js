@@ -37,6 +37,11 @@ const AstrolabeUI = (() => {
       onCivSelect: handleCivSelect,
       onYearChange: updateReadout
     });
+
+    const zoomInBtn = document.getElementById('astrolabe-zoom-in');
+    const zoomOutBtn = document.getElementById('astrolabe-zoom-out');
+    if (zoomInBtn) zoomInBtn.addEventListener('click', () => AstrolabeRings.zoomBy(0.12));
+    if (zoomOutBtn) zoomOutBtn.addEventListener('click', () => AstrolabeRings.zoomBy(-0.12));
   }
 
   return { init };

@@ -36,6 +36,8 @@
       width: min(88vh, 88vw);
       height: min(88vh, 88vw);
       display: block;
+      overflow: visible; /* prevents clipping at MAX_ZOOM — content can
+                             legitimately extend past the 640×640 viewBox */
     }
 
     #astrolabe-readout {
@@ -73,6 +75,47 @@
     #astrolabe-svg [id^="ring-"] circle {
       transition: fill-opacity 0.15s ease;
     }
+
+    /* ── Starfield atmosphere — astrolabe-exclusive, per v3 doc ──
+       Additive layer, not a palette change: real app tokens still
+       drive every ring/dot color above this. */
+    #astrolabe-starfield {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+    }
+    #astrolabe-starfield .star {
+      position: absolute;
+      border-radius: 50%;
+      background: #f0eee8;
+      animation: astrolabe-twinkle 4s ease-in-out infinite;
+    }
+    @keyframes astrolabe-twinkle {
+      0%, 100% { opacity: 0.12; }
+      50% { opacity: 0.75; }
+    }
+    #astrolabe-svg { position: relative; z-index: 1; }
+
+    #astrolabe-zoom-controls {
+      position: absolute;
+      bottom: 16px;
+      right: 16px;
+      display: flex;
+      gap: 8px;
+      z-index: 2;
+    }
+    #astrolabe-zoom-controls button {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      border: 1px solid var(--border-mid, rgba(255,255,255,0.2));
+      background: rgba(3,6,18,.82);
+      color: var(--gold, #c8a030);
+      font-family: var(--font-mono);
+      font-size: 15px;
+      cursor: pointer;
+    }
+    #astrolabe-zoom-controls button:active { background: rgba(200,160,48,0.2); }
   </style>
 </head>
 <body>
@@ -98,6 +141,8 @@
     <span class="nav-sep">·</span>
     <a href="community.html">COMMUNITY</a>
     <span class="nav-sep">·</span>
+    <a href="astrolabe.html" class="active">ASTROLABE</a>
+    <span class="nav-sep">·</span>
     <a href="portal.html">MY PORTAL</a>
     <span class="nav-sep">·</span>
     <a href="about.html">ABOUT</a>
@@ -106,15 +151,23 @@
   <!-- ══ ASTROLABE VIEWPORT ═════════════════════════════════ -->
   <div id="astrolabe-container">
 
+    <div id="astrolabe-starfield"></div>
+
     <div id="astrolabe-readout">— · —</div>
 
     <svg id="astrolabe-svg" viewBox="0 0 640 640" xmlns="http://www.w3.org/2000/svg"></svg>
+
+    <div id="astrolabe-zoom-controls">
+      <button id="astrolabe-zoom-out" aria-label="Zoom out">−</button>
+      <button id="astrolabe-zoom-in" aria-label="Zoom in">+</button>
+    </div>
 
     <div id="astrolabe-legend">
       OUTER RING — drag or click to choose an epoch &nbsp;·&nbsp;
       MIDDLE RING — drag to scrub through the epoch's years &nbsp;·&nbsp;
       INNER RING — click a civilization to select it &nbsp;·&nbsp;
-      CENTER — click the selected civilization to view details
+      CENTER — click the selected civilization to view details &nbsp;·&nbsp;
+      PINCH OR SCROLL TO ZOOM
     </div>
 
   </div>
@@ -122,12 +175,35 @@
 </div>
 
 <!-- ══ SCRIPTS ══════════════════════════════════════════════ -->
-<!-- Load order: data → astrolabe engine → astrolabe wiring → shared UI panel -->
+<!-- Load order: data → celestial data (zodiac ages, real Phase 4 data,
+     reused rather than re-invented) → astrolabe engine → astrolabe wiring
+     → shared UI panel -->
 <script src="data.js"></script>
 <script src="data-extended.js"></script>
+<script src="celestial-data.js"></script>
 <script src="astrolabe-rings.js"></script>
 <script src="astrolabe-ui.js"></script>
 <script src="ui.js"></script>
+
+<script>
+  // Starfield — astrolabe-exclusive atmosphere layer, generated once on load.
+  (function buildStarfield() {
+    var field = document.getElementById('astrolabe-starfield');
+    if (!field) return;
+    for (var i = 0; i < 80; i++) {
+      var s = document.createElement('div');
+      s.className = 'star';
+      var size = Math.random() * 1.6 + 0.6;
+      s.style.width = size + 'px';
+      s.style.height = size + 'px';
+      s.style.left = Math.random() * 100 + '%';
+      s.style.top = Math.random() * 100 + '%';
+      s.style.animationDelay = (Math.random() * 4) + 's';
+      s.style.animationDuration = (3 + Math.random() * 3) + 's';
+      field.appendChild(s);
+    }
+  })();
+</script>
 
 </body>
 </html>
