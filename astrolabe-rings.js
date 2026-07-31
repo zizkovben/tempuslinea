@@ -226,7 +226,6 @@ const AstrolabeRings = (() => {
       text.textContent = ep.n.length > 14 ? ep.n.slice(0, 13) + '…' : ep.n;
       g.appendChild(text);
     });
-    attachDrag(g, 'outer');
     svg.appendChild(g);
   }
 
@@ -256,7 +255,6 @@ const AstrolabeRings = (() => {
       stroke: '#1a1204', 'stroke-width': 1.5
     }));
 
-    attachDrag(g, 'middle');
     svg.appendChild(g);
   }
 
@@ -362,7 +360,14 @@ const AstrolabeRings = (() => {
     });
 
     if (civ) {
-      const hitArea = svgEl('circle', { cx: CX, cy: CY, r: HUB_R, fill: 'transparent', style: 'cursor:pointer;' });
+      const hitArea = svgEl('circle', {
+        cx: CX, cy: CY, r: HUB_R, fill: 'transparent',
+        'pointer-events': 'all', // fill:transparent alone doesn't reliably
+                                  // register hits in every browser — this
+                                  // was almost certainly why hub clicks to
+                                  // open the panel weren't registering
+        style: 'cursor:pointer;'
+      });
       hitArea.addEventListener('click', () => { if (onCivSelectCb) onCivSelectCb(civ, true); });
       g.appendChild(hitArea);
     }
@@ -395,44 +400,73 @@ const AstrolabeRings = (() => {
   }
 
   // ─── Drag interaction (Pointer Events — unifies mouse/touch/pen) ─────────
-  // touch-action:none is paired with real pointer handlers here deliberately
-  // — the diagnosed cause of the Living Atlas mobile-nav bug was the reverse
-  // (touch-action suppressing default behavior with no handler to replace
-  // it). Not repeating that here.
-  function attachDrag(el, which) {
-    let dragging = false, startAngle = 0, startRotation = 0;
+  // FIXED this pass: previously attached pointerdown/move/up + pointer
+  // capture directly to each ring's own <g>, which render() destroys and
+  // recreates on every single call — including mid-drag, since render()
+  // is called from inside the pointermove handler itself (via
+  // scheduleRender()). The moment the first throttled re-render fired,
+  // the captured element was removed from the DOM, capture was silently
+  // dropped per spec, and the freshly-rebuilt ring's brand-new closure had
+  // no idea a drag was in progress — so the ring would flicker very
+  // slightly on the first pointermove and then stop responding entirely.
+  // That's what "rings not spinning" actually was.
+  //
+  // Fix: attach the listeners ONCE, to the root <svg> element itself,
+  // which is stable and never torn down (render() only clears its
+  // children). Which ring is being dragged is determined by the pointer's
+  // distance from center at pointerdown — same technique already proven
+  // in the standalone concept demo this was ported from.
+  let dragWhich = null, dragStartAngle = 0, dragStartRotation = 0;
 
-    function angleAt(clientX, clientY) {
-      const rect = svg.getBoundingClientRect();
-      const scale = 640 / rect.width; // svg intrinsic size / rendered size
-      const x = (clientX - rect.left) * scale - CX;
-      const y = (clientY - rect.top) * scale - CY;
-      return Math.atan2(x, -y) * 180 / Math.PI; // matches polar()'s -90/clockwise convention
-    }
+  function localPoint(clientX, clientY) {
+    const rect = svg.getBoundingClientRect();
+    const scale = 640 / rect.width; // svg intrinsic size / rendered size
+    return {
+      x: ((clientX - rect.left) * scale - CX) / zoom,
+      y: ((clientY - rect.top) * scale - CY) / zoom
+    };
+  }
+  function angleAt(clientX, clientY) {
+    const p = localPoint(clientX, clientY);
+    return Math.atan2(p.x, -p.y) * 180 / Math.PI; // matches polar()'s -90/clockwise convention
+  }
+  function ringAtPoint(clientX, clientY) {
+    const p = localPoint(clientX, clientY);
+    const r = Math.hypot(p.x, p.y);
+    if (r >= OUTER_R_IN && r <= OUTER_R_OUT + 12) return 'outer';
+    if (r >= MID_R_IN - 6 && r <= MID_R_OUT + 6) return 'middle';
+    return null; // zodiac/inner/hub are tap targets, not drag targets
+  }
 
-    el.style.touchAction = 'none';
-    el.addEventListener('pointerdown', e => {
-      dragging = true;
-      startAngle = angleAt(e.clientX, e.clientY);
-      startRotation = which === 'outer' ? outerRotation : middleRotation;
-      el.setPointerCapture(e.pointerId);
+  function attachDrag(rootEl) {
+    rootEl.style.touchAction = 'none';
+    rootEl.addEventListener('pointerdown', e => {
+      const which = ringAtPoint(e.clientX, e.clientY);
+      if (!which) return;
+      dragWhich = which;
+      dragStartAngle = angleAt(e.clientX, e.clientY);
+      dragStartRotation = which === 'outer' ? outerRotation : middleRotation;
+      rootEl.setPointerCapture(e.pointerId);
       markInteraction();
     });
-    el.addEventListener('pointermove', e => {
-      if (!dragging) return;
-      const delta = angleAt(e.clientX, e.clientY) - startAngle;
-      if (which === 'outer') {
-        outerRotation = startRotation + delta;
+    rootEl.addEventListener('pointermove', e => {
+      if (!dragWhich) return;
+      const delta = angleAt(e.clientX, e.clientY) - dragStartAngle;
+      if (dragWhich === 'outer') {
+        outerRotation = dragStartRotation + delta;
       } else {
-        middleRotation = normalizeAngle(startRotation + delta);
+        middleRotation = normalizeAngle(dragStartRotation + delta);
       }
       scheduleRender();
     });
-    el.addEventListener('pointerup', () => {
-      if (!dragging) return;
-      dragging = false;
-      if (which === 'outer') snapOuterToNearest();
-    });
+    function endDrag() {
+      if (!dragWhich) return;
+      const finishedWhich = dragWhich;
+      dragWhich = null;
+      if (finishedWhich === 'outer') snapOuterToNearest();
+    }
+    rootEl.addEventListener('pointerup', endDrag);
+    rootEl.addEventListener('pointercancel', endDrag); // capture-loss safety net
   }
 
   function snapOuterToNearest() {
@@ -505,6 +539,9 @@ const AstrolabeRings = (() => {
     svg = document.getElementById(svgId);
     onCivSelectCb = (callbacks && callbacks.onCivSelect) || null;
     onYearChangeCb = (callbacks && callbacks.onYearChange) || null;
+    attachDrag(svg);  // attached ONCE to the stable root element — see the
+                       // long comment above attachDrag() for why this is
+                       // no longer attached per-ring, per-render
     attachZoom(svg);
     selectEpoch(DEFAULT_EPOCH_INDEX);
     markInteraction(); // schedules the first ambient-drift start
