@@ -40,20 +40,62 @@
                              legitimately extend past the 640×640 viewBox */
     }
 
-    #astrolabe-readout {
+    /* ── "What is this?" explainer — addresses the purpose/onboarding
+       gap. Small persistent button rather than a permanent block of
+       text, so it doesn't add back the clutter just removed elsewhere.
+       Auto-opens once on first visit via localStorage, reachable again
+       any time after. ────────────────────────────────────────────── */
+    #astrolabe-explainer-btn {
       position: absolute;
-      top: 14px;
-      left: 50%;
-      transform: translateX(-50%);
-      font-family: var(--font-mono);
-      font-size: 11px;
-      letter-spacing: 2px;
-      color: var(--gold, #c8a030);
+      top: 16px;
+      left: 16px;
+      z-index: 3;
+      width: 30px; height: 30px;
+      border-radius: 50%;
+      border: 1px solid var(--border-mid, rgba(255,255,255,0.2));
       background: rgba(3,6,18,.82);
-      border: 1px solid rgba(12,35,80,.5);
-      border-radius: 3px;
-      padding: 6px 16px;
-      pointer-events: none;
+      color: var(--gold, #c8a030);
+      font-family: var(--font-display, "Cinzel", serif);
+      font-size: 14px;
+      cursor: pointer;
+    }
+    #astrolabe-explainer-btn:hover { background: rgba(200,160,48,0.15); }
+    #astrolabe-explainer-panel {
+      position: absolute;
+      top: 54px;
+      left: 16px;
+      z-index: 3;
+      width: min(320px, 70vw);
+      background: rgba(6,8,14,.96);
+      border: 1px solid var(--border-mid, rgba(255,255,255,0.2));
+      border-radius: 8px;
+      padding: 16px 18px;
+      display: none;
+    }
+    #astrolabe-explainer-panel.open { display: block; }
+    #astrolabe-explainer-panel h3 {
+      margin: 0 0 8px;
+      font-family: var(--font-display, "Cinzel", serif);
+      font-size: 13px;
+      color: var(--gold, #c8a030);
+      letter-spacing: 0.04em;
+    }
+    #astrolabe-explainer-panel p {
+      margin: 0 0 10px;
+      font-family: var(--font-body, "Jost", sans-serif);
+      font-size: 13px;
+      line-height: 1.55;
+      color: var(--text-secondary, #b8c2cc);
+    }
+    #astrolabe-explainer-panel p:last-of-type { margin-bottom: 0; }
+    #astrolabe-explainer-close {
+      position: absolute;
+      top: 10px; right: 12px;
+      background: none; border: none;
+      color: var(--text-dim, #667799);
+      font-family: var(--font-mono, monospace);
+      font-size: 11px;
+      cursor: pointer;
     }
 
     #astrolabe-legend {
@@ -153,7 +195,18 @@
 
     <div id="astrolabe-starfield"></div>
 
-    <div id="astrolabe-readout">— · —</div>
+    <button id="astrolabe-explainer-btn" aria-label="What is this?">?</button>
+    <div id="astrolabe-explainer-panel">
+      <button id="astrolabe-explainer-close" aria-label="Close">✕ CLOSE</button>
+      <h3>What am I looking at?</h3>
+      <p>The Astrolabe is an instrument for finding what existed at a specific
+         moment in time. Dial in an era on the outer ring, scrub to a year on
+         the middle ring, and the inner ring shows you who was there — tied to
+         the real astrological ages of the Celestial Layer.</p>
+      <p>It's not a full history browser — that's what the Timeline is for.
+         This is for feeling time as one continuous gesture, the way an
+         astronomer once dialed a date against the sky.</p>
+    </div>
 
     <svg id="astrolabe-svg" viewBox="0 0 640 640" xmlns="http://www.w3.org/2000/svg"></svg>
 
@@ -174,6 +227,20 @@
 
 </div>
 
+<!-- ══ SHARED CHRONOS SIDE PANEL — same as every other page ═════
+     BUG FIX: this markup was missing from astrolabe.html entirely.
+     ChronosUI.showInfo() (ui.js) does
+       `const panel = document.getElementById('info-panel');
+        const inner = document.getElementById('info-inner');
+        if (!panel || !inner) return;`
+     — so on this page, every civ click was silently no-op-ing with
+     zero console error. This is almost certainly the actual "civs
+     don't open" bug, not a click-handling problem at all. -->
+<div id="info-panel-backdrop"></div>
+<div id="info-panel">
+  <div id="info-inner"></div>
+</div>
+
 <!-- ══ SCRIPTS ══════════════════════════════════════════════ -->
 <!-- Load order: data → celestial data (zodiac ages, real Phase 4 data,
      reused rather than re-invented) → astrolabe engine → astrolabe wiring
@@ -181,12 +248,16 @@
      NOTE: data-extended.js deliberately NOT loaded here — confirmed unused
      by any astrolabe file (CIV_META isn't referenced), and at ~360KB it
      was adding real weight to first load for nothing. If a future phase
-     needs CIV_META on this page, add it back deliberately, not by habit. -->
-<script src="data.js"></script>
-<script src="celestial-data.js"></script>
-<script src="astrolabe-rings.js"></script>
-<script src="astrolabe-ui.js"></script>
-<script src="ui.js"></script>
+     needs CIV_META on this page, add it back deliberately, not by habit.
+     `defer` added on all five this pass — lets the page shell (nav,
+     starfield, explainer button) paint immediately instead of blocking on
+     data.js's ~800KB parse; defer still preserves execution order across
+     multiple scripts, so nothing here depends on load order breaking. -->
+<script src="data.js" defer></script>
+<script src="celestial-data.js" defer></script>
+<script src="astrolabe-rings.js" defer></script>
+<script src="astrolabe-ui.js" defer></script>
+<script src="ui.js" defer></script>
 
 <script>
   // Starfield — astrolabe-exclusive atmosphere layer, generated once on load.
@@ -205,6 +276,28 @@
       s.style.animationDuration = (3 + Math.random() * 3) + 's';
       field.appendChild(s);
     }
+  })();
+
+  // "What is this?" explainer — auto-opens once on first visit (per
+  // browser, via localStorage), reachable again any time via the "?"
+  // button. Addresses the "what is this achieving" onboarding gap.
+  (function wireExplainer() {
+    var btn = document.getElementById('astrolabe-explainer-btn');
+    var panel = document.getElementById('astrolabe-explainer-panel');
+    var closeBtn = document.getElementById('astrolabe-explainer-close');
+    if (!btn || !panel) return;
+    function open() { panel.classList.add('open'); }
+    function close() { panel.classList.remove('open'); }
+    btn.addEventListener('click', function () {
+      panel.classList.contains('open') ? close() : open();
+    });
+    if (closeBtn) closeBtn.addEventListener('click', close);
+    try {
+      if (!localStorage.getItem('astrolabe-explainer-seen')) {
+        open();
+        localStorage.setItem('astrolabe-explainer-seen', '1');
+      }
+    } catch (e) { /* localStorage unavailable — fine, just skip auto-open */ }
   })();
 </script>
 
