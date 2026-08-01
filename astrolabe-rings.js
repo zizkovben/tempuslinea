@@ -193,33 +193,65 @@ const AstrolabeRings = (() => {
 
   function renderOuterRing() {
     const g = svgEl('g', { id: 'ring-outer' });
+    const ringR = (OUTER_R_OUT + OUTER_R_IN) / 2;
+
+    // Thin ring outline instead of filled wedges. Solid filled segments
+    // read as heavy/busy compared to the concept demo's thin-ring-and-
+    // ticks treatment — this carries the same "where am I" information
+    // with far less visual weight.
+    g.appendChild(svgEl('circle', {
+      cx: CX, cy: CY, r: ringR, fill: 'none',
+      stroke: 'var(--border-mid, rgba(255,255,255,0.16))', 'stroke-width': 1
+    }));
+
     EPOCHS.forEach((ep, i) => {
       const a1 = i * EPOCH_ANGLE + outerRotation;
       const a2 = a1 + EPOCH_ANGLE;
+      const mid = (a1 + a2) / 2;
       const active = i === selectedEpochIdx;
-      const seg = svgEl('path', {
-        d: arcPath(OUTER_R_OUT, OUTER_R_IN, a1, a2),
-        fill: active ? 'var(--gold, #c8a030)' : (i % 2 === 0 ? 'rgba(255,255,255,0.04)' : 'rgba(255,255,255,0.07)'),
-        'fill-opacity': active ? 0.35 : 1,
-        stroke: 'var(--border-mid, rgba(255,255,255,0.15))',
-        'stroke-width': 1,
-        style: 'cursor:pointer;'
-      });
-      seg.addEventListener('click', () => selectEpoch(i));
-      g.appendChild(seg);
 
-      // Labels stay screen-upright regardless of ring rotation. (Previously
-      // wrapped in a `rotate(-outerRotation)` group intended to counter-
-      // rotate and stay upright — but that rotated every label by the same
-      // single global angle instead of canceling each label's own position,
-      // which is what actually produced the sideways/vertical text. Text
-      // placed at x/y with no rotation transform is upright by default —
-      // no counter-rotation was ever needed.)
-      const midAngle = (a1 + a2) / 2;
-      const lp = polar((OUTER_R_OUT + OUTER_R_IN) / 2, midAngle);
+      // Boundary tick between epochs
+      const t1 = polar(OUTER_R_OUT + 3, a1), t2 = polar(OUTER_R_IN - 3, a1);
+      g.appendChild(svgEl('line', {
+        x1: t1.x, y1: t1.y, x2: t2.x, y2: t2.y,
+        stroke: 'var(--border-mid, rgba(255,255,255,0.14))', 'stroke-width': 1
+      }));
+
+      // Active-epoch marker — one short bright tick at the segment's
+      // midpoint rather than a full filled wedge. Same information,
+      // a fraction of the visual weight.
+      if (active) {
+        const m1 = polar(OUTER_R_OUT + 6, mid), m2 = polar(OUTER_R_IN - 6, mid);
+        g.appendChild(svgEl('line', {
+          x1: m1.x, y1: m1.y, x2: m2.x, y2: m2.y,
+          stroke: 'var(--gold, #c8a030)', 'stroke-width': 2.5
+        }));
+      }
+
+      // Invisible, generously-sized hit target per segment — click-to-
+      // select still works without needing a visibly filled wedge to
+      // click on.
+      const hit = svgEl('path', {
+        d: arcPath(OUTER_R_OUT + 10, OUTER_R_IN - 10, a1, a2),
+        fill: 'transparent', 'pointer-events': 'all', style: 'cursor:pointer;'
+      });
+      hit.addEventListener('click', () => selectEpoch(i));
+      g.appendChild(hit);
+
+      // Label — upright (see fix note below), sitting just outside the
+      // ring rather than embedded in a wedge, for breathing room.
+      // Labels stay screen-upright regardless of ring rotation. (Was
+      // previously wrapped in a `rotate(-outerRotation)` group intended
+      // to counter-rotate and stay upright — but that rotated every
+      // label by the same single global angle instead of canceling each
+      // label's own position, which is what produced the sideways text
+      // reported earlier. Text placed at x/y with no rotation transform
+      // is upright by default — no counter-rotation was ever needed.)
+      const lp = polar(OUTER_R_OUT + 15, mid);
       const text = svgEl('text', {
         x: lp.x, y: lp.y, 'text-anchor': 'middle', 'dominant-baseline': 'middle',
-        fill: active ? '#1a1204' : 'var(--text-secondary, #9fb0c0)',
+        fill: active ? 'var(--gold, #c8a030)' : 'var(--text-secondary, #9fb0c0)',
+        'font-weight': active ? 700 : 400,
         'font-size': 9, 'font-family': 'var(--font-mono, monospace)',
         'letter-spacing': '0.5px', 'pointer-events': 'none'
       });
@@ -275,13 +307,22 @@ const AstrolabeRings = (() => {
     const r = (INNER_R_OUT + INNER_R_IN) / 2;
 
     if (!items.length) {
-      const empty = svgEl('text', {
-        x: CX, y: CY - r, 'text-anchor': 'middle',
+      const badge = svgEl('g', { style: 'pointer-events:none;' });
+      const label = 'No civilizations here — turn the middle ring';
+      const w = label.length * 4.6 + 20;
+      badge.appendChild(svgEl('rect', {
+        x: CX - w / 2, y: CY - r - 11, width: w, height: 22, rx: 11,
+        fill: 'rgba(3,6,18,0.85)', stroke: 'var(--border-mid, rgba(255,255,255,0.15))',
+        'stroke-width': 1
+      }));
+      const text = svgEl('text', {
+        x: CX, y: CY - r, 'text-anchor': 'middle', 'dominant-baseline': 'middle',
         fill: 'var(--text-dim, #667799)', 'font-size': 9,
         'font-family': 'var(--font-mono, monospace)'
       });
-      empty.textContent = 'No civilizations at this point — turn the middle ring';
-      g.appendChild(empty);
+      text.textContent = label;
+      badge.appendChild(text);
+      g.appendChild(badge);
       svg.appendChild(g);
       return;
     }
@@ -306,7 +347,12 @@ const AstrolabeRings = (() => {
       dot.addEventListener('click', () => selectCiv(item.civ));
       g.appendChild(dot);
 
-      if (Math.abs(offset) < 90) {
+      // Only the selected civ (or, if nothing's selected yet, the closest
+      // one to the dialed year) shows a persistent label. Every dot having
+      // an always-on label is exactly the clutter the concept demo avoided
+      // by leaving dots unlabeled until chosen — ported that behavior here.
+      const showLabel = isSel || (selectedCivId === null && i === 0);
+      if (showLabel) {
         const lp = polar(r + 16, angle);
         const label = svgEl('text', {
           x: lp.x, y: lp.y, 'text-anchor': 'middle', 'dominant-baseline': 'middle',
