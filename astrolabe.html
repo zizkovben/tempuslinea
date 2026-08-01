@@ -158,6 +158,10 @@
       cursor: pointer;
     }
     #astrolabe-zoom-controls button:active { background: rgba(200,160,48,0.2); }
+    #astrolabe-zoom-controls button.wide {
+      width: auto; height: 32px; padding: 0 16px; border-radius: 16px;
+      font-size: 9px; letter-spacing: 1px;
+    }
   </style>
 </head>
 <body>
@@ -199,19 +203,24 @@
     <div id="astrolabe-explainer-panel">
       <button id="astrolabe-explainer-close" aria-label="Close">✕ CLOSE</button>
       <h3>What am I looking at?</h3>
-      <p>The Astrolabe is an instrument for finding what existed at a specific
-         moment in time. Dial in an era on the outer ring, scrub to a year on
-         the middle ring, and the inner ring shows you who was there — tied to
-         the real astrological ages of the Celestial Layer.</p>
-      <p>It's not a full history browser — that's what the Timeline is for.
-         This is for feeling time as one continuous gesture, the way an
-         astronomer once dialed a date against the sky.</p>
+      <p>Before written chronologies, watching the sky — solstice alignments,
+         star positions, the slow 26,000-year drift of the stars called
+         precession — was how long spans of time were tracked at all. Real
+         astrolabes were built for exactly this. This dial does the same job:
+         an instrument for finding what existed at a given moment, using the
+         same celestial reference points.</p>
+      <p>Dial in an era on the outer ring, scrub to a year on the middle
+         ring, and the inner ring shows who was there — sometimes alongside
+         a real, cited alignment (⟡) that placed that moment in the sky.
+         Not a full history browser — that's what the Timeline is for. This
+         is time as one continuous, astronomical gesture.</p>
     </div>
 
     <svg id="astrolabe-svg" viewBox="0 0 640 640" xmlns="http://www.w3.org/2000/svg"></svg>
 
     <div id="astrolabe-zoom-controls">
       <button id="astrolabe-zoom-out" aria-label="Zoom out">−</button>
+      <button id="astrolabe-reset" class="wide" aria-label="Reset dial">RESET</button>
       <button id="astrolabe-zoom-in" aria-label="Zoom in">+</button>
     </div>
 

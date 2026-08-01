@@ -116,6 +116,22 @@ const AstrolabeRings = (() => {
     });
   }
 
+  // Real, cited archaeoastronomy alignments (Nabta Playa, Newgrange,
+  // Stonehenge, Great Pyramid, Angkor Wat, and 60+ more — see
+  // celestial-data.js) — the concrete backbone for "this is how time was
+  // actually tracked before written chronologies." Same tolerance as civ
+  // filtering, so a marker surfaces exactly when it'd feel connected to
+  // the dialed year, not just "somewhere in this epoch."
+  function findNearestMarker() {
+    if (typeof CELESTIAL_DATA === 'undefined') return null;
+    const year = dialedYear();
+    const tol = getTolerance();
+    const inRange = CELESTIAL_DATA.getSolsticeMarkers(year - tol, year + tol);
+    if (!inRange.length) return null;
+    inRange.sort((a, b) => Math.abs(a.year - year) - Math.abs(b.year - year));
+    return inRange[0];
+  }
+
   // ─── Render throttling — pointermove during a drag can fire far faster
   // than the DOM rebuild in render() can keep up with (every ring is torn
   // down and rebuilt from scratch on every call). scheduleRender() coalesces
@@ -238,18 +254,22 @@ const AstrolabeRings = (() => {
       hit.addEventListener('click', () => selectEpoch(i));
       g.appendChild(hit);
 
-      // Label — upright (see fix note below), sitting just outside the
-      // ring rather than embedded in a wedge, for breathing room.
-      // Labels stay screen-upright regardless of ring rotation. (Was
-      // previously wrapped in a `rotate(-outerRotation)` group intended
-      // to counter-rotate and stay upright — but that rotated every
-      // label by the same single global angle instead of canceling each
-      // label's own position, which is what produced the sideways text
-      // reported earlier. Text placed at x/y with no rotation transform
-      // is upright by default — no counter-rotation was ever needed.)
+      // Label — dial-tilt, matching the concept demo's authentic-instrument
+      // look (requested again this session over the upright variant tried
+      // previously). Each label rotates by its OWN mid-angle around its
+      // OWN anchor point — this is the correct way to do it. The earlier
+      // "vertical/broken text" bug was a different thing entirely: that
+      // code applied ONE shared rotation value (`-outerRotation`, the
+      // ring's single current rotation) to every label regardless of its
+      // own position, which produces arbitrary, inconsistent tilt with no
+      // relationship to where each label actually sits. Rotating each
+      // label by its own angle instead keeps every label consistently
+      // tangent to the ring — legible if you tilt your head, the same
+      // way an engraved astrolabe ring actually reads.
       const lp = polar(OUTER_R_OUT + 15, mid);
       const text = svgEl('text', {
         x: lp.x, y: lp.y, 'text-anchor': 'middle', 'dominant-baseline': 'middle',
+        transform: `rotate(${mid} ${lp.x} ${lp.y})`,
         fill: active ? 'var(--gold, #c8a030)' : 'var(--text-secondary, #9fb0c0)',
         'font-weight': active ? 700 : 400,
         'font-size': 9, 'font-family': 'var(--font-mono, monospace)',
@@ -390,7 +410,19 @@ const AstrolabeRings = (() => {
       const zAge = (typeof CELESTIAL_DATA !== 'undefined') ? CELESTIAL_DATA.getZodiacAge(dialedYear()) : null;
       lines.push({ t: zAge ? zAge.name.toUpperCase() : fmtRange(currentEpoch().s, currentEpoch().e),
         sz: 8, w: 400, fill: 'var(--text-secondary, #9fb0c0)' });
-      lines.push({ t: 'TURN THE RINGS', sz: 7, w: 400, fill: 'var(--text-dim, #667799)' });
+
+      // Real alignment marker, if the dialed year is close to one — this
+      // is the concrete backbone for "astrolabes tracked time via real
+      // star/solstice alignments," not just decorative zodiac flavor.
+      // Reuses the same tolerance the civ filtering already uses, so a
+      // marker appears exactly when it'd feel connected to the dialed
+      // year rather than merely "somewhere in this epoch."
+      const marker = findNearestMarker();
+      if (marker) {
+        lines.push({ t: '⟡ ' + marker.label, sz: 7.5, w: 600, fill: 'var(--teal, #2aada0)' });
+      } else {
+        lines.push({ t: 'TURN THE RINGS', sz: 7, w: 400, fill: 'var(--text-dim, #667799)' });
+      }
     }
 
     const startY = CY - ((lines.length - 1) * 15) / 2;
@@ -597,7 +629,14 @@ const AstrolabeRings = (() => {
     return { epoch: currentEpoch(), year: dialedYear(), civId: selectedCivId, zoom };
   }
 
-  return { init, selectEpoch, getState, setZoom, zoomBy };
+  function reset() {
+    zoom = 1;
+    middleRotation = 0;
+    selectedCivId = null;
+    selectEpoch(DEFAULT_EPOCH_INDEX); // also renders
+  }
+
+  return { init, selectEpoch, getState, setZoom, zoomBy, reset };
 })();
 
 window.AstrolabeRings = AstrolabeRings;

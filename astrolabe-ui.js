@@ -40,8 +40,10 @@ const AstrolabeUI = (() => {
 
     const zoomInBtn = document.getElementById('astrolabe-zoom-in');
     const zoomOutBtn = document.getElementById('astrolabe-zoom-out');
+    const resetBtn = document.getElementById('astrolabe-reset');
     if (zoomInBtn) zoomInBtn.addEventListener('click', () => AstrolabeRings.zoomBy(0.12));
     if (zoomOutBtn) zoomOutBtn.addEventListener('click', () => AstrolabeRings.zoomBy(-0.12));
+    if (resetBtn) resetBtn.addEventListener('click', () => AstrolabeRings.reset());
   }
 
   return { init };
