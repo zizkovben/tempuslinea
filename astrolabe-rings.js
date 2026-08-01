@@ -233,14 +233,19 @@ const AstrolabeRings = (() => {
         stroke: 'var(--border-mid, rgba(255,255,255,0.14))', 'stroke-width': 1
       }));
 
-      // Active-epoch marker — one short bright tick at the segment's
-      // midpoint rather than a full filled wedge. Same information,
-      // a fraction of the visual weight.
+      // Active-epoch marker — a short pointer tick just outside the ring,
+      // not a line spanning the full band width. The earlier version ran
+      // from OUTER_R_OUT+6 all the way to OUTER_R_IN-6 (a ~60-unit line
+      // across almost the entire ring band) — visually that read as a
+      // stray/broken diagonal line cutting into the ring rather than a
+      // subtle "you are here" mark, which is exactly what got reported.
+      // The gold label color already carries most of the "active" signal;
+      // this only needs to be a small accent, not a second data channel.
       if (active) {
-        const m1 = polar(OUTER_R_OUT + 6, mid), m2 = polar(OUTER_R_IN - 6, mid);
+        const m1 = polar(OUTER_R_OUT - 2, mid), m2 = polar(OUTER_R_OUT + 8, mid);
         g.appendChild(svgEl('line', {
           x1: m1.x, y1: m1.y, x2: m2.x, y2: m2.y,
-          stroke: 'var(--gold, #c8a030)', 'stroke-width': 2.5
+          stroke: 'var(--gold, #c8a030)', 'stroke-width': 2, 'stroke-linecap': 'round'
         }));
       }
 
@@ -255,21 +260,21 @@ const AstrolabeRings = (() => {
       g.appendChild(hit);
 
       // Label — dial-tilt, matching the concept demo's authentic-instrument
-      // look (requested again this session over the upright variant tried
-      // previously). Each label rotates by its OWN mid-angle around its
-      // OWN anchor point — this is the correct way to do it. The earlier
-      // "vertical/broken text" bug was a different thing entirely: that
-      // code applied ONE shared rotation value (`-outerRotation`, the
-      // ring's single current rotation) to every label regardless of its
-      // own position, which produces arbitrary, inconsistent tilt with no
-      // relationship to where each label actually sits. Rotating each
-      // label by its own angle instead keeps every label consistently
-      // tangent to the ring — legible if you tilt your head, the same
-      // way an engraved astrolabe ring actually reads.
+      // look. Each label rotates by its OWN mid-angle around its OWN
+      // anchor point, tangent to the ring. One refinement this pass: the
+      // bottom half of the ring (roughly 90°-270°) gets an extra 180°
+      // flip, otherwise a plain tangent rotation renders those labels
+      // upside-down — legible mid-drag as a decorative tilt, but
+      // genuinely hard to read at rest, and it's what was colliding with
+      // the legend text at the bottom of the dial. Position is computed
+      // from the true `mid` either way — only the text's own rotation
+      // angle flips, so this doesn't move anything, just re-orients it.
       const lp = polar(OUTER_R_OUT + 15, mid);
+      const normMid = normalizeAngle(mid);
+      const labelRot = (normMid > 90 && normMid < 270) ? normMid - 180 : normMid;
       const text = svgEl('text', {
         x: lp.x, y: lp.y, 'text-anchor': 'middle', 'dominant-baseline': 'middle',
-        transform: `rotate(${mid} ${lp.x} ${lp.y})`,
+        transform: `rotate(${labelRot} ${lp.x} ${lp.y})`,
         fill: active ? 'var(--gold, #c8a030)' : 'var(--text-secondary, #9fb0c0)',
         'font-weight': active ? 700 : 400,
         'font-size': 9, 'font-family': 'var(--font-mono, monospace)',

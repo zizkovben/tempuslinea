@@ -33,8 +33,8 @@
     }
 
     #astrolabe-svg {
-      width: min(88vh, 88vw);
-      height: min(88vh, 88vw);
+      width: min(74vh, 80vw);
+      height: min(74vh, 80vw);
       display: block;
       overflow: visible; /* prevents clipping at MAX_ZOOM — content can
                              legitimately extend past the 640×640 viewBox */
@@ -109,6 +109,9 @@
       color: var(--text-dim, #667799);
       text-align: center;
       pointer-events: none;
+      background: rgba(3,6,18,.72);
+      border-radius: 6px;
+      padding: 5px 12px;
       max-width: 480px;
       line-height: 1.6;
     }
