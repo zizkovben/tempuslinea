@@ -209,14 +209,18 @@ const AstrolabeRings = (() => {
 
   function renderOuterRing() {
     const g = svgEl('g', { id: 'ring-outer' });
-    const ringR = (OUTER_R_OUT + OUTER_R_IN) / 2;
 
     // Thin ring outline instead of filled wedges. Solid filled segments
     // read as heavy/busy compared to the concept demo's thin-ring-and-
     // ticks treatment — this carries the same "where am I" information
-    // with far less visual weight.
+    // with far less visual weight. Two thin boundary lines (not one
+    // midpoint line) for consistency with the middle/inner rings below.
     g.appendChild(svgEl('circle', {
-      cx: CX, cy: CY, r: ringR, fill: 'none',
+      cx: CX, cy: CY, r: OUTER_R_OUT, fill: 'none',
+      stroke: 'var(--border-mid, rgba(255,255,255,0.16))', 'stroke-width': 1
+    }));
+    g.appendChild(svgEl('circle', {
+      cx: CX, cy: CY, r: OUTER_R_IN, fill: 'none',
       stroke: 'var(--border-mid, rgba(255,255,255,0.16))', 'stroke-width': 1
     }));
 
@@ -288,12 +292,19 @@ const AstrolabeRings = (() => {
 
   function renderMiddleRing() {
     const g = svgEl('g', { id: 'ring-middle' });
-    const bg = svgEl('circle', {
-      cx: CX, cy: CY, r: (MID_R_OUT + MID_R_IN) / 2,
-      fill: 'none', stroke: 'var(--border-mid, rgba(255,255,255,0.12))',
-      'stroke-width': MID_R_OUT - MID_R_IN
-    });
-    g.appendChild(bg);
+    // Thin outline, not a filled band. (Previously fill:'none' but with
+    // stroke-width set to the ENTIRE band thickness — ~48 units — which
+    // is a wide stroke doing the visual job of a fill. Same issue as the
+    // outer ring had before that was fixed; this one was missed at the
+    // time since only the outer ring was reworked that pass.)
+    g.appendChild(svgEl('circle', {
+      cx: CX, cy: CY, r: MID_R_OUT,
+      fill: 'none', stroke: 'var(--border-mid, rgba(255,255,255,0.14))', 'stroke-width': 1
+    }));
+    g.appendChild(svgEl('circle', {
+      cx: CX, cy: CY, r: MID_R_IN,
+      fill: 'none', stroke: 'var(--border-mid, rgba(255,255,255,0.14))', 'stroke-width': 1
+    }));
 
     // Tick marks every 5% of the epoch span
     for (let i = 0; i < 20; i++) {
@@ -317,10 +328,15 @@ const AstrolabeRings = (() => {
 
   function renderInnerRing() {
     const g = svgEl('g', { id: 'ring-inner' });
+    // Thin outline, not a filled band — same fix as the outer and middle
+    // rings; this one had the identical wide-stroke-as-fill pattern.
     g.appendChild(svgEl('circle', {
-      cx: CX, cy: CY, r: (INNER_R_OUT + INNER_R_IN) / 2,
-      fill: 'none', stroke: 'var(--border-mid, rgba(255,255,255,0.08))',
-      'stroke-width': INNER_R_OUT - INNER_R_IN
+      cx: CX, cy: CY, r: INNER_R_OUT,
+      fill: 'none', stroke: 'var(--border-mid, rgba(255,255,255,0.1))', 'stroke-width': 1
+    }));
+    g.appendChild(svgEl('circle', {
+      cx: CX, cy: CY, r: INNER_R_IN,
+      fill: 'none', stroke: 'var(--border-mid, rgba(255,255,255,0.1))', 'stroke-width': 1
     }));
 
     const items = getCandidateCivs();

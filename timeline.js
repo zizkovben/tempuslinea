@@ -102,14 +102,47 @@ window.TimelineEngine = (() => {
   }
 
   // ── LANE ASSIGNMENT ──────────────────────────────────────
-  function assignLanes(civs) {
-    const sorted = [...civs].sort((a, b) => a.s - b.s);
-    const laneEnds = [];
-    return sorted.map(c => {
-      let lane = 0;
-      while (laneEnds[lane] !== undefined && laneEnds[lane] > c.s + 30) lane++;
-      laneEnds[lane] = c.e;
-      return { ...c, lane };
+  // FIXED: previously took a pre-sliced civ list and packed strictly in
+  // start-date order, checking only the MOST RECENT occupant of each
+  // lane for overlap. The row-limit bug traced back to how this got
+  // called — see below — but this function itself also only supported
+  // "sort by start date, append to first free lane," which can't
+  // properly pack a relevance-ordered list (a later-processed civ might
+  // fit an earlier gap in a lane that the old check would miss, since it
+  // only looked at the lane's last end-time, not every occupant).
+  // Now: accepts civs in whatever priority order the caller wants
+  // (relevance order, from both call sites below), checks a candidate
+  // lane against ALL of its current occupants, and optionally caps at
+  // maxLanes — civs that don't fit within maxLanes go to `overflow`
+  // instead of being silently pre-excluded before packing even starts.
+  function assignLanes(civs, maxLanes) {
+    const lanes = [];   // lanes[i] = array of {s,e} already placed in that lane
+    const placed = [];
+    const overflow = [];
+    civs.forEach(c => {
+      let laneIdx = -1;
+      for (let i = 0; i < lanes.length; i++) {
+        if (maxLanes && i >= maxLanes) break;
+        const overlaps = lanes[i].some(occ => !(c.e + 30 <= occ.s || c.s - 30 >= occ.e));
+        if (!overlaps) { laneIdx = i; break; }
+      }
+      if (laneIdx === -1) {
+        if (maxLanes && lanes.length >= maxLanes) { overflow.push(c); return; }
+        laneIdx = lanes.length;
+        lanes.push([]);
+      }
+      lanes[laneIdx].push({ s: c.s, e: c.e });
+      placed.push({ ...c, lane: laneIdx });
+    });
+    return { placed, overflow };
+  }
+
+  function rankByRelevance(civs) {
+    const typeRank = { confirmed: 0, debated: 1, theorized: 2 };
+    return [...civs].sort((a, b) => {
+      const tr = (typeRank[a.t] ?? 3) - (typeRank[b.t] ?? 3);
+      if (tr !== 0) return tr;
+      return (b.up || 0) - (a.up || 0);
     });
   }
 
@@ -169,24 +202,18 @@ window.TimelineEngine = (() => {
     }
 
     // ── ROW LIMIT — user-chosen cap on simultaneously visible lanes ──
-    // Sort by relevance (confirmed first, then by upvotes) before laning,
-    // so the most significant civs always claim the visible rows.
-    // rowLimit === 0 means "show all".
-    let working = perfCapped;
-    if (rowLimit > 0 && perfCapped.length > rowLimit) {
-      const typeRank = { confirmed: 0, debated: 1, theorized: 2 };
-      const ranked = [...perfCapped].sort((a, b) => {
-        const tr = (typeRank[a.t] ?? 3) - (typeRank[b.t] ?? 3);
-        if (tr !== 0) return tr;
-        return (b.up || 0) - (a.up || 0);
-      });
-      working   = ranked.slice(0, rowLimit);
-      overflow  = ranked.slice(rowLimit);
-    } else {
-      overflow = [];
-    }
-
-    const laned = assignLanes(working);
+    // Sort by relevance (confirmed first, then upvotes) so contested lane
+    // slots go to the most significant civs first when two compete for
+    // the same lane. Actual lane capping now happens inside assignLanes,
+    // which packs into whatever gaps exist across all `rowLimit` lanes —
+    // this is what makes "ROWS: 20" actually fill up to 20 rows, instead
+    // of pre-slicing to the top 20 civs regardless of how many rows those
+    // 20 happened to occupy (the original bug — 20 top-ranked civs often
+    // only filled 3-4 lanes if they didn't chronologically overlap much).
+    const ranked = rankByRelevance(perfCapped);
+    const laneResult = assignLanes(ranked, rowLimit > 0 ? rowLimit : undefined);
+    const laned = laneResult.placed;
+    overflow = laneResult.overflow;
 
     // Notify UI layer of overflow count so the drawer can update
     if (window.ChronosUI && ChronosUI.updateOverflowDrawer) {
@@ -361,16 +388,10 @@ window.TimelineEngine = (() => {
       sizingSet = vis.slice(0, 900);
     }
     if (rowLimit > 0 && sizingSet.length > rowLimit) {
-      const typeRank = { confirmed: 0, debated: 1, theorized: 2 };
-      const ranked = [...sizingSet].sort((a, b) => {
-        const tr = (typeRank[a.t] ?? 3) - (typeRank[b.t] ?? 3);
-        if (tr !== 0) return tr;
-        return (b.up || 0) - (a.up || 0);
-      });
-      sizingSet = ranked.slice(0, rowLimit);
+      sizingSet = rankByRelevance(sizingSet);
     }
-    const laned = assignLanes(sizingSet);
-    const maxLane = laned.length ? Math.max(...laned.map(c => c.lane)) : 0;
+    const { placed: sizingPlaced } = assignLanes(sizingSet, rowLimit > 0 ? rowLimit : undefined);
+    const maxLane = sizingPlaced.length ? Math.max(...sizingPlaced.map(c => c.lane)) : 0;
     CH = HDR + (maxLane + 1) * (LH + LG) + 20;
     const dpr = window.devicePixelRatio || 1;
     cvs.width  = CW * dpr; cvs.height = CH * dpr;
