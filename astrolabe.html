@@ -26,6 +26,14 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      /* Reserves guaranteed clear space at the bottom for the legend.
+         Previous attempt tried shrinking the SVG's size percentage to
+         create clearance indirectly — that was a guess and it wasn't
+         enough. This is deterministic instead: align-items:center
+         centers within the padded content box, so this bottom padding
+         becomes a dead zone the centered dial can never be placed into,
+         regardless of viewport height. */
+      padding-bottom: 100px;
       background: radial-gradient(ellipse at 50% 45%,
         rgba(8,14,35,1) 0%,
         rgba(2,4,14,1)  60%,
@@ -33,8 +41,8 @@
     }
 
     #astrolabe-svg {
-      width: min(74vh, 80vw);
-      height: min(74vh, 80vw);
+      width: min(80vh, 82vw);
+      height: min(80vh, 82vw);
       display: block;
       overflow: visible; /* prevents clipping at MAX_ZOOM — content can
                              legitimately extend past the 640×640 viewBox */
@@ -96,6 +104,52 @@
       font-family: var(--font-mono, monospace);
       font-size: 11px;
       cursor: pointer;
+    }
+
+    /* ── SHARED CHRONOS SIDE PANEL — base positioning/transition CSS.
+       BUG FIX: this block was missing from astrolabe.html entirely.
+       styles.css only defines the `.visible` MODIFIER
+       (`transform: translateX(0)`); the actual base state — fixed
+       positioning, width, starting `translateX(100%)`, the transition —
+       lives in each page's own local <style> block (see globe.html,
+       community.html), copy-pasted per page rather than centralized.
+       astrolabe.html never got this copied in, so ChronosUI.showInfo()
+       was correctly toggling the `.visible` class onto a panel with no
+       base CSS at all — an unstyled div with no fixed position, sitting
+       invisibly in normal document flow. That's the actual "civs don't
+       open" bug, this time for real. Copied verbatim from globe.html. */
+    #info-panel {
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: 400px;
+      max-width: calc(100vw - 32px);
+      height: 100vh;
+      overflow-y: auto;
+      background: var(--bg-panel, #0c0d11);
+      border-left: 1px solid var(--border-mid, rgba(255,255,255,.14));
+      padding: 24px 20px;
+      z-index: 200;
+      transform: translateX(100%);
+      transition: transform 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      scrollbar-width: thin;
+    }
+    #info-panel.visible { transform: translateX(0); }
+    #info-panel-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(2,3,8,.5);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+      z-index: 199;
+    }
+    #info-panel-backdrop.visible { opacity: 1; pointer-events: auto; }
+    @media (max-width: 600px) {
+      #info-panel { width: 100vw; max-width: 100vw; }
     }
 
     #astrolabe-legend {
