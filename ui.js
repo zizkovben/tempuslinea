@@ -247,11 +247,17 @@ window.ChronosUI = (() => {
         <div style="font-size:9px;color:#6b21a8;letter-spacing:1px;text-align:right;margin-top:6px;">
           ◈ ${civ.dateTheories.length} DATE CHALLENGE${civ.dateTheories.length > 1 ? 'S' : ''}
         </div>` : ''}
-        <div style="font-size:9px;color:var(--text-dim);letter-spacing:1px;text-align:right;margin-top:4px;">
-          COMMENTS & SOURCES → PHASE 3b
-        </div>
         <div style="margin-top:10px;padding-top:8px;border-top:1px solid rgba(107,33,168,.12);
-                    display:flex;justify-content:flex-end;">
+                    display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap;">
+          ${window.location.pathname.indexOf('community.html') === -1 ? `
+          <a href="community.html?civ=${civ.id}"
+             style="background:transparent;border:1px solid rgba(107,33,168,.28);
+                    color:var(--text-dim);font-family:var(--font-mono);font-size:8px;
+                    letter-spacing:1.5px;padding:3px 10px;border-radius:2px;cursor:pointer;
+                    text-decoration:none;display:inline-flex;align-items:center;
+                    transition:all .15s;">
+            EXPLORE IN COMMUNITY →
+          </a>` : ''}
           <button id="btn-follow-civ"
             style="background:transparent;border:1px solid rgba(107,33,168,.28);
                    color:var(--text-dim);font-family:var(--font-mono);font-size:8px;
