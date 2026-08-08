@@ -51,6 +51,22 @@ const GlobeBorders = (() => {
   const ANCIENT_DIM       = 0.65;
   const SURFACE_OFFSET    = 1.003;
 
+  // Minimum-clarity floor (owner-requested standing setting, Bible v38 known
+  // issue — not a one-off palette tweak). Root cause of the "some borders
+  // much weaker than others in the same frame" complaint: STYLE's baseOpacity
+  // legitimately differs by certainty tier (confirmed 0.80, estimated 0.45,
+  // theorized 0.28), and confirmed-ancient dims further to 0.52 — theorized
+  // borders were structurally almost 3x fainter than confirmed ones, which
+  // reads as "hard to see" rather than "appropriately less certain."
+  // This floor is applied ONLY to the certainty-tier baseline (baseOpacity x
+  // ancient dim), never to the transitional/user-controlled multipliers
+  // (dissolve fade-out, blend fadeIn, the global opacity slider, or a
+  // per-entity override) — so a civ that's genuinely dissolving still fades
+  // all the way to invisible, and the user's own opacity controls are still
+  // fully honored. Raise/lower this single number to retune the whole site's
+  // border legibility floor without touching individual colors or tiers.
+  const MIN_STRUCTURAL_OPACITY = 0.40;
+
   // ─── Per-entity color ────────────────────────────────────────────────────
   // Previously every "confirmed" entity shared the exact same teal, so two
   // or three empires visible at once (e.g. Rome + Han + Maurya at 100 CE)
@@ -259,7 +275,12 @@ const GlobeBorders = (() => {
     const ancient = year < ANCIENT_THRESHOLD && entity.type === 'confirmed';
     const dimMul  = ancient ? ANCIENT_DIM : 1.0;
     const entityMul = _entityOpacityOverride[entityId] !== undefined ? _entityOpacityOverride[entityId] : 1;
-    const opacity = style.baseOpacity * (1 - entity.dissolve) * dimMul * (blend.fadeIn || 1) * _opacity * entityMul;
+    // Certainty-tier baseline only, floored — see MIN_STRUCTURAL_OPACITY above.
+    // Transitional/user multipliers are applied after the floor, not before,
+    // so dissolve/fadeIn/_opacity/entityMul can still take a border all the
+    // way to fully invisible when that's the actual intent.
+    const structuralOpacity = Math.max(MIN_STRUCTURAL_OPACITY, style.baseOpacity * dimMul);
+    const opacity = structuralOpacity * (1 - entity.dissolve) * (blend.fadeIn || 1) * _opacity * entityMul;
 
     const multi  = GlobeBordersGeom.isMultiPart(blend.polyA);
     const partsA = multi ? blend.polyA : [blend.polyA];
