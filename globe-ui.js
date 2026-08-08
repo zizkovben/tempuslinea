@@ -90,9 +90,25 @@ window.GlobeUI = (() => {
       document.dispatchEvent(new CustomEvent('yd-crossing'));
       _triggerYDTransition(newYear <= YD_BOUNDARY);
     } else if (window.GlobeTerrain) {
-      // Instant state set — no animation (same side of boundary)
+      // Same side of the boundary as the previous epoch — no dramatic
+      // vignette sequence needed, but this still goes through the
+      // animated path rather than the old instant setEarthState() snap.
+      // setEarthState() was an "instant, no animation" escape hatch that
+      // could fire mid-transition (e.g. clicking through epochs faster
+      // than the 2s morph), forcibly cancelling an in-progress smooth
+      // morph and snapping straight to the final value — which is what
+      // produced visibly inconsistent ice coverage between screenshots
+      // of the "same" epoch, depending on click timing. morphToGlacial/
+      // morphToHolocene() now retarget smoothly from whatever the
+      // current value actually is (see _currentMorphT in
+      // globe-terrain.js) and no-op immediately if already fully
+      // settled, so this is safe to call unconditionally here.
       const isGlacial = newYear <= YD_BOUNDARY;
-      GlobeTerrain.setEarthState(isGlacial ? 'glacial' : 'holocene');
+      if (isGlacial) {
+        GlobeTerrain.morphToGlacial(600);
+      } else {
+        GlobeTerrain.morphToHolocene(600);
+      }
       _updateStateIndicator(isGlacial ? 'glacial' : 'holocene');
     }
 

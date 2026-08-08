@@ -16,6 +16,12 @@ const GlobeTerrain = (() => {
   let iceSheet      = null;   // separate ice overlay mesh
   let morphState    = 'holocene';  // 'holocene' | 'glacial' | 'morphing'
   let morphTween    = null;        // active tween { start, end, duration, from, to }
+  let _currentMorphT = 0.0;        // true current interpolated value — always kept up to
+                                    // date in tick(), so a new morph can retarget from
+                                    // wherever the last one actually left off instead of
+                                    // restarting from a hardcoded 0.0/1.0 (which used to
+                                    // cause a visible backward jump if a transition was
+                                    // re-triggered before the previous one finished).
  
   // ── CONSTANTS ─────────────────────────────────────────────
   const EARTH_R   = 1.0;
@@ -375,7 +381,20 @@ const GlobeTerrain = (() => {
           rim = pow(rim, 2.5);
  
           vec3 col   = mix(uGlacierCol, uGlowCol, rim * 0.5 + coverage * 0.3);
-          float alpha = coverage * uMorphT * 0.65 + rim * coverage * uMorphT * 0.2;
+
+          // Alpha in the core of a coverage region ramps toward fully
+          // opaque rather than capping around ~0.65-0.85. The overlay has
+          // no day/night lighting of its own, so at partial alpha the
+          // terrain mesh's night-side shadow (up to 70% darkened, see
+          // the terrain shader's "night" term) shows through underneath
+          // it — visible as a dark terminator-shaped patch bleeding
+          // through the ice on the night side. Pushing core coverage
+          // near-opaque (~0.92) means the bright overlay fully occludes
+          // that shadow instead of partially blending with it; only the
+          // true edge/rim of the ice sheet stays soft-alpha.
+          float core  = smoothstep(0.55, 0.85, coverage);
+          float alpha = mix(coverage * 0.55, 0.92, core) * uMorphT
+                      + rim * coverage * uMorphT * 0.15;
  
           if (alpha < 0.01) discard;
           gl_FragColor = vec4(col, alpha);
@@ -391,22 +410,26 @@ const GlobeTerrain = (() => {
  
   // ── MORPH ANIMATION ──────────────────────────────────────
   function morphToGlacial(durationMs) {
-    if (morphState === 'glacial') return;
-    _startMorph(0.0, 1.0, durationMs || 2500);
+    if (morphState === 'glacial' && !morphTween) return;
+    _startMorph(_currentMorphT, 1.0, durationMs || 2500);
   }
  
   function morphToHolocene(durationMs) {
-    if (morphState === 'holocene') return;
-    _startMorph(1.0, 0.0, durationMs || 2500);
+    if (morphState === 'holocene' && !morphTween) return;
+    _startMorph(_currentMorphT, 0.0, durationMs || 2500);
   }
  
   function _startMorph(fromT, toT, durationMs) {
+    // Re-targeting mid-transition: scale the remaining duration to how
+    // far fromT actually is from toT, so retargeting near the end of a
+    // transition doesn't suddenly take as long as a full 0→1 sweep.
+    const remainingFrac = Math.min(Math.abs(toT - fromT), 1.0);
     morphState = 'morphing';
     iceSheet.visible = true;
  
     morphTween = {
       startTime: Date.now(),
-      duration:  durationMs,
+      duration:  Math.max((durationMs || 2500) * remainingFrac, 200),
       fromT,
       toT,
     };
@@ -428,6 +451,7 @@ const GlobeTerrain = (() => {
     t = t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t+2, 3)/2;
  
     const morphT = morphTween.fromT + (morphTween.toT - morphTween.fromT) * t;
+    _currentMorphT = morphT;
  
     // Apply to terrain mesh
     if (terrainMesh && terrainMesh.material.uniforms) {
@@ -463,6 +487,7 @@ const GlobeTerrain = (() => {
     const t = state === 'glacial' ? 1.0 : 0.0;
     morphState = state;
     morphTween = null;
+    _currentMorphT = t;
     if (terrainMesh && terrainMesh.material.uniforms) {
       terrainMesh.material.uniforms.uMorphT.value   = t;
       terrainMesh.material.uniforms.uSeaLevel.value = t * -120;
@@ -476,6 +501,7 @@ const GlobeTerrain = (() => {
   // ── SEA LEVEL DIRECT CONTROL ──────────────────────────────
   function setSeaLevel(metres) {
     const t = Math.abs(metres) / 120;   // 0 → 1
+    _currentMorphT = t;
     if (terrainMesh && terrainMesh.material.uniforms) {
       terrainMesh.material.uniforms.uSeaLevel.value = metres;
       terrainMesh.material.uniforms.uMorphT.value   = t;

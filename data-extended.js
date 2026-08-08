@@ -5368,7 +5368,17 @@ const CIV_META = {
       }
     ],
     plausibilityScore: { up: 3456, dn: 88 }
-  }
+  },
+  1006: {
+    lang:'chacha', rel:'unknown', gov:'confederation', pop:'medium',
+        tags:["andes","cloud-forest","fortified-city"],
+        sources:["Kuélap excavation reports"] },
+  1012: {
+    lang:'unknown', rel:'unknown', gov:'unknown', pop:'unknown',
+        locationType:'C',
+        tags:["biblical","gold-source","location-unresolved"],
+        sources:["Hebrew Bible, 1 Kings 9–10"],
+        locationTheories:[{lat:15.5,lng:47.5,label:"Southern Arabia",source:"Biblical-geography scholarship",researcher:null,up:70,dn:30},{lat:-20.3,lng:30.9,label:"Great Zimbabwe / SE Africa (largely discredited)",source:"Colonial-era misattribution literature",researcher:null,up:25,dn:90},{lat:15,lng:74,label:"Western India coast",source:"Trade-route comparative linguistics",researcher:null,up:45,dn:25}] },
 };
 
 // ── FILTER OPTION DEFINITIONS ────────────────────────────────
