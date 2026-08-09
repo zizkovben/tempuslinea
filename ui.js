@@ -147,6 +147,30 @@ window.ChronosUI = (() => {
       </div>`;
   }
 
+  // ── RELATED ENTRIES (Phase A prep — parentCiv display layer) ──
+  // Data plumbing only. The visual tree/breadcrumb pattern is being
+  // held pending mobile-ui-mockup.html (approved design reference, not
+  // in the repo) so this doesn't get built twice. _getFamily() below is
+  // wired and tested; _buildRelatedEntries() is the deliberate stub —
+  // next session drops the mockup's markup straight into it and calls
+  // it from showInfo() where the commented call site already sits.
+  function _getFamily(civ) {
+    const children = CIVS.filter(c => c.parentCiv === civ.id);
+    const parent    = civ.parentCiv ? CIVS.find(c => c.id === civ.parentCiv) : null;
+    return { children, parent };
+  }
+
+  function _buildRelatedEntries(civ) {
+    // TODO (Phase A, next session): render children as a collapsed-by-
+    // default expandable list (owner decision, this session) with a
+    // "+N more" overflow pattern — Mississippian Culture (id 105, 50
+    // children) is the stress-test case — and a "part of [parent]"
+    // breadcrumb when civ.parentCiv is set. Pattern comes from
+    // mobile-ui-mockup.html once attached.
+    // const { children, parent } = _getFamily(civ);
+    return '';
+  }
+
   // ── INFO PANEL ────────────────────────────────────────────
   function showInfo(civ, votes) {
     const panel = document.getElementById('info-panel');
@@ -186,6 +210,11 @@ window.ChronosUI = (() => {
 
     // Date challenge section (only for civs that have dateTheories[])
     const dateChallenges = _buildDateChallenges(civ);
+
+    // Related entries (Phase A, next session — see _buildRelatedEntries
+    // above). Call site left in place, deliberately not slotted into the
+    // template below yet.
+    // const relatedEntries = _buildRelatedEntries(civ);
 
     // CLIO integration — calls setActiveCiv on panel show
     if (window.CLIO) CLIO.setActiveCiv(civ);

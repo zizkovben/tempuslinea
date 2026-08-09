@@ -147,8 +147,15 @@ window.TimelineEngine = (() => {
   }
 
   // ── FILTERED CIV LIST ─────────────────────────────────────
+  // Phase A (parentCiv display layer): the default (no active search/
+  // filter) list shows top-level entries only — civs with a parentCiv
+  // are folded into their parent's "related entries" tree in the info
+  // panel instead of getting their own row. Once the person actively
+  // searches or filters (filteredCivs is set), we DON'T re-apply this —
+  // if someone searches for a child civ by name, they should still find
+  // it; hiding a direct search hit would be a regression, not a feature.
   function getVisible() {
-    const source = filteredCivs !== null ? filteredCivs : CIVS;
+    const source = filteredCivs !== null ? filteredCivs : CIVS.filter(c => !c.parentCiv);
     return source.filter(c => c.e >= vS && c.s <= vE);
   }
 

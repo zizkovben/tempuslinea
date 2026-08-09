@@ -99,11 +99,15 @@ const AstrolabeRings = (() => {
     return Math.min(Math.max(span / TOLERANCE_DIVISIONS, MIN_TOLERANCE), MAX_TOLERANCE);
   }
 
+  // Phase A (parentCiv display layer): the inner ring's carousel excludes
+  // civs with a parentCiv set, matching Timeline/Globe's default-view
+  // behaviour — children are reached via the info panel's related-entries
+  // tree once a top-level civ is centered, not dialed to directly.
   function getCandidateCivs() {
     const year = dialedYear();
     const tol  = getTolerance();
     const ep   = currentEpoch();
-    const source = CIVS;
+    const source = CIVS.filter(c => !c.parentCiv);
     const inWindow = source.filter(c =>
       c.e >= year - tol && c.s <= year + tol &&
       c.e >= ep.s && c.s <= ep.e   // stay relevant to the selected epoch band

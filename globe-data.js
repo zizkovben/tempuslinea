@@ -1124,9 +1124,16 @@ window.GLOBE_DATA = (() => {
   }
 
   // ── HELPER: get active civs for a snapshot ────────────────
+  // Phase A (parentCiv display layer): both branches now exclude civs
+  // with a parentCiv set, so the globe shows top-level entries only by
+  // default — children are reached via the info panel's related-entries
+  // tree, not as their own marker. Applies to curated activeCivIds lists
+  // too, for consistency with Timeline/Astrolabe's default behaviour.
   function getSnapshotCivs(snapshot) {
-    if (!snapshot.activeCivIds.length) return CIVS.filter(c => c.t === 'confirmed');
-    return CIVS.filter(c => snapshot.activeCivIds.includes(c.id));
+    if (!snapshot.activeCivIds.length) {
+      return CIVS.filter(c => c.t === 'confirmed' && !c.parentCiv);
+    }
+    return CIVS.filter(c => snapshot.activeCivIds.includes(c.id) && !c.parentCiv);
   }
 
   // ── HELPER: get coords for a civ ─────────────────────────
