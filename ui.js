@@ -147,28 +147,118 @@ window.ChronosUI = (() => {
       </div>`;
   }
 
-  // ── RELATED ENTRIES (Phase A prep — parentCiv display layer) ──
-  // Data plumbing only. The visual tree/breadcrumb pattern is being
-  // held pending mobile-ui-mockup.html (approved design reference, not
-  // in the repo) so this doesn't get built twice. _getFamily() below is
-  // wired and tested; _buildRelatedEntries() is the deliberate stub —
-  // next session drops the mockup's markup straight into it and calls
-  // it from showInfo() where the commented call site already sits.
+  // ── RELATED ENTRIES (Phase A — parentCiv display layer) ───
+  // Built against the approved tree-UI pattern in mobile-ui-mockup.html:
+  // a collapsed-by-default toggle header (owner decision this session),
+  // indented child rows (name + dates), "+N more" overflow after the
+  // first CHILD_PREVIEW_COUNT rows — Mississippian Culture (id 105, 50
+  // children) is the stress-test case the mockup was built around.
+  // Colors reuse the site's real var(--gold)/var(--violet)/var(--teal)
+  // certainty-tier tokens (styles.css), not the mockup's own local demo
+  // token values — the mockup is a layout/interaction reference only.
+  const CHILD_PREVIEW_COUNT = 8;
+  const FAMILY_COLOR = { confirmed: 'var(--gold)', theorized: 'var(--violet)', debated: 'var(--teal)' };
+  const _familyExpanded = {};   // civId -> true once "+N more" clicked
+
   function _getFamily(civ) {
-    const children = CIVS.filter(c => c.parentCiv === civ.id);
+    const children = CIVS.filter(c => c.parentCiv === civ.id).sort((a, b) => a.s - b.s);
     const parent    = civ.parentCiv ? CIVS.find(c => c.id === civ.parentCiv) : null;
     return { children, parent };
   }
 
-  function _buildRelatedEntries(civ) {
-    // TODO (Phase A, next session): render children as a collapsed-by-
-    // default expandable list (owner decision, this session) with a
-    // "+N more" overflow pattern — Mississippian Culture (id 105, 50
-    // children) is the stress-test case — and a "part of [parent]"
-    // breadcrumb when civ.parentCiv is set. Pattern comes from
-    // mobile-ui-mockup.html once attached.
-    // const { children, parent } = _getFamily(civ);
-    return '';
+  // "Part of [Parent]" breadcrumb — shown near the top of the panel,
+  // just under the dates, for any civ that has a parentCiv.
+  function _buildBreadcrumb(civ) {
+    const { parent } = _getFamily(civ);
+    if (!parent) return '';
+    const color = FAMILY_COLOR[parent.t] || 'var(--gold)';
+    return `
+      <div style="font-size:9px;letter-spacing:1px;margin-bottom:10px;">
+        <span style="color:var(--text-dim);">PART OF · </span>
+        <span style="color:${color};cursor:pointer;" onclick="ChronosUI.openFamilyCiv(${parent.id})">
+          ${parent.n}
+        </span>
+      </div>`;
+  }
+
+  // Related-entries expandable tree — shown after the description, for
+  // any civ that has children. Collapsed by default; clicking the header
+  // toggles it open/closed in place (no re-render needed). Clicking
+  // "+N more" re-renders the panel with the full list expanded.
+  function _buildRelatedTree(civ) {
+    const { children } = _getFamily(civ);
+    if (!children.length) return '';
+
+    const expanded = !!_familyExpanded[civ.id];
+    const preview   = expanded ? children : children.slice(0, CHILD_PREVIEW_COUNT);
+    const overflowN = children.length - preview.length;
+    const treeId    = `tree-${civ.id}`;
+
+    const rows = preview.map(c => `
+      <div style="display:flex;align-items:center;justify-content:space-between;
+                  padding:8px 0;border-bottom:0.5px solid rgba(255,255,255,.06);
+                  font-size:11px;color:var(--text-secondary);cursor:pointer;"
+        onclick="ChronosUI.openFamilyCiv(${c.id})">
+        <span>${c.n}</span>
+        <span style="font-size:9px;color:var(--text-dim);white-space:nowrap;margin-left:10px;">
+          ${_fmtYear(c.s)} → ${_fmtYear(c.e)}
+        </span>
+      </div>`).join('');
+
+    const overflowRow = overflowN > 0 ? `
+      <div style="padding:8px 0 0;font-size:10px;color:var(--gold-dim);cursor:pointer;"
+        onclick="ChronosUI.expandFamilyTree(${civ.id})">
+        + ${overflowN} more&hellip;
+      </div>` : '';
+
+    return `
+      <div id="${treeId}-toggle"
+        style="display:flex;align-items:center;justify-content:space-between;
+               padding:10px 12px;background:rgba(255,255,255,.03);
+               border:0.5px solid var(--border-mid);border-radius:8px;cursor:pointer;
+               font-size:10px;letter-spacing:1px;color:var(--gold);margin-top:10px;"
+        onclick="ChronosUI.toggleRelatedTree('${treeId}')">
+        <span>${children.length} RELATED ENTR${children.length === 1 ? 'Y' : 'IES'} · VIEW ALL</span>
+        <span id="${treeId}-chev"
+          style="color:var(--gold-dim);font-size:9px;display:inline-block;transition:transform .2s;">▶</span>
+      </div>
+      <div id="${treeId}-body"
+        style="display:none;margin-top:2px;padding-left:12px;margin-left:8px;
+               border-left:1px solid var(--border-mid);">
+        ${rows}
+        ${overflowRow}
+      </div>`;
+  }
+
+  // In-place open/close — no re-render, matches the mockup's chevron
+  // rotation + slide behaviour exactly.
+  function toggleRelatedTree(treeId) {
+    const body = document.getElementById(`${treeId}-body`);
+    const chev = document.getElementById(`${treeId}-chev`);
+    if (!body) return;
+    const willOpen = body.style.display !== 'block';
+    body.style.display = willOpen ? 'block' : 'none';
+    if (chev) chev.style.transform = willOpen ? 'rotate(90deg)' : 'rotate(0deg)';
+  }
+
+  // "+N more" — re-renders the panel with the full children list and the
+  // tree pre-opened, since a re-render otherwise collapses it again.
+  function expandFamilyTree(civId) {
+    const civ = CIVS.find(c => c.id === civId);
+    if (!civ || !_lastVotes) return;
+    _familyExpanded[civId] = true;
+    showInfo(civ, _lastVotes);
+    const treeId = `tree-${civId}`;
+    setTimeout(() => toggleRelatedTree(treeId), 0);
+  }
+
+  // Clicking a parent breadcrumb or a child tree row opens that civ's
+  // own panel — same behaviour as the overflow drawer's openOverflowCiv.
+  function openFamilyCiv(civId) {
+    const civ = CIVS.find(c => c.id === civId);
+    if (!civ) return;
+    showInfo(civ, getVotes());
+    if (window.TimelineEngine && TimelineEngine.focusCiv) TimelineEngine.focusCiv(civId);
   }
 
   // ── INFO PANEL ────────────────────────────────────────────
@@ -211,10 +301,10 @@ window.ChronosUI = (() => {
     // Date challenge section (only for civs that have dateTheories[])
     const dateChallenges = _buildDateChallenges(civ);
 
-    // Related entries (Phase A, next session — see _buildRelatedEntries
-    // above). Call site left in place, deliberately not slotted into the
-    // template below yet.
-    // const relatedEntries = _buildRelatedEntries(civ);
+    // Related entries (Phase A) — breadcrumb near the top, expandable
+    // children tree after the description, matching the mockup's layout.
+    const breadcrumb   = _buildBreadcrumb(civ);
+    const relatedTree  = _buildRelatedTree(civ);
 
     // CLIO integration — calls setActiveCiv on panel show
     if (window.CLIO) CLIO.setActiveCiv(civ);
@@ -229,6 +319,7 @@ window.ChronosUI = (() => {
           ${_fmtYear(civ.s)} → ${_fmtYear(civ.e)}
           <span style="color:var(--text-dim);margin-left:8px;">(${dur.toLocaleString()} years)</span>
         </div>
+        ${breadcrumb}
         ${civ.lang && civ.lang !== 'unknown' ? `
         <div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:10px;">
           <div style="font-size:9px;letter-spacing:1px;">
@@ -245,6 +336,7 @@ window.ChronosUI = (() => {
           </div>` : ''}
         </div>` : ''}
         <p class="civ-desc">${civ.d}</p>
+        ${relatedTree}
         ${stubBanner}
         ${dateChallenges}
       </div>
@@ -542,6 +634,7 @@ window.ChronosUI = (() => {
     init, showInfo, hideInfo, handleVote, toggleFollowCiv, openFromURL,
     updateOverflowDrawer, openOverflowCiv, toggleOverflowDrawer, getVotes,
     onPanelClose,
+    toggleRelatedTree, expandFamilyTree, openFamilyCiv,
   };
 
 })();
