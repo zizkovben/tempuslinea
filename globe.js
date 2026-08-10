@@ -393,11 +393,27 @@ const GlobeEngine = (() => {
       ));
     }, { passive: false });
 
-    let tPrev = null;
+    // Known-issue fix (Living Atlas mobile navigation): single-finger
+    // rotate already worked, but there was no two-finger handling at
+    // all — zoom only ever listened for 'wheel'. That's the actual
+    // root cause, not a touch-action conflict. pinchD0 tracks the
+    // previous inter-finger distance so each touchmove applies an
+    // incremental ratio, the same way the wheel handler applies an
+    // incremental delta, rather than jumping on first contact.
+    let tPrev   = null;
+    let pinchD0 = null;
     el.addEventListener('touchstart', e => {
       e.preventDefault();
-      if (e.touches.length === 1) tPrev = { x: e.touches[0].clientX, y: e.touches[0].clientY };
-      isDragging = true;
+      if (e.touches.length === 1) {
+        tPrev = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+        pinchD0 = null;
+        isDragging = true;
+      } else if (e.touches.length === 2) {
+        isDragging = false;
+        const dx = e.touches[0].clientX - e.touches[1].clientX;
+        const dy = e.touches[0].clientY - e.touches[1].clientY;
+        pinchD0 = Math.sqrt(dx*dx + dy*dy);
+      }
     }, { passive: false });
     el.addEventListener('touchmove', e => {
       e.preventDefault();
@@ -407,9 +423,16 @@ const GlobeEngine = (() => {
         rotY += dx;
         rotX  = Math.max(-Math.PI/2, Math.min(Math.PI/2, rotX + dy));
         tPrev = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+      } else if (e.touches.length === 2 && pinchD0) {
+        const dx = e.touches[0].clientX - e.touches[1].clientX;
+        const dy = e.touches[0].clientY - e.touches[1].clientY;
+        const nd = Math.sqrt(dx*dx + dy*dy);
+        const f  = pinchD0 / nd;
+        camera.position.z = Math.max(1.4, Math.min(5.0, camera.position.z * f));
+        pinchD0 = nd;
       }
     }, { passive: false });
-    el.addEventListener('touchend', () => { isDragging = false; tPrev = null; });
+    el.addEventListener('touchend', () => { isDragging = false; tPrev = null; pinchD0 = null; });
   }
 
   // ── RESIZE ────────────────────────────────────────────────
@@ -549,6 +572,13 @@ const GlobeEngine = (() => {
   }
 
   // ── PUBLIC: toggle autorotate ─────────────────────────────
+  // ── MOBILE: step-zoom for the +/- icon buttons in the mobile chrome.
+  // Same clamp as the wheel handler and pinch handler above.
+  function zoomStep(dir) {
+    const delta = dir === 'out' ? 0.3 : -0.3;
+    camera.position.z = Math.max(1.4, Math.min(5.0, camera.position.z + delta));
+  }
+
   function setAutoRotate(v) { autoRotate = v; }
 
   // ── PUBLIC: pin placement mode ────────────────────────────
@@ -578,6 +608,7 @@ const GlobeEngine = (() => {
     clearSelection,
     rotateToLatLng,
     setAutoRotate,
+    zoomStep,
     setPinPlaceMode,
     getPendingPin,
     clearPendingPin,

@@ -278,6 +278,7 @@ html, body {
   padding: 24px 24px 16px;
   flex-shrink: 0;
 }
+.sheet-handle { display: none; }
 .side-panel-body {
   flex: 1;
   overflow-y: auto;
@@ -381,11 +382,127 @@ html, body {
   white-space: nowrap;
 }
 
+/* ── MOBILE CHROME ────────────────────────────────────────────
+   Icon-only floating controls + nav drawer + bottom-sheet panel,
+   per the approved mobile-ui-mockup.html reference. Elements live
+   outside the media query (so their base geometry doesn't need to
+   be redeclared per breakpoint) but stay hidden until a page both
+   (a) opts in via body.mobile-chrome-page and (b) is under the
+   mobile breakpoint below. Phase 1: Timeline + Living Atlas only —
+   other pages don't set the body class yet, so this block has no
+   effect on them. ───────────────────────────────────────────── */
+.mobile-only { display: none; }
+
+.chrome-icon {
+  width: 42px; height: 42px; border-radius: var(--radius-lg);
+  background: var(--bg-panel); border: 0.5px solid var(--border-mid);
+  backdrop-filter: blur(6px);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--text-secondary); font-size: 17px; cursor: pointer;
+  position: fixed; z-index: 60;
+}
+.chrome-icon:active { border-color: var(--border-hi); }
+.chrome-icon.top-left  { top: 18px; left: 18px; }
+.chrome-icon.top-right { top: 18px; right: 18px; }
+
+.mobile-brand-mark {
+  position: fixed; top: 20px; left: 68px; z-index: 60;
+  font-family: var(--font-display); font-size: 13px; letter-spacing: .12em;
+  color: var(--gold); font-weight: 600; pointer-events: none;
+}
+
+.mobile-zoom-stack {
+  position: fixed; right: 18px; bottom: 130px; z-index: 60;
+  flex-direction: column; gap: 8px;
+}
+.mobile-zoom-stack .chrome-icon { position: static; }
+
+.mobile-epoch-pill {
+  position: fixed; left: 18px; bottom: 130px; z-index: 60;
+  background: var(--bg-panel); border: 0.5px solid var(--border-mid);
+  border-radius: 20px; padding: 7px 16px; font-size: 11px; letter-spacing: .06em;
+  color: var(--gold); backdrop-filter: blur(6px); font-family: var(--font-display);
+  white-space: nowrap; pointer-events: none;
+}
+
+/* Search overlay — Timeline only (Globe's search is a disabled Phase-3
+   placeholder on desktop too, so it isn't wired here). */
+.mobile-search-overlay {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 70;
+  padding: 64px 18px 14px;
+  background: linear-gradient(to bottom, var(--bg-void) 60%, transparent);
+  transform: translateY(-100%); transition: transform .22s ease;
+}
+.mobile-search-overlay.open { transform: translateY(0); }
+.mobile-search-overlay input {
+  width: 100%; background: var(--bg-panel); border: 1px solid var(--border-mid);
+  color: var(--text-primary); font-family: var(--font-ui); font-size: 14px;
+  letter-spacing: .5px; padding: 11px 14px; border-radius: var(--radius-md);
+  outline: none;
+}
+.mobile-search-overlay input:focus { border-color: var(--border-hi); }
+
+/* Nav drawer + scrim — one shared pattern, reused on every page as the
+   mobile overhaul reaches it. */
+.mobile-nav-drawer {
+  position: fixed; top: 0; left: 0; bottom: 0; width: 220px; z-index: 80;
+  background: var(--bg-panel); backdrop-filter: blur(10px);
+  border-right: 0.5px solid var(--border-mid);
+  transform: translateX(-100%); transition: transform .28s ease;
+  padding: 70px 0 20px; display: flex; flex-direction: column;
+}
+.mobile-nav-drawer.open { transform: translateX(0); }
+.mobile-nav-drawer a {
+  display: block; padding: 13px 24px; font-size: 12px; letter-spacing: .1em;
+  color: var(--text-secondary); text-decoration: none; border-left: 2px solid transparent;
+  font-family: var(--font-ui);
+}
+.mobile-nav-drawer a.active {
+  color: var(--gold); border-left-color: var(--gold); background: rgba(232,160,32,.06);
+}
+.mobile-scrim {
+  position: fixed; inset: 0; background: rgba(0,0,0,.4); z-index: 75;
+  opacity: 0; pointer-events: none; transition: opacity .25s;
+}
+.mobile-scrim.show { opacity: 1; pointer-events: auto; }
+
 /* ── RESPONSIVE ───────────────────────────────────────────── */
 @media (max-width: 600px) {
   .logo-title { font-size: 18px; letter-spacing: 3px; }
   .toolbar    { padding: 6px 10px; }
   .info-panel { width: 100vw; }
+
+  /* Full-bleed canvas: desktop header/nav/toolbar/footer collapse in
+     favour of the floating icon chrome, on opted-in pages only. */
+  body.mobile-chrome-page .app-header,
+  body.mobile-chrome-page .app-nav,
+  body.mobile-chrome-page .toolbar,
+  body.mobile-chrome-page footer {
+    display: none !important;
+  }
+  body.mobile-chrome-page #overflow-drawer {
+    display: none !important;
+  }
+  body.mobile-chrome-page .mobile-only { display: flex; }
+  body.mobile-chrome-page .mobile-brand-mark,
+  body.mobile-chrome-page .mobile-epoch-pill { display: block; }
+
+  /* Info panel becomes a bottom sheet on mobile-chrome pages, reusing
+     the exact same .visible toggle ChronosUI.showInfo()/hideInfo()
+     already drive — only the resting transform axis changes. */
+  body.mobile-chrome-page .info-panel {
+    top: auto; left: 0; right: 0; bottom: 0; width: 100%; max-width: 100vw;
+    height: 62vh; border-left: none; border-top: 1px solid var(--border-hi);
+    border-radius: 20px 20px 0 0;
+    transform: translateY(100%);
+    box-shadow: 0 -8px 40px rgba(0,0,0,.5);
+  }
+  body.mobile-chrome-page .info-panel.visible { transform: translateY(0); }
+  body.mobile-chrome-page .info-panel .side-panel-header { padding-top: 18px; }
+  body.mobile-chrome-page .sheet-handle {
+    width: 36px; height: 4px; border-radius: 2px;
+    background: var(--border-hi); margin: 0 auto 10px;
+  }
 }
 
 /* ── ROW LIMIT SELECT ─────────────────────────────────────── */

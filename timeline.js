@@ -78,6 +78,21 @@ window.TimelineEngine = (() => {
     return { s, e };
   }
 
+  // ── MOBILE: step-zoom for the +/- icon buttons in the mobile chrome.
+  // Same factor as one wheel tick, centered on the current view's middle
+  // (a fixed cursor position doesn't make sense for a tap button).
+  function zoomStep(dir) {
+    const mid = (vS + vE) / 2;
+    const f   = dir === 'out' ? 1.35 : 0.74;
+    const { s, e } = clampView(mid - (mid - vS) * f, mid + (vE - mid) * f);
+    vS = s; vE = e; render();
+  }
+
+  // ── MOBILE: current view-center label, for the epoch pill.
+  function getViewCenterLabel() {
+    return fmtYear((vS + vE) / 2);
+  }
+
   function tickInterval() {
     const sp = vE - vS;
     // Deep Time spans up to ~13.8 billion years (Big Bang preset) — without
@@ -535,6 +550,6 @@ window.TimelineEngine = (() => {
     render();
   }
 
-  return { init, resize, setFilteredCivs, setPreset, registerVote, fmtYear, render, focusCiv, getVotes, setRowLimit, getOverflow };
+  return { init, resize, setFilteredCivs, setPreset, registerVote, fmtYear, render, focusCiv, getVotes, setRowLimit, getOverflow, zoomStep, getViewCenterLabel };
 
 })();

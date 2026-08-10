@@ -427,7 +427,29 @@
     }
   </style>
 </head>
-<body>
+<body class="mobile-chrome-page">
+
+<!-- ══ MOBILE CHROME (Phase 1: Living Atlas) ═══════════════
+     Same pattern as index.html — see mobile-nav.js and styles.css's
+     mobile-chrome-page rules. No search icon here: Globe's own
+     desktop search box is a disabled Phase-3 placeholder, so there's
+     nothing live to surface on mobile yet either. ════════════ -->
+<div class="mobile-scrim" id="mobile-scrim"></div>
+<nav class="mobile-nav-drawer" id="mobile-nav-drawer">
+  <a href="about.html">About</a>
+  <a href="index.html">Timeline</a>
+  <a href="globe.html" class="active">Living Atlas</a>
+  <a href="astrolabe.html">Astrolabe</a>
+  <a href="community.html">Community</a>
+  <a href="portal.html">My Portal</a>
+</nav>
+<button class="chrome-icon mobile-only top-left" id="mobile-menu-btn" aria-label="Menu">&#9776;</button>
+<div class="mobile-brand-mark">TEMPUS LINEA</div>
+<div class="mobile-epoch-pill" id="mobile-epoch-pill">&mdash;</div>
+<div class="mobile-zoom-stack mobile-only">
+  <button class="chrome-icon" id="mobile-zoom-in" aria-label="Zoom in">+</button>
+  <button class="chrome-icon" id="mobile-zoom-out" aria-label="Zoom out">&#8722;</button>
+</div>
 
 <div class="globe-shell">
 
@@ -568,6 +590,7 @@
 <script src="share-ui.js"></script>
 <script src="notifications.js"></script>
 <script src="notifications-ui.js"></script>
+<script src="mobile-nav.js"></script>
 
 <script>
   document.addEventListener('DOMContentLoaded', () => {

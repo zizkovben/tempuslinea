@@ -22,7 +22,33 @@
     [data-theme="day"] #timeline-canvas { filter: brightness(1.05) contrast(0.95); }
   </style>
 </head>
-<body>
+<body class="mobile-chrome-page">
+
+<!-- ══ MOBILE CHROME (Phase 1: Timeline) ═══════════════════
+     Icon-only floating controls + nav drawer, per the approved
+     mobile-ui-mockup.html reference. Hidden on desktop via CSS
+     (see styles.css's mobile-chrome-page rules); the elements below
+     only become visible under the mobile breakpoint. ════════ -->
+<div class="mobile-scrim" id="mobile-scrim"></div>
+<nav class="mobile-nav-drawer" id="mobile-nav-drawer">
+  <a href="about.html">About</a>
+  <a href="index.html" class="active">Timeline</a>
+  <a href="globe.html">Living Atlas</a>
+  <a href="astrolabe.html">Astrolabe</a>
+  <a href="community.html">Community</a>
+  <a href="portal.html">My Portal</a>
+</nav>
+<button class="chrome-icon mobile-only top-left" id="mobile-menu-btn" aria-label="Menu">&#9776;</button>
+<div class="mobile-brand-mark">TEMPUS LINEA</div>
+<button class="chrome-icon mobile-only top-right" id="mobile-search-btn" aria-label="Search">&#128269;</button>
+<div class="mobile-epoch-pill" id="mobile-epoch-pill">&mdash;</div>
+<div class="mobile-zoom-stack mobile-only">
+  <button class="chrome-icon" id="mobile-zoom-in" aria-label="Zoom in">+</button>
+  <button class="chrome-icon" id="mobile-zoom-out" aria-label="Zoom out">&#8722;</button>
+</div>
+<div class="mobile-search-overlay" id="mobile-search-overlay">
+  <input id="mobile-search-input" type="text" placeholder="Search civilizations...">
+</div>
 
 <div class="app-shell">
 
@@ -161,6 +187,7 @@
 <script src="share-ui.js"></script>
 <script src="notifications.js"></script>
 <script src="notifications-ui.js"></script>
+<script src="mobile-nav.js"></script>
 
 </body>
 </html>

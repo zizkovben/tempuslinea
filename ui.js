@@ -310,6 +310,7 @@ window.ChronosUI = (() => {
     if (window.CLIO) CLIO.setActiveCiv(civ);
 
     inner.innerHTML = `
+      <div class="sheet-handle"></div>
       <div style="flex:1;min-width:180px;">
         <div class="civ-type-tag" style="color:${tc}">
           ◈ ${civ.t.toUpperCase()} · ${civ.r}
