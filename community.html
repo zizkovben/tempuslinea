@@ -62,6 +62,14 @@
       display: flex;
       flex-direction: column;
       overflow-y: auto;   /* fallback only — normally the open group(s) exactly fill this */
+      /* This is the nearest genuinely-scrollable ancestor of the
+         VirtualList viewports below. Some mobile browser compositors
+         decide whether to hand a touch to native scrolling based on
+         this ancestor, before the .vlist-viewport's own touch-action
+         override gets a say — so the override needs to live here too,
+         not just on the innermost element. */
+      touch-action: none;
+      overscroll-behavior: none;
       scrollbar-width: thin;
       scrollbar-color: rgba(20,55,130,.3) transparent;
     }
@@ -111,6 +119,7 @@
       flex: 1;
       min-height: 0;   /* required for flex children to actually shrink/scroll */
       overflow: hidden;
+      touch-action: none;
     }
     .sidebar-group.collapsed .sidebar-group-body { display: none; }
     .vlist-viewport {
@@ -461,6 +470,15 @@
 
     /* ── RESPONSIVE ──────────────────────────────────────── */
     @media (max-width: 700px) {
+      /* The page body was never locked down the way Astrolabe's is
+         (body{overflow:hidden}) — on mobile, the internal list should
+         be the only scrollable thing on the page. Without this, a
+         swipe could still be resolved as an attempt to scroll the
+         whole page rather than handled by community-list.js's touch
+         handlers, even with touch-action:none further down the tree. */
+      html, body { overflow: hidden; overscroll-behavior: none; }
+      .community-shell { height: 100vh; min-height: 0; }
+
       .community-body    { flex-direction: column; }
       /* Two states, not a cramped stack: full-height list by default,
          and full-screen panel once a civ is selected — driven by the
