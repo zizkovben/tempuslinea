@@ -21,8 +21,14 @@ const AstrolabeRings = (() => {
 
   // ─── Zoom — modest "look closer at the dial" range per v3 doc. Not a
   // semantic time-zoom (that's the middle ring's job) — pinch/wheel/buttons
-  // all drive this same clamped value. ──────────────────────────────────
-  const MIN_ZOOM = 0.85, MAX_ZOOM = 1.35;
+  // all drive this same clamped value.
+  // MAX_ZOOM is mobile-aware: 1.35 was tuned against desktop's much larger
+  // physical dial (up to 80vh). On a phone the SVG itself starts smaller
+  // (see astrolabe.html's mobile media query), so the same ceiling left
+  // ring text too small to read even at full zoom — real-device testing
+  // asked for more headroom specifically here. ──────────────────────────
+  const MIN_ZOOM = 0.85;
+  const MAX_ZOOM = window.matchMedia('(max-width: 600px)').matches ? 2.2 : 1.35;
   let zoom = 1;
 
   // ─── Ambient idle drift — mirrors the Living Atlas globe's existing

@@ -68,6 +68,22 @@
       cursor: pointer;
     }
     #astrolabe-explainer-btn:hover { background: rgba(200,160,48,0.15); }
+
+    /* Mobile chrome pages have a fixed hamburger at top:18px/left:18px —
+       the explainer button was sitting in exactly that spot. Drop it
+       below the icon row instead of fighting for the same corner. */
+    @media (max-width: 600px) {
+      body.mobile-chrome-page #astrolabe-explainer-btn {
+        top: 70px;
+      }
+    }
+
+    /* Mobile chrome pages have a fixed hamburger at top:18px/left:18px —
+       the explainer button was sitting in exactly that spot. Drop it
+       below the icon row instead of fighting for the same corner. */
+    body.mobile-chrome-page #astrolabe-explainer-btn {
+      top: 70px;
+    }
     #astrolabe-explainer-panel {
       position: absolute;
       top: 54px;
@@ -150,6 +166,21 @@
     #info-panel-backdrop.visible { opacity: 1; pointer-events: auto; }
     @media (max-width: 600px) {
       #info-panel { width: 100vw; max-width: 100vw; }
+
+      /* The persistent legend duplicates the "?" explainer's content
+         and was eating space that could go to the dial — on mobile,
+         hide it and reclaim that room. Reserve just enough bottom
+         clearance for the zoom controls instead of the full legend
+         height. */
+      #astrolabe-legend { display: none; }
+      #astrolabe-container { padding-bottom: 70px; }
+
+      /* Bigger dial = bigger ring text, since SVG text scales with the
+         rendered element (font sizes are fixed in the internal 640×640
+         viewBox — there's no separate "mobile font size" to bump).
+         82vw left real margin on a narrow phone; push closer to full
+         width now that the legend isn't competing for space below it. */
+      #astrolabe-svg { width: min(78vh, 94vw); height: min(78vh, 94vw); }
     }
 
     #astrolabe-legend {
@@ -221,7 +252,24 @@
     }
   </style>
 </head>
-<body>
+<body class="mobile-chrome-page page-astrolabe">
+
+<!-- ══ MOBILE CHROME (Phase 2: Astrolabe) ══════════════════
+     Same minimal pattern as Community — hamburger + drawer only.
+     The explainer "?" button and zoom controls already exist and are
+     repositioned for mobile below (see the media query in the style
+     block above), so they aren't duplicated here. ════════════════ -->
+<div class="mobile-scrim" id="mobile-scrim"></div>
+<nav class="mobile-nav-drawer" id="mobile-nav-drawer">
+  <a href="about.html">About</a>
+  <a href="index.html">Timeline</a>
+  <a href="globe.html">Living Atlas</a>
+  <a href="astrolabe.html" class="active">Astrolabe</a>
+  <a href="community.html">Community</a>
+  <a href="portal.html">My Portal</a>
+</nav>
+<button class="chrome-icon mobile-only top-left" id="mobile-menu-btn" aria-label="Menu">&#9776;</button>
+<div class="mobile-brand-mark">TEMPUS LINEA</div>
 
 <div class="astrolabe-shell">
 
@@ -324,6 +372,7 @@
 <script src="astrolabe-rings.js" defer></script>
 <script src="astrolabe-ui.js" defer></script>
 <script src="ui.js" defer></script>
+<script src="mobile-nav.js" defer></script>
 
 <script>
   // Starfield — astrolabe-exclusive atmosphere layer, generated once on load.
