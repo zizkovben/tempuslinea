@@ -217,6 +217,26 @@ const NotificationsUI = (() => {
         #notif-panel.open { right: 10px; }
         #notif-bell-fab { right: 54px; }
       }
+
+      /* Mobile chrome pages (Timeline, Living Atlas): the bell FAB's
+         default top:14px/right:64px sits directly under the mobile
+         chrome's hamburger/search icons (top:18px, 42px tall, z-index
+         60) and this FAB's z-index:1200 draws over them — that's the
+         "overlapping pills" congestion seen in real-device testing.
+         Drop the bell to its own row below the icon strip instead of
+         sharing it. Scoped to body.mobile-chrome-page only, so pages
+         not yet in mobile chrome scope (Community/Astrolabe/Portal/
+         About) are unaffected. */
+      @media (max-width: 600px) {
+        body.mobile-chrome-page #notif-bell-fab {
+          top: 70px;
+          right: 18px;
+        }
+        body.mobile-chrome-page #notif-panel {
+          top: 122px;
+          max-height: calc(100vh - 146px);
+        }
+      }
     `;
     document.head.appendChild(style);
   }

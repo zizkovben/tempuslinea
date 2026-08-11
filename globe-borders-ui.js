@@ -10,7 +10,10 @@ const GlobeBordersUI = (() => {
   // actually explains what the border lines are, was hidden behind a
   // small toggle a first-time visitor had no reason to click. Opens by
   // default now; still collapsible via the legend button.
-  let _legendOpen = true;
+  // On phone-width screens this default was never reconsidered — real-
+  // device testing showed the open panel covering the entire header on
+  // mobile, so it starts collapsed there instead (still one tap away).
+  let _legendOpen = window.matchMedia('(max-width: 600px)').matches ? false : true;
   let _opacity    = 0.85;
   let _yearGetter = () => 2024;
 
