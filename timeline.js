@@ -451,13 +451,22 @@ window.TimelineEngine = (() => {
 
   // ── EVENT WIRING ──────────────────────────────────────────
   function wireEvents() {
-    cvs.addEventListener('click', e => {
+    // Shared by the mouse 'click' handler and the touch tap-detection
+    // below. Root cause found via real-device testing: touchstart calls
+    // e.preventDefault() (needed so a drag doesn't also scroll the
+    // page), and doing so silently suppresses the browser's synthetic
+    // 'click' event that would normally follow a touchend — so a tap
+    // has never been able to open a civ on any touch device, only a
+    // mouse click. Same missing-piece bug class as the pinch-zoom fix.
+    function selectAtPoint(clientX, clientY) {
       const r = cvs.getBoundingClientRect();
-      const hit = hitTest(e.clientX - r.left, e.clientY - r.top);
+      const hit = hitTest(clientX - r.left, clientY - r.top);
       if (hit) { selCiv = hit.c; if (window.ChronosUI) ChronosUI.showInfo(hit.c, votes); }
       else     { selCiv = null;  if (window.ChronosUI) ChronosUI.hideInfo(); }
       render();
-    });
+    }
+
+    cvs.addEventListener('click', e => selectAtPoint(e.clientX, e.clientY));
 
     cvs.addEventListener('mousemove', e => {
       if (drag) return;
@@ -498,12 +507,21 @@ window.TimelineEngine = (() => {
       vS = s; vE = en; render();
     }, { passive: false });
 
+    // tapStart survives only if the touch never moved beyond a small
+    // threshold and stayed single-finger — that's what distinguishes a
+    // tap-to-select from a pan/pinch gesture, now that touchstart's
+    // preventDefault() blocks the browser's own synthetic click.
+    let tapStart = null;
+    const TAP_MOVE_TOLERANCE = 8;
+
     wrap.addEventListener('touchstart', e => {
       e.preventDefault();
       if (e.touches.length === 1) {
         drag = true; dx0 = e.touches[0].clientX; dS0 = vS; dE0 = vE; td0 = null;
+        tapStart = { x: e.touches[0].clientX, y: e.touches[0].clientY };
       } else if (e.touches.length === 2) {
         drag = false;
+        tapStart = null;
         const dx = e.touches[0].clientX - e.touches[1].clientX;
         const dy = e.touches[0].clientY - e.touches[1].clientY;
         td0 = Math.sqrt(dx*dx + dy*dy);
@@ -515,9 +533,15 @@ window.TimelineEngine = (() => {
     wrap.addEventListener('touchmove', e => {
       e.preventDefault();
       if (e.touches.length === 1 && drag) {
+        if (tapStart) {
+          const mdx = e.touches[0].clientX - tapStart.x;
+          const mdy = e.touches[0].clientY - tapStart.y;
+          if (Math.sqrt(mdx*mdx + mdy*mdy) > TAP_MOVE_TOLERANCE) tapStart = null;
+        }
         const shift = (e.touches[0].clientX - dx0) / CW * (dE0 - dS0);
         vS = dS0 - shift; vE = dE0 - shift; render();
       } else if (e.touches.length === 2 && td0) {
+        tapStart = null;
         const dx = e.touches[0].clientX - e.touches[1].clientX;
         const dy = e.touches[0].clientY - e.touches[1].clientY;
         const nd = Math.sqrt(dx*dx + dy*dy);
@@ -527,7 +551,11 @@ window.TimelineEngine = (() => {
       }
     }, { passive: false });
 
-    wrap.addEventListener('touchend', () => { drag = false; td0 = null; });
+    wrap.addEventListener('touchend', () => {
+      drag = false; td0 = null;
+      if (tapStart) selectAtPoint(tapStart.x, tapStart.y);
+      tapStart = null;
+    });
     window.addEventListener('resize', resize);
   }
 

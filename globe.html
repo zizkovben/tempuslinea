@@ -421,9 +421,41 @@
     /* ── RESPONSIVE ─────────────────────────────────────────── */
     @media (max-width: 600px) {
       #info-panel             { width: 100vw; max-width: 100vw; }
-      .globe-controls        { top: 8px; right: 8px; }
-      .scrubber-wrap         { padding: 8px 10px 12px; }
-      #earth-state-indicator { font-size: 8px; padding: 4px 12px; }
+      .scrubber-wrap          { padding: 8px 10px 12px; }
+
+      /* Prev/Next/Auto-rotate: was a tall vertical stack of full-text
+         buttons sitting at top:14/right:16 — directly under where the
+         notification bell also had to go (see notifications-ui.js),
+         and overlapping the epoch/brand text below it. Collapsed into
+         a single compact icon-only row (labels hidden, icons kept —
+         the "pills into icons" pass) and moved to sit beside the bell
+         in the same row rather than stacked underneath it.
+         Bell is 36px wide at right:18px (occupies right:18–54px), so
+         this row starts at right:66px to clear it with a visible gap. */
+      .globe-controls {
+        top: 70px; right: 66px;
+        flex-direction: row; gap: 6px;
+      }
+      .globe-controls .btn {
+        width: 36px; height: 36px; padding: 0;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 15px;
+      }
+      .globe-controls .btn-label   { display: none; }
+      .globe-controls .controls-spacer { display: none; }
+
+      /* Was centered at top:14px — same row as the brand mark
+         (left:68px) and hamburger, so long labels ("HOLOCENE EARTH ·
+         SEA LEVEL ±0m") visibly overlapped "TEMPUS LINEA". Dropped
+         below the entire icon row (hamburger/bell/controls all clear
+         by top:106px) instead of fighting for the same strip. */
+      #earth-state-indicator {
+        top: 112px; font-size: 8px; padding: 4px 12px;
+      }
+
+      /* Arrow-key hint is meaningless on a touchscreen and was just
+         eating space in an already-tight bottom area. */
+      .key-hint { display: none; }
     }
   </style>
 </head>
@@ -497,10 +529,10 @@
     <div class="key-hint">← → ARROW KEYS TO NAVIGATE EPOCHS</div>
 
     <div class="globe-controls">
-      <button id="btn-epoch-prev" class="btn">◀ PREV</button>
-      <button id="btn-epoch-next" class="btn">NEXT ▶</button>
-      <div style="height:6px;"></div>
-      <button id="btn-autorotate" class="btn active">⟳ AUTO-ROTATE ON</button>
+      <button id="btn-epoch-prev" class="btn"><span class="btn-icon">◀</span><span class="btn-label"> PREV</span></button>
+      <button id="btn-epoch-next" class="btn"><span class="btn-icon">▶</span><span class="btn-label">NEXT </span></button>
+      <div style="height:6px;" class="controls-spacer"></div>
+      <button id="btn-autorotate" class="btn active"><span class="btn-icon">⟳</span><span class="btn-label"> AUTO-ROTATE ON</span></button>
     </div>
 
     <div id="pin-panel">

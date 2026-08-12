@@ -348,6 +348,25 @@ const GlobeEngine = (() => {
     });
     window.addEventListener('mouseup', () => { isDragging = false; });
 
+    // Shared by the mouse 'click' handler and the touch tap-detection
+    // below — see the matching comment in timeline.js's wireEvents for
+    // the full root-cause explanation (touchstart's preventDefault()
+    // silently blocks the synthetic click a tap would otherwise fire).
+    function selectAtPoint(clientX, clientY) {
+      const civId = hitTestMarkers({ clientX, clientY });
+      if (civId) {
+        selectedId = civId;
+        const civ = CIVS.find(c => c.id === civId);
+        if (onSelectCb && civ) onSelectCb(civ);
+        if (civ) document.dispatchEvent(new CustomEvent('chronos-civ-selected', { detail: { civ } }));
+      }
+      if (window.GlobePins) {
+        raycaster.setFromCamera(mouse, camera);
+        const pin = GlobePins.hitTest(raycaster);
+        if (pin && onPinSelectCb) onPinSelectCb(pin);
+      }
+    }
+
     el.addEventListener('click', e => {
       // Pin placement mode — capture lat/lng from click, don't select civ
       if (pinPlaceMode) {
@@ -369,21 +388,7 @@ const GlobeEngine = (() => {
         return;
       }
 
-      // Normal civ selection
-      const civId = hitTestMarkers(e);
-      if (civId) {
-        selectedId = civId;
-        const civ = CIVS.find(c => c.id === civId);
-        if (onSelectCb && civ) onSelectCb(civ);
-        if (civ) document.dispatchEvent(new CustomEvent('chronos-civ-selected', { detail: { civ } }));
-      }
-
-      // Check pin hit test
-      if (window.GlobePins) {
-        raycaster.setFromCamera(mouse, camera);
-        const pin = GlobePins.hitTest(raycaster);
-        if (pin && onPinSelectCb) onPinSelectCb(pin);
-      }
+      selectAtPoint(e.clientX, e.clientY);
     });
 
     el.addEventListener('wheel', e => {
@@ -402,14 +407,18 @@ const GlobeEngine = (() => {
     // incremental delta, rather than jumping on first contact.
     let tPrev   = null;
     let pinchD0 = null;
+    let tapStart = null;
+    const TAP_MOVE_TOLERANCE = 8;
     el.addEventListener('touchstart', e => {
       e.preventDefault();
       if (e.touches.length === 1) {
         tPrev = { x: e.touches[0].clientX, y: e.touches[0].clientY };
         pinchD0 = null;
         isDragging = true;
+        tapStart = { x: e.touches[0].clientX, y: e.touches[0].clientY };
       } else if (e.touches.length === 2) {
         isDragging = false;
+        tapStart = null;
         const dx = e.touches[0].clientX - e.touches[1].clientX;
         const dy = e.touches[0].clientY - e.touches[1].clientY;
         pinchD0 = Math.sqrt(dx*dx + dy*dy);
@@ -418,12 +427,18 @@ const GlobeEngine = (() => {
     el.addEventListener('touchmove', e => {
       e.preventDefault();
       if (e.touches.length === 1 && tPrev) {
+        if (tapStart) {
+          const mdx = e.touches[0].clientX - tapStart.x;
+          const mdy = e.touches[0].clientY - tapStart.y;
+          if (Math.sqrt(mdx*mdx + mdy*mdy) > TAP_MOVE_TOLERANCE) tapStart = null;
+        }
         const dx = (e.touches[0].clientX - tPrev.x) * 0.005;
         const dy = (e.touches[0].clientY - tPrev.y) * 0.005;
         rotY += dx;
         rotX  = Math.max(-Math.PI/2, Math.min(Math.PI/2, rotX + dy));
         tPrev = { x: e.touches[0].clientX, y: e.touches[0].clientY };
       } else if (e.touches.length === 2 && pinchD0) {
+        tapStart = null;
         const dx = e.touches[0].clientX - e.touches[1].clientX;
         const dy = e.touches[0].clientY - e.touches[1].clientY;
         const nd = Math.sqrt(dx*dx + dy*dy);
@@ -432,7 +447,11 @@ const GlobeEngine = (() => {
         pinchD0 = nd;
       }
     }, { passive: false });
-    el.addEventListener('touchend', () => { isDragging = false; tPrev = null; pinchD0 = null; });
+    el.addEventListener('touchend', () => {
+      isDragging = false; tPrev = null; pinchD0 = null;
+      if (tapStart && !pinPlaceMode) selectAtPoint(tapStart.x, tapStart.y);
+      tapStart = null;
+    });
   }
 
   // ── RESIZE ────────────────────────────────────────────────

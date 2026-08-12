@@ -199,6 +199,20 @@ const GlobeBordersStyles = (() => {
       .gb-dot:hover {
         transform: scale(1.15);
       }
+
+      /* #gb-controls renders in normal document flow near the top of
+         #globe-container — unlike the hamburger/bell/PREV-NEXT row
+         above it, which are all position:fixed to the viewport. On
+         mobile that meant this panel sat right underneath the fixed
+         icon row instead of below it. Push it down to clear that row,
+         and drop the two purely-decorative text bits (coverage tag,
+         "opacity" label) — both still have title tooltips for anyone
+         who taps for detail, so nothing explanatory is actually lost. */
+      @media (max-width: 600px) {
+        #gb-controls { margin-top: 106px; flex-wrap: wrap; }
+        #gb-coverage-tag { display: none; }
+        #gb-opacity-label { display: none; }
+      }
     `;
     document.head.appendChild(style);
   }

@@ -158,7 +158,7 @@ window.GlobeUI = (() => {
     setTimeout(() => {
       GlobeEngine.setAutoRotate(false);
       if (rotBtn) {
-        rotBtn.textContent = '⟳ AUTO-ROTATE OFF';
+        _setBtnLabel(rotBtn, ' AUTO-ROTATE OFF');
         rotBtn.classList.remove('active');
       }
       isRotating = false;
@@ -201,7 +201,7 @@ window.GlobeUI = (() => {
       GlobeEngine.setAutoRotate(true);
       isRotating = true;
       if (rotBtn) {
-        rotBtn.textContent = '⟳ AUTO-ROTATE ON';
+        _setBtnLabel(rotBtn, ' AUTO-ROTATE ON');
         rotBtn.classList.add('active');
       }
     }, 100);
@@ -318,6 +318,16 @@ window.GlobeUI = (() => {
     });
   }
 
+  // Sets only the label span's text — keeps the icon span intact.
+  // The button markup is now <span class="btn-icon">⟳</span><span
+  // class="btn-label">...</span> so the label can be hidden via CSS on
+  // mobile (icon-only, per the "pills into icons" decluttering pass)
+  // without JS ever needing to know about that split.
+  function _setBtnLabel(btn, text) {
+    const label = btn && btn.querySelector('.btn-label');
+    if (label) label.textContent = text;
+  }
+
   // ── CONTROLS ─────────────────────────────────────────────
   function buildControls() {
     const rotBtn = document.getElementById('btn-autorotate');
@@ -325,7 +335,7 @@ window.GlobeUI = (() => {
       rotBtn.addEventListener('click', () => {
         isRotating = !isRotating;
         GlobeEngine.setAutoRotate(isRotating);
-        rotBtn.textContent = isRotating ? '⟳ AUTO-ROTATE ON' : '⟳ AUTO-ROTATE OFF';
+        _setBtnLabel(rotBtn, isRotating ? ' AUTO-ROTATE ON' : ' AUTO-ROTATE OFF');
         rotBtn.classList.toggle('active', isRotating);
       });
     }
